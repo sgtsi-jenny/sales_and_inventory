@@ -793,11 +793,11 @@
           },
           series: {
             shadowSize: 0, // Drawing is faster without shadows
-            color: "#3c8dbc"
+            color: "#24b798"
           },
           lines: {
             fill: true, //Converts the line chart to area chart
-            color: "#3c8dbc"
+            color: "#24b798"
           },
           yaxis: {
             min: 0,
@@ -853,11 +853,11 @@
         }
         var line_data1 = {
           data: sin,
-          color: "#3c8dbc"
+          color: "#24b798"
         };
         var line_data2 = {
           data: cos,
-          color: "#337ab7"
+          color: "#24b798"
         };
         $.plot("#line-chart", [line_data1, line_data2], {
           grid: {
@@ -877,7 +877,7 @@
           },
           lines: {
             fill: false,
-            color: ["#3c8dbc", "#f56954"]
+            color: ["#24b798", "#f56954"]
           },
           yaxis: {
             show: true,
@@ -921,7 +921,7 @@
           },
           series: {
             shadowSize: 0, // Drawing is faster without shadows
-            color: "#337ab7"
+            color: "#24b798"
           },
           lines: {
             fill: true //Converts the line chart to area chart
@@ -943,7 +943,7 @@
 
         var bar_data = {
           data: [["January", 10], ["February", 8], ["March", 4], ["April", 13], ["May", 17], ["June", 9]],
-          color: "#3c8dbc"
+          color: "#24b798"
         };
         $.plot("#bar-chart", [bar_data], {
           grid: {
@@ -971,9 +971,9 @@
          */
 
         var donutData = [
-          {label: "Series2", data: 30, color: "#3c8dbc"},
+          {label: "Series2", data: 30, color: "#24b798"},
           {label: "Series3", data: 20, color: "#0073b7"},
-          {label: "Series4", data: 50, color: "#337ab7"}
+          {label: "Series4", data: 50, color: "#24b798"}
         ];
         $.plot("#donut-chart", donutData, {
           series: {

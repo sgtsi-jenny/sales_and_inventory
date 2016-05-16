@@ -56,8 +56,8 @@
 
                                 <div class='form-group'>
                                     <div class='col-sm-12 col-md-9 col-md-offset-3 '>
-                                        <a href='settings.php' class='btn btn-default'>Cancel</a>
                                         <button type='submit' class='btn btn-success'> <span class='fa fa-check'></span> Save</button>
+                                        <a href='settings.php' class='btn btn-default'>Cancel</a>
                                     </div>
                                     
                                 </div>                    		

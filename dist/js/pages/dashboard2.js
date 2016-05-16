@@ -103,26 +103,26 @@ $(function () {
     },
     {
       value: 500,
-      color: "#337ab7",
-      highlight: "#337ab7",
+      color: "#24b798",
+      highlight: "#24b798",
       label: "IE"
     },
     {
       value: 400,
-      color: "#337ab7",
-      highlight: "#337ab7",
+      color: "#24b798",
+      highlight: "#24b798",
       label: "FireFox"
     },
     {
       value: 600,
-      color: "#337ab7",
-      highlight: "#337ab7",
+      color: "#24b798",
+      highlight: "#24b798",
       label: "Safari"
     },
     {
       value: 300,
-      color: "#3c8dbc",
-      highlight: "#3c8dbc",
+      color: "#24b798",
+      highlight: "#24b798",
       label: "Opera"
     },
     {
@@ -195,7 +195,7 @@ $(function () {
     },
     markerStyle: {
       initial: {
-        fill: '#337ab7',
+        fill: '#24b798',
         stroke: '#111'
       }
     },
