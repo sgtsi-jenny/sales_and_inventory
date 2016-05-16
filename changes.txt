@@ -1,0 +1,10 @@
+Table
+-organization_temp
+-contacts_temp
+-opportunities_temp
+
+
+
+Views
+-vw_org_changes
+
