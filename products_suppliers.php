@@ -2,7 +2,7 @@
    $supplier=$con->myQuery("SELECT * FROM suppliers WHERE is_deleted=0")->fetchAll(PDO::FETCH_ASSOC);
   //if(!empty($_GET))
   //{
-    $supplier_product=$con->myQuery("SELECT supplier_id FROM supplier_products WHERE supplier_products_id=?",array($products['product_id']))->fetchAll(PDO::FETCH_ASSOC);
+    $supplier_product=$con->myQuery("SELECT supplier_id FROM supplier_products WHERE supplier_product_id=?",array($products['product_id']))->fetchAll(PDO::FETCH_ASSOC);
   //}
   $tab=2;
 ?>

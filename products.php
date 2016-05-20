@@ -8,7 +8,7 @@
     if(!AllowUser(array(1))){
          redirect("index.php");
     }
-    
+    $data=$con->myQuery("SELECT * FROM products WHERE is_deleted=0");
     makeHead("Products");
 ?>
 
@@ -18,9 +18,9 @@
 ?>
     <div class="content-wrapper">
          <section class="content-header">
-                                      <h1 align="center" style="color:#24b798;">
-                                      List of Products
-                                      </h1>
+            <h1 align="center" style="color:#24b798;">
+            List of Products
+            </h1>
         </section>
         <section class="content">
 
@@ -29,62 +29,50 @@
             <div class='col-md-12'>
               <div class="box box-primary">
                 <div class="box-body">
-                          <div class='panel-body'>
-                                    <div class='col-md-12 text-right'>
-                                        <div class='col-md-12 text-right'>
-                                        <a href='frm_products.php' class='btn btn-brand'> Create New <span class='fa fa-plus'></span> </a>
-                                        </div>                                
-                                    </div> 
-                          </div>
-                                <?php
-                                Alert();
-                                ?>
-                            <br/>                 
-                    <table id='ResultTable' class='table table-bordered table-striped'>
+                  <div class="row">
+                    <div class="col-sm-12">
+                        <div class='col-ms-12 text-right'>
+                          <a href='frm_products.php' class='btn btn-brand'> Create New <span class='fa fa-plus'></span> </a>
+                        </div>
+                        <br/>
+                        <table id='ResultTable' class='table table-bordered table-striped'>
                           <thead>
                             <tr>
-                                                <th class='text-center'>Product name</th>
-                                                <th class='text-center'>Product code</th>
-                                                <th class='text-center'>Category</th>
-                                                <th class='text-center'>Address</th>
-                                                <th class='text-center'>Email</th>
-                                                <th class='text-center'>Action</th>
-                                                
+                              <th class='text-center'>Product Code</th>
+                              <th class='text-center'>Product Name</th>
+                              <th class='text-center'>Description</th>
+                              <th class='text-center'>Category</th>
+                              <th class='text-center'>Current Quantity</th>
+                              <th class='text-center'>Selling Price</th>
+                              <th class='text-center'>Wholesale Price</th>
+                              <th class='text-center'>Action</th>
                             </tr>
                           </thead>
                           <tbody>
-                                            <?php
-                                                $supplier=$con->myQuery("SELECT name,description, contact_number,address, email
-FROM suppliers 
-WHERE is_deleted=0")->fetchAll(PDO::FETCH_ASSOC);
-                                                foreach ($supplier as $row):
-                                                  $action_buttons="";
-                                            ?>
-
-                                                <tr>
-                                                   <td><?php echo htmlspecialchars($row['name'])?></td>
-                                                   <td><?php echo htmlspecialchars($row['description'])?></td>
-                                                   <td><?php echo htmlspecialchars($row['contact_number'])?></td>
-                                                   <td><?php echo htmlspecialchars($row['address'])?></td>
-                                                   <td><?php echo htmlspecialchars($row['email'])?></td>
-                                                   
-                                                <td class="text-center">
-                                                    
-                                                    <a class='btn btn-sm btn-warning' href='frm_users.php?id=<?php echo $row['id'];?>'><span class='fa fa-pencil'></span></a>
-                                                    <a class='btn btn-sm btn-danger' href='delete.php?id=<?php echo $row['id'];?>&t=user' onclick='return confirm("This user will be deleted.")'><span class='fa fa-trash'></span></a>
-                                                </td>
-                                                </tr>
-                                            <?php
-                                                endforeach;
-                                            ?>
-                                        </tbody>
+                            <?php
+                              while($row = $data->fetch(PDO::FETCH_ASSOC)):
+                            ?>
+                              <tr>
+                                <td><?php echo htmlspecialchars($row['product_code'])?></td>
+                                <td><?php echo htmlspecialchars($row['product_name'])?></td>
+                                <td><?php echo htmlspecialchars($row['description'])?></td>
+                                <td><?php echo htmlspecialchars($row['category_id'])?></td>
+                                <td><?php echo htmlspecialchars($row['current_quantity'])?></td>
+                                <td><?php echo htmlspecialchars($row['selling_price'])?></td>
+                                <td><?php echo htmlspecialchars($row['wholesale_price'])?></td>
+                                <td class='text-center'>
+                                  <a href='frm_products.php?id=<?php echo $row['product_id']; ?>' class='btn btn-success btn-sm'><span class='fa fa-pencil'></span></a>
+                                  <a href='#' onclick="return confirm('This record will be deleted.')" class='btn btn-danger btn-sm'><span class='fa fa-trash'></span></a>
+                                </td>
+                              </tr>
+                            <?php
+                              endwhile;
+                            ?>
+                          </tbody>
                         </table>
-
-
-                  <!--</div>--><!-- /.tab-pane -->
-                <!--</div>--><!-- /.tab-content -->
-              <!--</div>--><!-- /.nav-tabs-custom -->
-                </div>
+                    </div><!-- /.col -->
+                  </div><!-- /.row -->
+                </div><!-- /.box-body -->
               </div>
             </div>
           </div><!-- /.row -->
