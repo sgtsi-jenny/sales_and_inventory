@@ -8,7 +8,24 @@
     if(!AllowUser(array(1))){
          redirect("index.php");
     }
-    $data=$con->myQuery("SELECT * FROM products WHERE is_deleted=0");
+    $data=$con->myQuery("SELECT
+                          p.product_id,
+                          p.product_code,
+                          p.product_name,
+                          p.description,
+                          p.category_id,
+                          c.name AS category_name,
+                          p.selling_price,
+                          p.wholesale_price,
+                          CONCAT(p.current_quantity,' ',m.abv) AS quantity,
+                          p.barcode
+                        FROM products p
+                        INNER JOIN categories c
+                          ON c.category_id=p.category_id
+                        INNER JOIN measurements m
+                          ON m.measurement_id=p.measurement_id
+                        WHERE p.is_deleted=0
+                        ");
     makeHead("Products");
 ?>
 
@@ -32,7 +49,7 @@
                   <div class="row">
                     <div class="col-sm-12">
                         <div class='col-ms-12 text-right'>
-                          <a href='frm_products.php' class='btn btn-brand'> Create New <span class='fa fa-plus'></span> </a>
+                          <a href='frm_products.php' class='btn btn-success'> Create New <span class='fa fa-plus'></span> </a>
                         </div>
                         <br/>
                         <table id='ResultTable' class='table table-bordered table-striped'>
@@ -42,9 +59,10 @@
                               <th class='text-center'>Product Name</th>
                               <th class='text-center'>Description</th>
                               <th class='text-center'>Category</th>
-                              <th class='text-center'>Current Quantity</th>
                               <th class='text-center'>Selling Price</th>
                               <th class='text-center'>Wholesale Price</th>
+                              <th class='text-center'>Current Quantity</th>
+                              <th class='text-center'>Barcode</th>
                               <th class='text-center'>Action</th>
                             </tr>
                           </thead>
@@ -56,10 +74,11 @@
                                 <td><?php echo htmlspecialchars($row['product_code'])?></td>
                                 <td><?php echo htmlspecialchars($row['product_name'])?></td>
                                 <td><?php echo htmlspecialchars($row['description'])?></td>
-                                <td><?php echo htmlspecialchars($row['category_id'])?></td>
-                                <td><?php echo htmlspecialchars($row['current_quantity'])?></td>
+                                <td><?php echo htmlspecialchars($row['category_name'])?></td>
                                 <td><?php echo htmlspecialchars($row['selling_price'])?></td>
                                 <td><?php echo htmlspecialchars($row['wholesale_price'])?></td>
+                                <td><?php echo htmlspecialchars($row['quantity'])?></td>
+                                <td><?php echo htmlspecialchars($row['barcode'])?></td>
                                 <td class='text-center'>
                                   <a href='frm_products.php?id=<?php echo $row['product_id']; ?>' class='btn btn-success btn-sm'><span class='fa fa-pencil'></span></a>
                                   <a href='#' onclick="return confirm('This record will be deleted.')" class='btn btn-danger btn-sm'><span class='fa fa-trash'></span></a>
