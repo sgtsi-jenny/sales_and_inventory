@@ -105,7 +105,7 @@
                                                 <tr>
                                                    <td><?php echo htmlspecialchars($row['name'])?></td>
                                                 <td>
-                                                    <a class='btn btn-sm btn-warning' href='settings_users.php?id=<?php echo $row['user_type_id'];?>'><span class='fa fa-pencil'></span></a>
+                                                    <a class='btn btn-sm btn-brand' href='settings_users.php?id=<?php echo $row['user_type_id'];?>'><span class='fa fa-pencil'></span></a>
                                                     <a class='btn btn-sm btn-danger' href='delete.php?id=<?php echo $row['user_type_id'];?>&t=ut' onclick='return confirm("This user type will be deleted.")'><span class='fa fa-trash'></span></a>
                                                 </td>
                                                 </tr>
