@@ -65,9 +65,7 @@ ps.name AS payment_name,
 FROM sales_master sm
 INNER JOIN customers ON sm.customer_id=customers.customer_id
 INNER JOIN sales_status ss ON sm.sales_status_id=ss.sales_status_id
-INNER JOIN payment_status ps ON sm.payment_status_id=ps.payment_status_id
-
-")->fetchAll(PDO::FETCH_ASSOC);
+INNER JOIN payment_status ps ON sm.payment_status_id=ps.payment_status_id")->fetchAll(PDO::FETCH_ASSOC);
                                                 foreach ($sales as $row):
                                                   $action_buttons="";
                                             ?>

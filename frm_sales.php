@@ -8,7 +8,6 @@
     if(!AllowUser(array(1))){
         redirect("index.php");
     }
-
 	$supplier="";
     
 if(!empty($_GET['id'])){
