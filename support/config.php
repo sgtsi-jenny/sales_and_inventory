@@ -32,7 +32,8 @@
 		}
 		else
 		{
-			return true; }
+			return true; 
+		}
 	}
 	function toLogin($url=NULL)
 	{
@@ -362,11 +363,11 @@ html;
 			redirect('frmlogin.php');
 			die;
 		}
-		if(is_active($_SESSION[WEBAPP]['user']['id'])){
-
+		if(is_active($_SESSION[WEBAPP]['user']['id']))
+		{
 			refresh_activity($_SESSION[WEBAPP]['user']['id']);
 		}
-		else{
+/*		else{
 			//echo 'You have been inactive.';
 			// die;
 			refresh_activity($_SESSION[WEBAPP]['user']['id']);
@@ -378,5 +379,6 @@ html;
 			redirect('frmlogin.php');
 			die;
 		}
+*/
 	}
 ?>
