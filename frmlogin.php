@@ -13,7 +13,7 @@
       <div class='row'>
         <div class='panel panel-primary'>
           <div class='panel-heading text-center'>
-            <h4><b>Customer Relationship Management</b></h4>
+            <h4><b>Sales and Inventory System</b></h4>
           </div>
         <div class="login-box-body">
         <?php
