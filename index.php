@@ -34,7 +34,7 @@
 
                                     <?php
                                     die;
-                                    $uid=$_SESSION[WEBAPP]['user']['id'];
+                                    $uid=$_SESSION[WEBAPP]['user']['user_id'];
                                         if(AllowUser(array(1,3,4,5))){
                                         $activities=$con->myQuery("SELECT opportunities.opp_name,  DATE_FORMAT(action_date, '%M %d, %Y %h:%i %p'), CONCAT(users.last_name,' ',users.first_name,' ',users.middle_name) AS users,notes FROM activities
                                         left join opportunities on activities.opp_id=opportunities.id

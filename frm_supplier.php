@@ -12,7 +12,7 @@
 	$supplier="";
     
 if(!empty($_GET['id'])){
-        $supplier=$con->myQuery("SELECT id,name,description, contact_number,address, email from suppliers WHERE id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
+        $supplier=$con->myQuery("SELECT supplier_id,name,description, contact_number,address, email from suppliers WHERE supplier_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
         if(empty($supplier)){
             //Alert("Invalid consumables selected.");
             Modal("Invalid supplier selected");
@@ -26,7 +26,7 @@ if(!empty($_GET['id'])){
         }
         $supplier=$_SESSION[WEBAPP]['frm_inputs'];
         if(!empty($old_sup)){
-            $supplier['id']=$old_sup['id'];
+            $supplier['supplier_id']=$old_sup['supplier_id'];
         }
     }
 
@@ -42,7 +42,7 @@ if(!empty($_GET['id'])){
   function isNumberKey(evt)
       {
          var charCode = (evt.which) ? evt.which : event.keyCode
-         if (charCode > 31 && (charCode < 48 || charCode > 57))
+         if ( charCode > 31 && (charCode < 47 || charCode > 57))
             return false;
 
          return true;
@@ -63,12 +63,12 @@ if(!empty($_GET['id'])){
             <?php
                 if(!empty($_GET['id'])){
             ?>
-                <h1>Update Supplier</h1>
+                <h1 align="center" style="color:#24b798;">Update Supplier</h1>
             <?php
             }
                 else{                    
             ?>
-            <h1>Create New Supplier</h1>                
+            <h1 align="center" style="color:#24b798;">Create New Supplier</h1>                
             <?php
                 }
             ?>
@@ -89,7 +89,7 @@ if(!empty($_GET['id'])){
                   <div class="row">
                 	<div class='col-sm-12 col-md-8 col-md-offset-2'>
                         <form class='form-horizontal' method='POST' action='save_supplier.php'>
-                                <input type='hidden' name='id' value='<?php echo !empty($supplier)?$supplier['id']:""?>'>
+                                <input type='hidden' name='supplier_id' value='<?php echo !empty($supplier)?$supplier['supplier_id']:""?>'>
                           
                                 <div class='form-group'>
                                     <label class='col-sm-12 col-md-3 control-label'> Name* </label>

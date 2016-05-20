@@ -13,7 +13,7 @@
     
     $data="";
     if(!empty($_GET['id'])){
-        $data=$con->myQuery("SELECT name, id FROM user_types WHERE id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
+        $data=$con->myQuery("SELECT name, user_type_id FROM user_types WHERE user_type_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
         if(empty($data)){
             //Alert("Invalid asset selected.");
             Modal("Invalid Account Selected");
@@ -35,7 +35,7 @@
 ?>
     <div class="content-wrapper">
          <section class="content-header">
-                                      <h1>
+                                      <h1 align="center" style="color:#24b798;">
                                       User Levels
                                       </h1>
         </section>
@@ -58,7 +58,7 @@
                                 ?>
                 <div id='collapseForm' class='collapse'>
                               <form class='form-horizontal' action='save_usertypes.php' onsubmit="return validatePost(this)" method="POST" >
-                                 <input type='hidden' name='id' value='<?php echo !empty($data)?$data['id']:""?>'>
+                                 <input type='hidden' name='user_type_id' value='<?php echo !empty($data)?$data['user_type_id']:""?>'>
                                  <!--<input type='hidden' name='opp_id' value='<?php echo $opp['id']?>'>-->
                                       
                                       <div class="form-group">
@@ -99,14 +99,14 @@
                           </thead>
                           <tbody>
                                             <?php
-                                                $opp2=$con->myQuery("SELECT id, name FROM user_types WHERE is_deleted=0")->fetchAll(PDO::FETCH_ASSOC);
+                                                $opp2=$con->myQuery("SELECT user_type_id, name FROM user_types WHERE is_deleted=0")->fetchAll(PDO::FETCH_ASSOC);
                                                 foreach ($opp2 as $row):
                                             ?>
                                                 <tr>
                                                    <td><?php echo htmlspecialchars($row['name'])?></td>
                                                 <td>
-                                                    <a class='btn btn-sm btn-warning' href='settings_users.php?id=<?php echo $row['id'];?>'><span class='fa fa-pencil'></span></a>
-                                                    <a class='btn btn-sm btn-danger' href='delete.php?id=<?php echo $row['id'];?>&t=ut' onclick='return confirm("This user type will be deleted.")'><span class='fa fa-trash'></span></a>
+                                                    <a class='btn btn-sm btn-warning' href='settings_users.php?id=<?php echo $row['user_type_id'];?>'><span class='fa fa-pencil'></span></a>
+                                                    <a class='btn btn-sm btn-danger' href='delete.php?id=<?php echo $row['user_type_id'];?>&t=ut' onclick='return confirm("This user type will be deleted.")'><span class='fa fa-trash'></span></a>
                                                 </td>
                                                 </tr>
                                             <?php

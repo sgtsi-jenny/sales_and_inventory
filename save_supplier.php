@@ -24,20 +24,20 @@
 		if($errors!=""){
 
 			Alert($errors,"danger");
-			if(empty($inputs['id'])){
+			if(empty($inputs['supplier_id'])){
 				redirect("frm_supplier.php");
 			}
 			else{
-				redirect("frm_supplier.php?id=".urlencode($inputs['id']));
+				redirect("frm_supplier.php?supplier_id=".urlencode($inputs['supplier_id']));
 			}
 			die;
 		}
 		else{
 			//IF id exists update ELSE insert
-			if(empty($inputs['id'])){
+			if(empty($inputs['supplier_id'])){
 				//Insert
 				$inputs=$_POST;
-				unset($inputs['id']);
+				unset($inputs['supplier_id']);
 				//$userid=$_SESSION[WEBAPP]['user']['id'];
 				// var_dump($inputs);
 				// die;
@@ -49,7 +49,7 @@
 			}
 			else{
 				
-				$con->myQuery("UPDATE suppliers SET name=:name,description=:description, contact_number=:contact_number,address=:address, email=:email WHERE id=:id",$inputs);
+				$con->myQuery("UPDATE suppliers SET name=:name,description=:description, contact_number=:contact_number,address=:address, email=:email WHERE supplier_id=:supplier_id",$inputs);
 				
 				Alert("Update successful","success");
 				}

@@ -9,7 +9,7 @@
          redirect("index.php");
     }
     
-    makeHead("Suppliers");
+    makeHead("Sales");
 ?>
 
 <?php
@@ -19,7 +19,7 @@
     <div class="content-wrapper">
          <section class="content-header">
                                       <h1 align="center" style="color:#24b798;">
-                                      List of Supplier
+                                      Sales Orders
                                       </h1>
         </section>
         <section class="content">
@@ -32,32 +32,43 @@
                           <div class='panel-body'>
                                     <div class='col-md-12 text-right'>
                                         <div class='col-md-12 text-right'>
-                                        <a href='frm_supplier.php' class='btn btn-brand'> Create New <span class='fa fa-plus'></span> </a>
+                                        <a href='frm_sales.php' class='btn btn-brand'> New Sales Order<span class='fa fa-plus'></span> </a>
                                         </div>                                
                                     </div> 
                           </div>
                                 <?php
                                 Alert();
-                                ?>                
+                                ?>
                             <br/>                 
                     <table id='ResultTable' class='table table-bordered table-striped'>
                           <thead>
                             <tr>
-                                                <th class='text-center'>Supplier name</th>
-                                                <th class='text-center'>Contact Number</th>
-                                                <th class='text-center'>Address</th>
-                                                <th class='text-center'>Email</th>              
-                                                <th class='text-center'>Description</th>
-                                                <th class='text-center'>Action</th>
+                                                <th class='text-center'>Order ID</th>
+                                                <th class='text-center'>Customer Name</th>
+                                                <th class='text-center'>Sales Status</th>
+                                                <th class='text-center'>Payment Status</th>
+                                                <th class='text-center'>Total</th>
+                                                <th class='text-center'>Paymed Amount</th>
+                                                <!-- <th class='text-center'>Action</th> -->
                                                 
                             </tr>
                           </thead>
                           <tbody>
                                             <?php
-                                                $supplier=$con->myQuery("SELECT name, contact_number,address,email,description,supplier_id
-FROM suppliers 
-WHERE is_deleted=0")->fetchAll(PDO::FETCH_ASSOC);
-                                                foreach ($supplier as $row):
+                                                $sales=$con->myQuery("SELECT 
+sm.sales_master_id,
+customers.customer_name AS customer,
+ss.name AS status_name,
+ps.name AS payment_name,
+(SELECT SUM(sd.total_cost) FROM sales_details sd WHERE sd.sales_master_id=sm.sales_master_id) AS total,
+(SELECT SUM(sp.amount) FROM sales_payments sp WHERE sp.sales_master_id=sm.sales_master_id) AS paymed_amount
+FROM sales_master sm
+INNER JOIN customers ON sm.customer_id=customers.customer_id
+INNER JOIN sales_status ss ON sm.sales_status_id=ss.sales_status_id
+INNER JOIN payment_status ps ON sm.payment_status_id=ps.payment_status_id
+
+")->fetchAll(PDO::FETCH_ASSOC);
+                                                foreach ($sales as $row):
                                                   $action_buttons="";
                                             ?>
 
@@ -65,25 +76,20 @@ WHERE is_deleted=0")->fetchAll(PDO::FETCH_ASSOC);
                                                     <?php
                                                       foreach ($row as $key => $value):
                                                     ?>
-                                                   
-
                                                     <?php
-                                                        if($key=='supplier_id'):
-                                                    ?> 
-                                                      <td class="text-center">
-                                                          
-                                                          <a class='btn btn-sm btn-warning' href='frm_supplier.php?id=<?php echo $row['supplier_id'];?>'><span class='fa fa-pencil'></span></a>
-                                                          <a class='btn btn-sm btn-danger' href='delete.php?id=<?php echo $row['supplier_id'];?>&t=user' onclick='return confirm("This user will be deleted.")'><span class='fa fa-trash'></span></a>
-                                                      </td>
-                                                    <?php
-                                                      else:
+                                                        if($key=='sales_master_id'):
                                                     ?>
-
-                                                            <td>
+                                                    <td class='text-center'> 
+                                                                <a href='sales_order_details.php?id=<?= $row['sales_master_id']?>'><img width="36" height="36" class="" src="uploads/so_id.png">SO<?php echo htmlspecialchars($value)?></a>
+                                                    </td>
+                                                    <?php
+                                                            else:
+                                                    ?>
+                                                    <td>
                                                                 <?php
                                                                     echo htmlspecialchars($value);
                                                                 ?>
-                                                            </td>
+                                                    </td>
                                                     <?php
                                                             endif;
                                                             endforeach;

@@ -2,7 +2,7 @@
 	require_once 'support/config.php';
 	if(!empty($_POST)){
 
-		$user=$con->myQuery("SELECT users.id,users.user_type_id as user_type,users.first_name,users.middle_name,users.last_name,users.is_login,users.is_active FROM users WHERE username=? AND password=? AND users.is_deleted=0 LIMIT 1",array($_POST['username'],encryptIt($_POST['password'])))->fetch(PDO::FETCH_ASSOC);
+		$user=$con->myQuery("SELECT users.user_id,users.user_type_id as user_type,users.first_name,users.middle_name,users.last_name,users.is_login,users.is_active FROM users WHERE username=? AND password=? AND users.is_deleted=0 LIMIT 1",array($_POST['username'],encryptIt($_POST['password'])))->fetch(PDO::FETCH_ASSOC);
 
 		//$user=$con->myQuery("SELECT first_name,middle_name,last_name,id,location_id,user_type_id as user_type,location_id,is_login,is_active  FROM users WHERE username=? AND password=? AND is_deleted=0",array($_POST['username'],$_POST['password']))->fetch(PDO::FETCH_ASSOC);
 
@@ -14,6 +14,7 @@
 			include("locked.php");
 			die;
 		}
+
 		if(empty($user)){
 			Alert("Invalid Username/Password","danger");
 			redirect('frmlogin.php');
@@ -26,6 +27,7 @@
 			}
 		}
 		else{
+			
 			if($user['is_login']==0){
 				if($user['is_active']==1){
 					UNSET($_SESSION[WEBAPP]['attempt_no']);

@@ -9,23 +9,11 @@
         redirect("index.php");
     }
 
-	$organization="";
-  //if(!empty($_GET['id'])){
-        //$organization=$con->myQuery("SELECT id,org_name,reg_name,trade_name,tin_num,tel_num,phone_num,email,address,industry,rating,org_type,annual_revenue,assigned_to,description,contact_id FROM organizations WHERE id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
-
-        //if(empty($organization)){
-            //Alert("Invalid asset selected.");
-            //Modal("Invalid Organization Selected");
-            //redirect("organizations.php");
-            //die();
-        //}
-        //var_dump($organization);
-        //die;
-    //}
+	$user="";
     
 if(!empty($_GET['id'])){
-        $organization=$con->myQuery("SELECT id,user_type_id,first_name,middle_name,last_name,username,password,email,contact_no,security_question, security_answer from users WHERE id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
-        if(empty($organization)){
+        $user=$con->myQuery("SELECT user_id,user_type_id,first_name,middle_name,last_name,username,password,email,contact_no,security_question, security_answer from users WHERE user_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
+        if(empty($user)){
             //Alert("Invalid consumables selected.");
             Modal("Invalid user selected");
             redirect("users.php");
@@ -38,18 +26,18 @@ if(!empty($_GET['id'])){
     //$contact=$con->myQuery("SELECT id,CONCAT(fname,' ',lname) as name from contacts")->fetchAll(PDO::FETCH_ASSOC);
     //$user=$con->myQuery("SELECT id, CONCAT(last_name,' ',first_name,' ',middle_name) as name FROM users")->fetchAll(PDO::FETCH_ASSOC);
     if(!empty($_SESSION[WEBAPP]['frm_inputs'])){
-        if(!empty($organization)){
-            $old_org=$organization;
+        if(!empty($user)){
+            $old_org=$user;
         }
-        $organization=$_SESSION[WEBAPP]['frm_inputs'];
+        $user=$_SESSION[WEBAPP]['frm_inputs'];
         if(!empty($old_org)){
-            $organization['id']=$old_org['id'];
+            $user['id']=$old_org['id'];
         }
     }
 
-    $department=$con->myQuery("SELECT id,name FROM departments WHERE is_deleted=0")->fetchAll(PDO::FETCH_ASSOC);
-    $location=$con->myQuery("SELECT id,name FROM locations WHERE is_deleted=0")->fetchAll(PDO::FETCH_ASSOC);
-    $user_type=$con->myQuery("SELECT id,name FROM user_types WHERE is_deleted=0")->fetchAll(PDO::FETCH_ASSOC);
+    // $department=$con->myQuery("SELECT id,name FROM departments WHERE is_deleted=0")->fetchAll(PDO::FETCH_ASSOC);
+    // $location=$con->myQuery("SELECT id,name FROM locations WHERE is_deleted=0")->fetchAll(PDO::FETCH_ASSOC);
+     $user_type=$con->myQuery("SELECT user_type_id,name FROM user_types WHERE is_deleted=0")->fetchAll(PDO::FETCH_ASSOC);
 	makeHead("User Form");
 
 
@@ -80,12 +68,12 @@ if(!empty($_GET['id'])){
             <?php
                 if(!empty($_GET['id'])){
             ?>
-                <h1>Update User</h1>
+                <h1 align="center" style="color:#24b798;">Update User</h1>
             <?php
             }
                 else{                    
             ?>
-            <h1>Create New User</h1>                
+            <h1 align="center" style="color:#24b798;">Create New User</h1>                
             <?php
                 }
             ?>
@@ -106,19 +94,19 @@ if(!empty($_GET['id'])){
                   <div class="row">
                 	<div class='col-sm-12 col-md-8 col-md-offset-2'>
                         <form class='form-horizontal' method='POST' action='create_users.php'>
-                                <input type='hidden' name='id' value='<?php echo !empty($organization)?$organization['id']:""?>'>
+                                <input type='hidden' name='user_id' value='<?php echo !empty($user)?$user['user_id']:""?>'>
                           
                                 <div class='form-group'>
                                     <label class='col-sm-12 col-md-3 control-label'> User Type*</label>
                                     <div class='col-sm-12 col-md-9'>
-                                        <!--<select class='form-control' required name='user_type_id' placeholder="Select User Type" <?php echo!(empty($organization))?"data-selected='".$organization['user_type_id']."'":NULL ?>>
+                                        <!--<select class='form-control' required name='user_type_id' placeholder="Select User Type" <?php echo!(empty($user))?"data-selected='".$user['user_type_id']."'":NULL ?>>
                                             <?php
                                             echo makeOptions($user_type);
                                             ?>
                                         </select>-->
-                                        <select class='form-control' name='user_type_id' data-placeholder="Select User Type" <?php echo!(empty($organization))?"data-selected='".$organization['user_type_id']."'":NULL ?> required>
+                                        <select class='form-control' name='user_type_id' data-placeholder="Select User Type" <?php echo!(empty($user))?"data-selected='".$user['user_type_id']."'":NULL ?> required>
                                                     <?php
-                                                        echo makeOptions($user_type,'Select User Type',NULL,'',!(empty($organization))?$organization['user_type_id']:NULL)
+                                                        echo makeOptions($user_type,'Select User Type',NULL,'',!(empty($user))?$user['user_type_id']:NULL)
                                                     ?>
                                                 </select>
                                     </div>
@@ -127,63 +115,63 @@ if(!empty($_GET['id'])){
                                 <div class='form-group'>
                                     <label class='col-sm-12 col-md-3 control-label'> First name* </label>
                                     <div class='col-sm-12 col-md-9'>
-                                        <input type="text" class="form-control" name="first_name" placeholder="Enter First Name" value="<?php echo !empty($organization)?$organization["first_name"]:"" ?>" required>
+                                        <input type="text" class="form-control" name="first_name" placeholder="Enter First Name" value="<?php echo !empty($user)?$user["first_name"]:"" ?>" required>
                                     </div>
                                 </div>
 
                                 <div class='form-group'>
                                     <label class='col-sm-12 col-md-3 control-label'> Middle name*</label>
                                     <div class='col-sm-12 col-md-9'>
-                                        <input type="text" class="form-control" name="middle_name" placeholder="Enter Middle name" value="<?php echo !empty($organization)?$organization["middle_name"]:"" ?>" required>
+                                        <input type="text" class="form-control" name="middle_name" placeholder="Enter Middle name" value="<?php echo !empty($user)?$user["middle_name"]:"" ?>" required>
                                     </div>
                                 </div>
 
                                 <div class='form-group'>
                                     <label class='col-sm-12 col-md-3 control-label'> Last name*</label>
                                     <div class='col-sm-12 col-md-9'>
-                                        <input type="text" class="form-control" name="last_name" placeholder="Enter Last name" value="<?php echo !empty($organization)?$organization["last_name"]:"" ?>" required>
+                                        <input type="text" class="form-control" name="last_name" placeholder="Enter Last name" value="<?php echo !empty($user)?$user["last_name"]:"" ?>" required>
                                     </div>
                                 </div>
 
                                 <div class='form-group'>
                                     <label class='col-sm-12 col-md-3 control-label'> Username*</label>
                                     <div class='col-sm-12 col-md-9'>
-                                        <input type='text' class='form-control' name='username' placeholder='Enter Username' value='<?php echo !empty($organization)?$organization['username']:"" ?>' required>
+                                        <input type='text' class='form-control' name='username' placeholder='Enter Username' value='<?php echo !empty($user)?$user['username']:"" ?>' required>
                                     </div>
                                 </div>
 
                                 <div class='form-group'>
                                     <label class='col-sm-12 col-md-3 control-label'> Password*</label>
                                     <div class='col-sm-12 col-md-9'>
-                                        <input type='password' class='form-control' name='password' placeholder='Enter Password' value='<?php echo !empty($organization)?htmlspecialchars(decryptIt($organization['password'])):''; ?>' required>
+                                        <input type='password' class='form-control' name='password' placeholder='Enter Password' value='<?php echo !empty($user)?htmlspecialchars(decryptIt($user['password'])):''; ?>' required>
                                     </div>
                                 </div>
 
                                 <div class='form-group'>
                                     <label class='col-sm-12 col-md-3 control-label'> Email Address*</label>
                                     <div class='col-sm-12 col-md-9'>
-                                        <input type='text' class='form-control' name='email' placeholder='Enter Email Address' value='<?php echo !empty($organization)?$organization['email']:"" ?>' required>
+                                        <input type='text' class='form-control' name='email' placeholder='Enter Email Address' value='<?php echo !empty($user)?$user['email']:"" ?>' required>
                                     </div>
                                 </div>
 
                                 <div class='form-group'>
                                     <label class='col-sm-12 col-md-3 control-label'> Contact Number</label>
                                     <div class='col-sm-12 col-md-9'>
-                                        <input type='text' class='form-control' name='contact_no' placeholder='Enter Contact Number' value='<?php echo !empty($organization)?$organization['contact_no']:"" ?>'  onkeypress="return isNumberKey(event)">
+                                        <input type='text' class='form-control' name='contact_no' placeholder='Enter Contact Number' value='<?php echo !empty($user)?$user['contact_no']:"" ?>'  onkeypress="return isNumberKey(event)">
                                     </div>
                                 </div>
 
                                 <div class='form-group'>
                                     <label class='col-sm-12 col-md-3 control-label'> Security Question</label>
                                     <div class='col-sm-12 col-md-9'>
-                                        <input type='text' class='form-control' name='security_question' placeholder='Enter your security question' value='<?php echo !empty($organization)?$organization['security_question']:"" ?>' required>
+                                        <input type='text' class='form-control' name='security_question' placeholder='Enter your security question' value='<?php echo !empty($user)?$user['security_question']:"" ?>' required>
                                     </div>
                                 </div>
 
                                 <div class='form-group'>
                                     <label class='col-sm-12 col-md-3 control-label'> Answer</label>
                                     <div class='col-sm-12 col-md-9'>
-                                        <input type='text' class='form-control' name='security_answer' placeholder='Enter you security answer' value='<?php echo !empty($organization)?$organization['security_answer']:"" ?>' required>
+                                        <input type='text' class='form-control' name='security_answer' placeholder='Enter you security answer' value='<?php echo !empty($user)?$user['security_answer']:"" ?>' required>
                                     </div>
                                 </div>
 

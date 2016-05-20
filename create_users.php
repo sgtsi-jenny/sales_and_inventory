@@ -37,11 +37,11 @@ if(!AllowUser(array(1))){
 			$_SESSION[WEBAPP]['frm_inputs']=$inputs;
 
 			Alert($errors,"danger");
-			if(empty($inputs['id'])){
+			if(empty($inputs['user_id'])){
 				redirect("frm_users.php");
 			}
 			else{
-				redirect("frm_users.php?id=".urlencode($inputs['id']));
+				redirect("frm_users.php?id=".urlencode($inputs['user_id']));
 			}
 			//die;
 			
@@ -51,10 +51,10 @@ if(!AllowUser(array(1))){
 		else{
 			//IF id exists update ELSE insert
 			$inputs['password']=encryptIt($inputs['password']);
-			if(empty($inputs['id'])){
+			if(empty($inputs['user_id'])){
 				//Insert
 				$inputs=$_POST;
-				unset($inputs['id']);
+				unset($inputs['user_id']);
 				$inputs['password']=encryptIt($inputs['password']);
 				$uname=$inputs['username'];
 				var_dump($inputs);
@@ -75,11 +75,11 @@ if(!AllowUser(array(1))){
 				{
 					$_SESSION[WEBAPP]['frm_inputs']=$inputs;
 					Alert("Username already exists.","danger");
-					if(empty($inputs['id'])){
+					if(empty($inputs['user_id'])){
 						redirect("frm_users.php");
 					}
 					else{
-						redirect("frm_users.php?id=".urlencode($inputs['id']));
+						redirect("frm_users.php?id=".urlencode($inputs['user_id']));
 					}
 					die;
 				}
@@ -111,16 +111,16 @@ if(!AllowUser(array(1))){
 				if($errors!=""){
 					$_SESSION[WEBAPP]['frm_inputs']=$inputs;
 					Alert($errors,"danger");
-					if(empty($inputs['id'])){
+					if(empty($inputs['user_id'])){
 						redirect("frm_users.php");
 					}
 					else{
-						redirect("frm_users.php?id=".urlencode($inputs['id']));
+						redirect("frm_users.php?id=".urlencode($inputs['user_id']));
 					}
 				}
 				//die;
 				
-				$con->myQuery("UPDATE users SET user_type_id=:user_type_id, first_name=:first_name, middle_name=:middle_name,last_name=:last_name,username=:username,password=:password,email=:email,contact_no=:contact_no,security_question=:security_question, security_answer=:security_answer WHERE id=:id",$inputs);
+				$con->myQuery("UPDATE users SET user_type_id=:user_type_id, first_name=:first_name, middle_name=:middle_name,last_name=:last_name,username=:username,password=:password,email=:email,contact_no=:contact_no,security_question=:security_question, security_answer=:security_answer WHERE user_id=:user_id",$inputs);
 				//die();
 				Alert("Update successful","success");
 

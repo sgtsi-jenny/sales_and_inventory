@@ -18,7 +18,7 @@
 ?>
     <div class="content-wrapper">
          <section class="content-header">
-                                      <h1>
+                                      <h1 align="center" style="color:#24b798;">
                                       List of Products
                                       </h1>
         </section>
@@ -32,7 +32,7 @@
                           <div class='panel-body'>
                                     <div class='col-md-12 text-right'>
                                         <div class='col-md-12 text-right'>
-                                        <a href='frm_supplier.php' class='btn btn-brand'> Create New <span class='fa fa-plus'></span> </a>
+                                        <a href='frm_products.php' class='btn btn-brand'> Create New <span class='fa fa-plus'></span> </a>
                                         </div>                                
                                     </div> 
                           </div>
@@ -43,9 +43,9 @@
                     <table id='ResultTable' class='table table-bordered table-striped'>
                           <thead>
                             <tr>
-                                                <th class='text-center'>Name</th>
-                                                <th class='text-center'>Description</th>
-                                                <th class='text-center'>Contact Number</th>
+                                                <th class='text-center'>Product name</th>
+                                                <th class='text-center'>Product code</th>
+                                                <th class='text-center'>Category</th>
                                                 <th class='text-center'>Address</th>
                                                 <th class='text-center'>Email</th>
                                                 <th class='text-center'>Action</th>

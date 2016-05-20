@@ -21,22 +21,22 @@
 		if($errors!=""){
 
 			Alert("Please fill in the following fields: <br/>".$errors,"danger");
-			if(empty($inputs['id'])){
+			if(empty($inputs['user_type_id'])){
 				redirect("settings_users.php");
 			}
 			else{
-				redirect("settings_users.php?id=".urlencode($inputs['id']));
+				redirect("settings_users.php?id=".urlencode($inputs['user_type_id']));
 			}
 			die;
 		}
 		else{
 			//IF id exists update ELSE insert
-			if(empty($inputs['id'])){
+			if(empty($inputs['user_type_id'])){
 				//Insert
 				$inputs=$_POST;
 				
 				//$inputs['name']=$_POST['name'];
-				unset($inputs['id']);
+				unset($inputs['user_type_id']);
 				//$userid=$_SESSION[WEBAPP]['user']['id'];
 				
 				$con->myQuery("INSERT INTO user_types(name) VALUES (:name)", $inputs);	
@@ -55,7 +55,7 @@
 				$inputs=$_POST;
 				//$userid=$_SESSION[WEBAPP]['user']['id'];
 				
-				$con->myQuery("UPDATE user_types SET name=:name WHERE id=:id",$inputs);
+				$con->myQuery("UPDATE user_types SET name=:name WHERE user_type_id=:user_type_id",$inputs);
 				
 				Alert("Update successful","success");
 				}

@@ -20,7 +20,7 @@
 ?>
     <div class="content-wrapper">
          <section class="content-header">
-                                      <h1>
+                                      <h1 align="center" style="color:#24b798;">
                                       List of User
                                       </h1>
         </section>
@@ -88,9 +88,9 @@
                           </thead>
                           <tbody>
                                             <?php
-                                                $opp2=$con->myQuery("SELECT CONCAT(first_name,' ',middle_name,' ',last_name) as name,username, user_types.name as usertype, email,contact_no,users.id,is_active
+                                                $opp2=$con->myQuery("SELECT CONCAT(first_name,' ',middle_name,' ',last_name) as name,username, user_types.name as usertype, email,contact_no,users.user_id,is_active
 FROM users 
-inner join user_types on users.user_type_id=user_types.id
+inner join user_types on users.user_type_id=user_types.user_type_id
 WHERE users.is_deleted=0")->fetchAll(PDO::FETCH_ASSOC);
                                                 foreach ($opp2 as $row):
                                                   $action_buttons="";
@@ -111,14 +111,14 @@ WHERE users.is_deleted=0")->fetchAll(PDO::FETCH_ASSOC);
                                                     }
                                                     else{
                                                     ?>
-                                                    <a class='btn btn-flat btn-sm btn-brand' href='activate.php?id=<?php echo $row['id'];?>' onclick='return confirm("Are you sure you want to activate this user?")'><span class='fa fa-unlock' ></span> Activate</a>
+                                                    <a class='btn btn-flat btn-sm btn-brand' href='activate.php?id=<?php echo $row['user_id'];?>' onclick='return confirm("Are you sure you want to activate this user?")'><span class='fa fa-unlock' ></span> Activate</a>
                                                     <?php
                                                     }
                                                     ?>
 
                                                     
-                                                    <a class='btn btn-sm btn-warning' href='frm_users.php?id=<?php echo $row['id'];?>'><span class='fa fa-pencil'></span></a>
-                                                    <a class='btn btn-sm btn-danger' href='delete.php?id=<?php echo $row['id'];?>&t=user' onclick='return confirm("This user will be deleted.")'><span class='fa fa-trash'></span></a>
+                                                    <a class='btn btn-sm btn-warning' href='frm_users.php?id=<?php echo $row['user_id'];?>'><span class='fa fa-pencil'></span></a>
+                                                    <a class='btn btn-sm btn-danger' href='delete.php?id=<?php echo $row['user_id'];?>&t=user' onclick='return confirm("This user will be deleted.")'><span class='fa fa-trash'></span></a>
                                                 </td>
                                                 </tr>
                                             <?php

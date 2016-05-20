@@ -15,11 +15,11 @@
                 <i class="fa fa-cube"></i> <span>Products</span>
               </a>
             </li>
-            <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="variants.php" || (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="variants.php"?"active":"";?>">
+            <!-- <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="variants.php" || (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="variants.php"?"active":"";?>">
               <a href="variants.php">
                 <i class="fa fa-cubes"></i> <span>Variants</span>
               </a>
-            </li>
+            </li> -->
             <li class='header'>ORDERS</li>
             <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="sales.php" || (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="sales.php"?"active":"";?>">
               <a href="sales.php">

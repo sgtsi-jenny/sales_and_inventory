@@ -148,12 +148,12 @@ function AllowUser($user_type_id){
 function refresh_activity($user_id)
 {
 	global $con;
-	$con->myQuery("UPDATE users SET last_activity=NOW() WHERE id=?",array($user_id));
+	$con->myQuery("UPDATE users SET last_activity=NOW() WHERE user_id=?",array($user_id));
 }
 function is_active($user_id)
 {
 	global $con;
-	$last_activity=$con->myQuery("SELECT last_activity FROM users  WHERE id=?",array($user_id))->fetchColumn();
+	$last_activity=$con->myQuery("SELECT last_activity FROM users  WHERE user_id=?",array($user_id))->fetchColumn();
 	$inactive_time=60*60;
 	// echo strtotime($last_activity)."<br/>";
 	// echo time();
@@ -167,7 +167,7 @@ function is_active($user_id)
 function user_is_active($user_id)
 {
 	global $con;
-	$last_activity=$con->myQuery("SELECT is_active FROM users  WHERE id=?",array($user_id))->fetchColumn();
+	$last_activity=$con->myQuery("SELECT is_active FROM users  WHERE user_id=?",array($user_id))->fetchColumn();
 	if(!empty($last_activity)){
 		return true;
 	}
@@ -244,14 +244,10 @@ function emailer($username,$password,$from,$to,$subject,$body,$host='tls://smtp.
 	//     echo('<p>Message successfully sent!</p>');
 	// }
 }
-function getEmpDetails($emp_id){
-	global $con;
-	return $con->myQuery("SELECT * FROM employees WHERE id=? LIMIT 1",array($emp_id))->fetch(PDO::FETCH_ASSOC);
-}
 function getApprovalFlow()
 {
 	global $con;
-	return $con->myQuery("SELECT user_id FROM request_users ORDER BY id")->fetchAll(PDO::FETCH_ASSOC);
+	return $con->myQuery("SELECT user_id FROM request_users ORDER BY user_id")->fetchAll(PDO::FETCH_ASSOC);
 }
 function getEmailSettings(){
 	global $con;
@@ -354,24 +350,24 @@ html;
 	require_once('class.myPDO.php');
 	$con=new myPDO('sales_and_inventory','root','');
 	if(isLoggedIn()){
-		if(!user_is_active($_SESSION[WEBAPP]['user']['id'])){
-			refresh_activity($_SESSION[WEBAPP]['user']['id']);
+		if(!user_is_active($_SESSION[WEBAPP]['user']['user_id'])){
+			refresh_activity($_SESSION[WEBAPP]['user']['user_id']);
 			session_destroy();
 			session_start();
 			Alert("Your account has been deactivated.","danger");
 			redirect('frmlogin.php');
 			die;
 		}
-		if(is_active($_SESSION[WEBAPP]['user']['id'])){
+		if(is_active($_SESSION[WEBAPP]['user']['user_id'])){
 
-			refresh_activity($_SESSION[WEBAPP]['user']['id']);
+			refresh_activity($_SESSION[WEBAPP]['user']['user_id']);
 		}
 		else{
 			//echo 'You have been inactive.';
 			// die;
-			refresh_activity($_SESSION[WEBAPP]['user']['id']);
+			refresh_activity($_SESSION[WEBAPP]['user']['user_id']);
 			// die;
-			$con->myQuery("UPDATE users SET is_login=0 WHERE id=?",array($_SESSION[WEBAPP]['user']['id']));
+			$con->myQuery("UPDATE users SET is_login=0 WHERE user_id=?",array($_SESSION[WEBAPP]['user']['user_id']));
 			session_destroy();
 			session_start();
 			Alert("You have been inactive for 3 minutes and have been logged out.","danger");
