@@ -10,8 +10,8 @@
               </a>
             </li>
             <li class='header'>INVENTORY</li>
-            <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="products.php" || (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="products.php"?"active":"";?>">
-              <a href="products.php">
+            <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="products_inventory.php" || (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="products_inventory.php"?"active":"";?>">
+              <a href="products_inventory.php">
                 <i class="fa fa-cube"></i> <span>Products</span>
               </a>
             </li>
@@ -47,11 +47,11 @@
               if(AllowUser(array(1,5))):
             ?>    
             <li class='header'>SETTINGS</li>
-            <li class='treeview <?php echo (in_array(substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1), array("setting_prod.php","categories.php","measurements.php","users.php","settings_users.php","tax.php","backup_restore")))?"active":"";?>'>
+            <li class='treeview <?php echo (in_array(substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1), array("products.php","categories.php","measurements.php","users.php","settings_users.php","tax.php","backup_restore")))?"active":"";?>'>
               <a href=''><i class="fa fa-cubes"></i><span>Administrator</span><i class="fa fa-angle-left pull-right"></i></a>
               <ul class='treeview-menu'>
-                <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="setting_prod.php"?"active":"";?>">
-                  <a href="setting_prod.php">
+                <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="products.php"?"active":"";?>">
+                  <a href="products.php">
                     <i class="fa fa-cube"></i> <span>Products</span>
                   </a>
                 <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="categories.php"?"active":"";?>">

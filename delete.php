@@ -29,7 +29,7 @@
 				break;
 			case 'prod_sup':
 				$table="supplier_products";
-				$page="frm_products.php?id={$_GET['pid']}&tab=2";
+				$page="frm_products.php?id={$_GET['phpid']}&tab=2";
 				$id="supplier_product_id";
 				break;
 			case 'org':
