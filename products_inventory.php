@@ -71,7 +71,7 @@
                               while($row = $data->fetch(PDO::FETCH_ASSOC)):
                             ?>
                               <tr>
-                                <td><?php echo htmlspecialchars($row['product_code'])?></td>
+                                <td><a href="product_inventory_details.php?id=<?php echo $row['product_id']; ?>"><i class="fa fa-cube"></i> <?php echo htmlspecialchars($row['product_code'])?></a></td>
                                 <td><?php echo htmlspecialchars($row['product_name'])?></td>
                                 <td><?php echo htmlspecialchars($row['description'])?></td>
                                 <td><?php echo htmlspecialchars($row['category_name'])?></td>

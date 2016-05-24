@@ -33,7 +33,7 @@
                             <div class='panel-body'>
                                 <div class='col-md-12 text-right'>
                                     <div class='col-md-12 text-right'>
-                                        <a href='#' class='btn btn-brand'> New Purchase Order<span class='fa fa-plus'></span> </a>
+                                        <a href='frm_purchase.php' class='btn btn-brand'> New Purchase Order <span class='fa fa-plus'></span> </a>
                                     </div>                                
                                 </div> 
                             </div>
@@ -55,46 +55,32 @@
                                 </thead>
                                 <tbody>
                                     <?php
-                                        $po=$con->myQuery("SELECT 
-                                            sm.sales_master_id,
-                                            customers.customer_name AS customer,
-                                            ss.name AS status_name,
-                                            ps.name AS payment_name,
-                                            (SELECT SUM(sd.total_cost) FROM sales_details sd WHERE sd.sales_master_id=sm.sales_master_id) AS total,
-                                            (SELECT SUM(sp.amount) FROM sales_payments sp WHERE sp.sales_master_id=sm.sales_master_id) AS paymed_amount
-                                            FROM sales_master sm
-                                            INNER JOIN customers ON sm.customer_id=customers.customer_id
-                                            INNER JOIN sales_status ss ON sm.sales_status_id=ss.sales_status_id
-                                            INNER JOIN payment_status ps ON sm.payment_status_id=ps.payment_status_id")->fetchAll(PDO::FETCH_ASSOC);
+                                        $po=$con->myQuery("SELECT
+                                                            pm.po_master_id,
+                                                            pm.po_number,
+                                                            (SELECT NAME FROM suppliers WHERE supplier_id=pm.supplier_id) AS supplier,
+                                                            pm.purchased_date,
+                                                            (SELECT NAME FROM po_status WHERE po_status_id=pm.po_status_id AND is_deleted=0) AS po_status,
+                                                            (SELECT SUM(total_cost) FROM po_details WHERE po_master_id=pm.po_master_id AND is_deleted=0) AS total_cost,
+                                                            (SELECT NAME FROM payment_status WHERE payment_status_id=pm.payment_status_id) AS payment_status
+                                                          FROM po_master  pm
+                                                          WHERE is_deleted=0");
                                           
-                                          foreach ($sales as $row):
-                                            $action_buttons="";
+                                        while($row = $po->fetch(PDO::FETCH_ASSOC)):
                                     ?>
                                     <tr>
-                                        <?php
-                                            foreach ($row as $key => $value):
-                                        ?>
-                                        <?php
-                                            if($key=='sales_master_id'):
-                                        ?>
                                         <td class='text-center'> 
-                                            <a href='sales_order_details.php?id=<?= $row['sales_master_id']?>'><img width="36" height="36" class="" src="uploads/so_id.png">SO<?php echo htmlspecialchars($value)?></a>
+                                            <a href='#'><img width="36" height="36" class="" src="uploads/so_id.png">PO<?php echo htmlspecialchars($row['po_number'])?></a>
                                         </td>
-                                        <?php
-                                            else:
-                                        ?>
-                                        <td>
-                                        <?php
-                                            echo htmlspecialchars($value);
-                                        ?>
-                                        </td>
-                                        <?php
-                                            endif;
-                                            endforeach;
-                                        ?>
+                                        <td class='text_center'><?php echo htmlspecialchars($row['supplier']); ?></td>
+                                        <td class='text_center'><?php echo htmlspecialchars($row['purchased_date']); ?></td>
+                                        <td class='text_center'><?php echo htmlspecialchars($row['po_status']); ?></td>
+                                        <td class='text_center'><?php echo htmlspecialchars($row['total_cost']); ?></td>
+                                        <td class='text_center'><?php echo htmlspecialchars($row['payment_status']); ?></td>
+                                        <td class='text_center'>#</td>
                                     </tr>
                                     <?php
-                                      endforeach;
+                                        endwhile;
                                     ?>
                                 </tbody>
                             </table>
@@ -118,64 +104,6 @@
         });
       });
 </script>
-<script type="text/javascript">
-    function validatePost(post_form){
-        console.log();
-        var str_error="";
-        $.each($(post_form).serializeArray(),function(index,field){
-            console.log(field);
-            if(field.value==""){
-            
-                switch(field.name){
-                    case "name":
-                        str_error+="Incorrect entry in the field. \n";
-                        break;
-                    case "prod_price":
-                        str_error+="Please provide product price. \n";
-                        break;
-                }
-                
-            }
-
-        });
-        if(str_error!=""){
-            alert("You have the following errors: \n" + str_error );
-            return false;
-        }
-        else{
-            return true
-        }
-    }
-
-    $(document).ready(function() {
-        $('#dataTables').DataTable({
-                 "scrollY": true,
-                "scrollX": true
-        });
-    });
-
-    function get_price(){
-        
-        $("#prod_based_price").val($("#prod_id option:selected").data("price"));
-        
-        $("#prod_name2").val($("#prod_id option:selected").html());
-    }
-    
-</script>
-<?php 
-  if(!empty($data)):
-?>
-<script type="text/javascript">
-  $(function(){
-    $('#collapseForm').collapse({
-      toggle: true
-    })    
-  });
-</script>
-
-<?php
-  endif;
-?>
 <?php
     Modal();
     makeFoot();
