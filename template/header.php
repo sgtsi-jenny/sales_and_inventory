@@ -1,5 +1,9 @@
 <header class="main-header" style="">
-
+<style type="text/css">
+        .logo:hover{
+            background-color: #1c9279!important;
+        }
+    </style>
         <!-- Logo -->
         <a href="index.php" class="logo">
           <!-- mini logo for sidebar mini 50x50 pixels -->
@@ -40,7 +44,7 @@
                     //     //   $image="dist/img/user_male.png";
                     //     // }
                     //     // else{
-                          $image="dist/img/user_female.png";
+                          $image="dist/img/user.png";
                        // }
                     // }
                     // else{
