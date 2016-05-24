@@ -15,16 +15,18 @@
                                       ON p.product_id=sp.product_id
                                     INNER JOIN suppliers s
                                       ON s.supplier_id=sp.supplier_id
-                                    WHERE sp.product_id=?
+                                    WHERE sp.product_id=? AND sp.is_deleted=0
                                     ",array($products['product_id']))->fetchAll(PDO::FETCH_ASSOC);
+    $disable="";
     #EDIT
     if (!empty($_GET['sp_id'])) 
     {
       $record=$con->myQuery("SELECT supplier_product_id,product_id,supplier_id,unit_cost,is_main FROM supplier_products WHERE supplier_product_id=? AND product_id=?",array($products['product_id'],$_GET['sp_id']))->fetch(PDO::FETCH_ASSOC);
+      $disable="disabled";
     }
     
     #COMBO BOX
-    $supplier=$con->myQuery("SELECT * FROM suppliers WHERE is_deleted=0 AND supplier_id NOT IN (SELECT supplier_id FROM supplier_products WHERE product_id=? AND is_deleted=0)",array($products['product_id']))->fetchAll(PDO::FETCH_ASSOC);
+    $supplier=$con->myQuery("SELECT supplier_id,CONCAT(description,' (',name,')') as name FROM suppliers WHERE is_deleted=0 AND supplier_id NOT IN (SELECT supplier_id FROM supplier_products WHERE product_id=? AND is_deleted=0)",array($products['product_id']))->fetchAll(PDO::FETCH_ASSOC);
     $tab=2;
 ?>
 <?php
@@ -40,7 +42,7 @@
       <div class="form-group">
         <label for="supplier" class="col-md-3 control-label">Supplier *</label>
         <div class="col-md-7">
-        	<select name='supplier' class='form-control select2' data-placeholder="Select Supplier" <?php echo !(empty($record))?"data-selected='".$record['supplier_id']."'":NULL ?> style='width:100%' required>
+        	<select name='supplier' class='form-control select2' data-placeholder="Select Supplier" <?php echo !(empty($record))?"data-selected='".$record['supplier_id']."'":NULL ?> style='width:100%' required <?php echo $disable; ?>>
         		<?php
         			echo makeOptions($supplier);
         		?>
@@ -97,7 +99,7 @@
 
         <td class='text-center'>
           <a href='frm_products.php?id=<?php echo $products['product_id']?>&tab=<?php echo $tab?>&sp_id=<?php echo $row['supplier_product_id']?>' class='btn btn-success btn-sm'><span class='fa fa-pencil'></span></a>
-          <a href='#' onclick="return confirm('This record will be deleted.')" class='btn btn-danger btn-sm'><span class='fa fa-trash'></span></a>
+          <a href='delete.php?pid=<?php echo $products['product_id']; ?>&id=<?php echo $row['supplier_product_id']; ?>&t=prod_sup' onclick="return confirm('This record will be deleted.')" class='btn btn-danger btn-sm'><span class='fa fa-trash'></span></a>
         </td>
       </tr>
     <?php
