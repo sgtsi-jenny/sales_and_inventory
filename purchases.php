@@ -48,7 +48,7 @@
                                         <th class='text-center'>Supplier</th>
                                         <th class='text-center'>Date Purchased</th>
                                         <th class='text-center'>PO Status</th>
-                                        <th class='text-center'>Total</th>
+                                        <th class='text-center'>Total Amount</th>
                                         <th class='text-center'>Payment Status</th>
                                         <th class='text-center'>Date Modified</th>
                                     </tr>
@@ -70,12 +70,12 @@
                                     ?>
                                     <tr>
                                         <td class='text-center'> 
-                                            <a href='#'><img width="36" height="36" class="" src="uploads/so_id.png">PO<?php echo htmlspecialchars($row['po_number'])?></a>
+                                            <a href='#'><img width="36" height="36" class="" src="uploads/so_id.png">PO<?php echo htmlspecialchars($row['po_master_id'])?></a>
                                         </td>
                                         <td class='text_center'><?php echo htmlspecialchars($row['supplier']); ?></td>
                                         <td class='text_center'><?php echo htmlspecialchars($row['purchased_date']); ?></td>
                                         <td class='text_center'><?php echo htmlspecialchars($row['po_status']); ?></td>
-                                        <td class='text_center'><?php echo htmlspecialchars($row['total_cost']); ?></td>
+                                        <td class='text_center pull-right'><?php echo "PHP ".number_format(($row['total_cost']),2,'.',','); ?></td>
                                         <td class='text_center'><?php echo htmlspecialchars($row['payment_status']); ?></td>
                                         <td class='text_center'>#</td>
                                     </tr>

@@ -1,216 +1,212 @@
 <?php
     require_once("support/config.php");
-    
-    if(!isLoggedIn())
-    {
-        toLogin();
-        die();
-    }
+	if(!isLoggedIn())
+	{
+		toLogin();
+		die();
+	}
 
     if(!AllowUser(array(1)))
     {
         redirect("index.php");
     }
-    $supplier="";
+    
+    $po_num=$con->myQuery("SELECT po_master_id FROM po_master ORDER BY po_master_id DESC LIMIT 1")->fetch(PDO::FETCH_ASSOC);
+    $supplier=$con->myQuery("SELECT supplier_id, CONCAT(description,' (',name,')') as name FROM suppliers")->fetchAll(PDO::FETCH_ASSOC);
+    /*$product=$con->myQuery("SELECT
+								CONCAT(p.product_name,' ',p.description) AS product,
+								sp.unit_cost
+							FROM supplier_products sp
+							INNER JOIN products p
+								ON p.product_id=sp.product_id
+							WHERE sp.supplier_id=1");*/
+   // $data=$con->myQuery("SELECT stock_adjmaster_id FROM stock_adj_master WHERE is_deleted=0 AND stock_adjmaster_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
 
-    if(!empty($_GET['id']))
-    {
-        $supplier=$con->myQuery("SELECT supplier_id,name,description, contact_number,address, email from suppliers WHERE supplier_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
-        if(empty($supplier))
-        {
-            //Alert("Invalid consumables selected.");
-            Modal("Invalid supplier selected");
-            redirect("suppliers.php");
-            die();
-        }
-    }
-
-    if(!empty($_SESSION[WEBAPP]['frm_inputs']))
-    {
-        if(!empty($supplier))
-        {
-            $old_sup=$supplier;
-        }
-        $supplier=$_SESSION[WEBAPP]['frm_inputs'];
-        if(!empty($old_sup))
-        {
-            $supplier['supplier_id']=$old_sup['supplier_id'];
-        }
-    }
-
-    $customer=$con->myQuery("SELECT customer_id,customer_name FROM customers")->fetchAll(PDO::FETCH_ASSOC);
-    makeHead("Sales Order");
+    makeHead("Purchase Order");
 ?>
-<script type="application/javascript">
-    function isNumberKey(evt)
-    {
-        var charCode = (evt.which) ? evt.which : event.keyCode
-        if ( charCode > 31 && (charCode < 47 || charCode > 57))
-        return false;
-        return true;
-    }
-</script>
-
 <?php
     require_once("template/header.php");
     require_once("template/sidebar.php");
 ?>
+
 <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <!-- <h1>
-        Create New User
-        </h1> -->
-        <?php
-            if(!empty($_GET['id']))
-            {
-        ?>
-                <h1 align="center" style="color:#24b798;">Update Sales Order</h1>
-        <?php
-            }else
-            {                    
-        ?>
-                <h1 align="center" style="color:#24b798;">Create New Sales Order</h1>                
-        <?php
-            }
-        ?>
-    </section>
-    <!-- Main content -->
-    <section class="content">
-        <!-- Main row -->
-        <div class="row">
-            <div class='col-md-10 col-md-offset-1'>
-                <?php
-                    Alert();
-                ?>
-                <div class="box box-primary">
-                    <div class="box-body">
-                        <div class="row">
-                            <div class='col-sm-12 col-md-8 col-md-offset-2'>
-                                <form class='form-horizontal' method='POST' action='save_supplier.php'>
-                                    <input type='hidden' name='supplier_id' value='<?php echo !empty($supplier)?$supplier['supplier_id']:""?>'>
-                                    <div class='form-group'>
-                                        <label class='col-sm-12 col-md-3 control-label'> Customer</label>
-                                        <div class='col-sm-12 col-md-4'>
-                                            <select class='form-control' name='customer_id' id='customer_id'  onchange='get_address()' data-placeholder="Select a Customer" <?php echo!(empty($organization))?"data-selected='".$organization['industry']."'":NULL ?> required>
-                                                <?php
-                                                    echo makeOptions($customer,'Select Customer')
-                                                ?>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class='form-group'>
-                                        <label class='col-sm-12 col-md-3 control-label'> Ship To:</label>
-                                        <div class='col-sm-12 col-md-4'>
-                                            <select class='form-control' name='industry' data-placeholder="Select an address" <?php echo!(empty($organization))?"data-selected='".$organization['industry']."'":NULL ?> required>
-                                                <?php
-                                                    echo makeOptions($customer,'Select an address',NULL,'',!(empty($organization))?$organization['industry']:NULL)
-                                                ?>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class='form-group'>
-                                        <label class='col-sm-12 col-md-3 control-label'> Bill To:</label>
-                                        <div class='col-sm-12 col-md-4'>
-                                            <select class='form-control' name='industry' data-placeholder="Select an address" <?php echo!(empty($organization))?"data-selected='".$organization['industry']."'":NULL ?> required>
-                                                <?php
-                                                    echo makeOptions($customer,'Select an address',NULL,'',!(empty($organization))?$organization['industry']:NULL)
-                                                ?>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class='form-group'>
-                                        <label class='col-sm-12 col-md-3 control-label'> Order creation date:</label>
-                                        <?php
-                                            $php_timestamp = time();
-                                            $php_timestamp_date = date("F d, Y l h:i A", $php_timestamp);
-                                            echo $php_timestamp_date;
-                                        ?>
-                                    </div>
-                                    <div class='form-group'>
-                                    <label class='col-sm-12 col-md-3 control-label'> Order last updated date:</label>
-                                    <?php
-                                    $php_timestamp = time();
-                                    $php_timestamp_date = date("F d, Y l h:i A", $php_timestamp);
-                                    echo $php_timestamp_date;
-                                    ?>
-                                    </div>
-                                    <br><br>
-                                    <?php
-                                    $sales_details=$con->myQuery("SELECT prod.product_name FROM sales_details sd INNER JOIN products prod ON sd.product_id=prod.product_id")->fetchAll(PDO::FETCH_ASSOC);
-                                    if(!empty($sales_details)):
+	<section class="content-header">
+		<h1 align="center" style="color:#24b798;">
+			Purchase Order
+		</h1>
+	</section>
+	<section class="content">
+		<!-- Main row -->
+		<div class="row">
+			<div class='col-sm-12 col-md-12'>
+				<div class="box box-primary">
+					<div class="box-body">
+						<div class='form-group'>
+							<div class = "row">
+								<div class = 'col-md-6' >
+									<div class = 'row'>
+										<div class = 'col-md-10'>
+											<br>
+											<h4 class='control-label'> PO Number:  <?php echo 'PO'.$po_num['po_master_id'];?></h4>
+											<label class = 'control-label'>Date created: </label><?php echo date("m/d/Y");?>
+											<br>
+											<label class = 'control-label'>Issued by: 	</label>
+											<?php
+												echo htmlspecialchars("{$_SESSION[WEBAPP]['user']['last_name']}, {$_SESSION[WEBAPP]['user']['first_name']} {$_SESSION[WEBAPP]['user']['middle_name']}")
+											?>
+											<br><br>
+											<div class='form-group'>
+												<div class ="row">
+													<div class = "col-md-3">
+														<label class='control-label'> Select Supplier: * </label>
+													</div>
+													<div class = "col-md-8">
+														<select class='form-control select2' name='supplier' data-placeholder="Select product"
+															<?php
+																echo makeOptions($supplier,'Select Supplier')
+															?>
+														</select>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class= "row">
+							<div class = "col-md-5">
+								<div class="box box-primary">
+									<div class="box-body">
+										<form method="post">
+											<div class='form-group'>
+												<div class ="row">
+													<div class = "col-md-4">
+														<label class='control-label'> Select Product: * </label>
+													</div>
+													<div class = "col-md-8">
+														<select class='form-control select2' name='product' data-placeholder="Select product" 
+															<?php //echo!(empty($product))?"data-selected='".$product['product_id']."'":NULL ?> required>
+															<?php
+																echo makeOptions('','Select Product')
+															?>
+														</select>
+													</div>
+												</div>
+											</div>
+											<div class='form-group'>
+												<div class ="row">
+													<div class = "col-md-4">
+														<label class='control-label'> Unit Cost: </label>
+													</div>
+													<div class = "col-md-8">
+														<input type="text" class="form-control " id="unit_cost" placeholder="Unit Cost" name='unit_cost' value='<?php //echo !empty($data)?htmlspecialchars($data['stock_adjmaster_id']):''; ?>' required readonly>
+													</div>
+												</div>
+											</div>
+											<div class='form-group'>
+				                           		<div class ="row">
+							                		<div class = "col-md-4">
+							                			<label class='control-label'> Quantity to Purchase: * </label>
+							                		</div>
+							                		<div class = "col-md-8">
+							                			<input type="text" class="form-control" id="qty" placeholder="Quantity to Purchase" name='qty' value='<?php //echo !empty($data)?htmlspecialchars($data['stock_adjmaster_id']):''; ?>' required>
+							                		</div>
+							                	</div>
+                           					</div>
+										</form>
+									<section align = "right">
+										<button type="button" class="btn btn-brand" onclick="AddToTable()">Add</button>
+										<button type="button" class="btn btn-default" onclick="AddToTable()">Cancel</button>
+									</section>
+									</div>
+								</div>
+							</div>
+							<div class = "col-md-7">
+								<div class="box box-primary">
+									<div class="box-body">
+										<table id='ResultTable' class='table table-bordered table-striped'>
+											<thead>
+												<tr>
+												<th class='text-center'>Product ID</th>
+												<th class='text-center'>Product name</th>
+												<th class='text-center'>Quantity</th>
+												<th class='text-center'>Unit Cost</th>
+												<th class='text-center'>Total Cost</th>
+												<th class='text-center'>Action </th>
+												</tr>
+											</thead>
+											<tbody id='table_container'>
 
-                                    ?>
-                                    <table class='table table-bordered table-condensed '>
-                                    <thead>
-                                    <tr>    
-                                    <td>Product Name</td>
-                                    <td>Action</td>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <?php
-                                    foreach ($sales_details as $sd):
-                                    ?>
-                                    <tr>
-                                    <td><?php echo htmlspecialchars($sd['product_name']);?></td>
-
-                                    <td class='text-center'> 
-                                    <a class='btn btn-flat btn-sm btn-danger' href='delete.php?id=<?php echo $sd['id']?>&t=fu&a=<?php echo $asset['id']?>' onclick='return confirm("This sale order will be deleted.")'><span class='fa fa-trash'></span></a>
-
-                                    </td>
-                                    </tr>
-                                    <?php
-                                    endforeach;
-                                    ?>
-
-                                    </tbody>
-                                    </table>
-                                    <?php
-                                    endif;
-                                    ?>
-
-
-
-
-
-                                    <div class='form-group'>
-                                    <div class='col-sm-12 col-md-9 col-md-offset-3 '>
-                                    <button type='submit' class='btn btn-brand'> <span class='fa fa-check'></span> Save</button>
-                                    <a href='suppliers.php' class='btn btn-default'>Cancel</a>
-                                    </div>
-
-                                    </div>                        
-                                </form>
-                            </div>
-                        </div><!-- /.row -->
-                    </div><!-- /.box-body -->
-                </div><!-- /.box -->
-            </div>
-        </div><!-- /.row -->
-    </section><!-- /.content -->
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>  
+			</div>
+		</div>
+	</section>
 </div>
 
 <script type="text/javascript">
-$(function () {
-$('#ResultTable').DataTable();
-});
+	function AddToTable() 
+	{
+		select_1_val=$("select[name='select_1']").val();
+		select_1_text=$("select[name='select_1'] :selected").text()
+		text_quantity=$("input[name='quantity_received']").val();
+		text_stockOnhand = $("input[name='stock_onhand']").val();
+		text_after = $("input[name='after']").val();
 
+		/*
+		See those group of letters up there^?
+		They just get the M@#$%^&*# Values of the M%*!@#*!@# Form on the modal.
+		More inputs?
+		Just add them there.
 
-function get_address(){
+		Also YOU should validate that shit.
+		Make sure the data is not already int the table.
+		*/
 
-$("#address").val($("#customer_id option:selected").data("price"));
+		input="<input type='hidden' name='select_1[]' value='"+select_1_val+"'> <input type='hidden' name='text_quantity[]' value='"+text_quantity+"'><input type='hidden' name='text_stockOnhand[]' value='"+text_stockOnhand+"'><input type='hidden' name='after[]' value='"+text_after+"'>" ;
+		/*
+		SEE THIS SHIT RIGHT HERE ^?
+		Thats what gets sent for saving. 
+		See the M*@#$%^&* square brackets? They allow the data to be passed as an array. That shit is important.
+		*/
 
-$("#prod_name2").val($("#prod_id option:selected").html());
-}
+		$("#table_container").append("<tr><td>"+select_1_val+"</td><td>"+select_1_text+"</td><td>"+text_quantity+"</td><td>"+text_stockOnhand+"</td><td>"+text_after+"</td><td><button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button></td></tr>");
+		/*
+		UPTOP ^?
+		This is what adds the data to the table.
+
+		that in the end? That deletes the whole row.
+		*/
+	}
+
+	function removeRow(del_button) 
+	{
+		// body...
+		if(confirm('Remove this row?'))
+		{
+			$(del_button).parent().parent().remove();
+		}
+		return false;
+		/*
+		^
+		Get theat row out of here.;
+		*/
+	}
 </script>
+<script type="text/javascript">
+	$(function () {
+		$('#ResultTable').DataTable({
+		});
+	});
+</script>
+
 <?php
-if(!empty($_SESSION[WEBAPP]['frm_inputs'])){
-// $asset=$_SESSION[WEBAPP]['frm_inputs'];
-// var_dump($asset);
-unset($_SESSION[WEBAPP]['frm_inputs']);
-}
-?>
-<?php
-makeFoot();
+	makeFoot();
 ?>
