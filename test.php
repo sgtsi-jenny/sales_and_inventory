@@ -31,7 +31,6 @@
 					var_dump($_POST);
 					/*	
 							^
-
 							Here is the data. 
 							Validate? your choice.
 							Loop and save dat shit.
@@ -74,7 +73,8 @@
 			    </div>
 			  </div>
 			</div>
-			<form method="post">
+			<!-- End Modal -->
+			<form method="post" action="save_sales_order.php">
 			<button type='submit' class='pull-right btn btn-brand btn-flat'>SAVE THEM DATA BRuH</button>
 			<table class='table table-bordered '>
 				<thead>
@@ -104,7 +104,7 @@
 			Just add them there.
 
 			Also YOU should validate that shit.
-			Make sure the data is not already int the table.
+			Make sure the data is not already in the table.
 		*/
 
 

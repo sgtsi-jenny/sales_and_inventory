@@ -32,15 +32,37 @@
         die();
     }
     else{
-        $opp=$con->myQuery("SELECT id,opp_name,org_id,org_name,cname,opp_type,users,sales_stage,forecast_amount,amount,tprice,description,product_set,date_created,date_modified FROM vw_opp WHERE id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
-        if(empty($opp)){
-            Modal("Invalid Opportunities Selected");
+        $sale=$con->myQuery("SELECT 
+        sm.sales_master_id,
+        customers.customer_name AS customer,
+        customers.email,
+        customers.fax,
+        customers.mobile_number,
+        customers.telephone_number,
+        prod.product_name,
+        ss.name AS status_name,
+        sm.date_issue,
+        sd.quantity,
+        prod.current_quantity AS available,
+        sd.unit_cost,
+        sd.discount,
+        sd.tax,
+        (SELECT SUM(sd.total_cost) FROM sales_details sd WHERE sd.sales_master_id=sm.sales_master_id) AS total,
+        (SELECT address FROM customer_address c_add WHERE sm.bill_to=c_add.customer_add_id) AS bill_to,
+        (SELECT address FROM customer_address c_add WHERE sm.ship_to=c_add.customer_add_id) AS ship_to
+        FROM sales_master sm
+        INNER JOIN customers ON sm.customer_id=customers.customer_id
+        INNER JOIN sales_status ss ON sm.sales_status_id=ss.sales_status_id
+        INNER JOIN sales_details sd ON sm.sales_master_id=sd.sales_master_id
+        INNER JOIN products prod ON prod.product_id=sd.product_id
+        WHERE sm.sales_master_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
+        if(empty($sale)){
+            //Modal("Invalid sales Selected");
             redirect("sales.php");
             die;
         }
     }
     
-
     makeHead("Sales");
 ?>
 
@@ -49,24 +71,56 @@
     require_once("template/sidebar.php");
 ?>
     <div class="content-wrapper">
-         <section class="content-header">
+        
+        <section class="content-header" align="right">
+          <a href='sales.php' class='btn btn-default'><span class='glyphicon glyphicon-arrow-left'></span> Back</a>
+        </section>
+        <section class="content-header">
                                       <h1>
                                       <img src="uploads/summary_Oppurtunities.png" width="50" height="50" title="Organization" alt="Organization" />
-                                      <?php echo htmlspecialchars($opp['opp_name']) ?>
+                                      <?php echo htmlspecialchars($sale['customer']) ?>
                                       </h1>
         </section>
-         <section class="content-header">
-        <br/>
-          <?php
-                if(AllowUser(array(1,5))){
-            ?> 
-          <a href='opportunities.php' class='btn btn-default'><span class='glyphicon glyphicon-arrow-left'></span> List of All Opportunities</a>          
-            <?php 
-            } ?>
-          <a href='org_opp.php?id=<?php echo $opp['org_id'] ?>' class='btn btn-default'><span class='glyphicon glyphicon-arrow-left'></span> Back to My Opportunity</a>
-          </section>
+        <section class="content-header">
+                <div class='row'>
+                            <div class='col-xs-12'>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <strong>Bill To: </strong>
+                                <em><?php echo htmlspecialchars($sale['bill_to'])?></em>
+                            </div>
+                            <div class='col-xs-12'>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <strong>Ship To: </strong>
+                                <em><?php echo htmlspecialchars($sale['ship_to'])?></em>
+                            </div>
+                            <div class='col-xs-12'>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <strong>Issue Date: </strong>
+                                <em><?php echo htmlspecialchars($sale['date_issue'])?></em>
+                            </div>
+                            <div class='col-xs-12'>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <strong>Email: </strong>
+                                <em><?php echo htmlspecialchars($sale['email'])?></em>
+                            </div>
+                            <div class='col-xs-12'>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <strong>Fax: </strong>
+                                <em><?php echo htmlspecialchars($sale['fax'])?></em>
+                            </div>
+                            <div class='col-xs-12'>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <strong>Mobile Number: </strong>
+                                <em><?php echo htmlspecialchars($sale['mobile_number'])?></em>
+                            </div>
+                            <div class='col-xs-12'>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <strong>Telephone Number: </strong>
+                                <em><?php echo htmlspecialchars($sale['telephone_number'])?></em>
+                            </div>
+                </div>
+        </section>
         <section class="content">
-
           <!-- Main row -->
           <div class="row">
             <div class='col-md-12'>
@@ -75,7 +129,7 @@
                     <!-- <?php
                         $no_employee_msg=' Personal Information must be saved.';
                     ?> -->
-                    <li <?php echo $tab=="1"?'class="active"':''?>><a href="" >Order Details</a>
+                    <li <?php echo $tab=="1"?'class="active"':''?>><a href="" >Sales Order Details</a>
                     </li>
                     <li> <a href="opp_events.php?id=<?php echo $_GET['id'] ?>">Payments</a>
                     </li>
@@ -83,75 +137,74 @@
                 </ul>
                 <div class="tab-content">
                   <div class="active tab-pane" >
-                  <br/>
-                    <table class='table table-bordered table-condensed'>
+
+                    <table id='ResultTable' class='table table-bordered table-striped'>
+                          <thead>
                             <tr>
-                                <th>Opportunity Name:</th>
-                                <td><?php echo htmlspecialchars($opp['opp_name']) ?></td>
+                                                <th class='text-center' style='min-width:200px'>Product Name</th>
+                                                <th class='text-center'>Quantity</th>
+                                                <th class='text-center'>Available</th>
+                                                <th class='text-center'>Price (Php)</th>
+                                                <th class='text-center'>Discount</th>
+                                                <th class='text-center'>Tax</th>
+                                                <th class='text-center'>Total (Php)</th>
+                                                
                             </tr>
-                            <tr>
-                                <th>Customer's Name:</th>
-                                <td><?php echo htmlspecialchars($opp['org_name']) ?></td>
-                            </tr>
-                            <tr>
-                                <th>Type:</th>
-                                <td><?php echo htmlspecialchars($opp['opp_type']) ?></td>
-                            </tr>
-                            <tr>
-                                <th>Sales Stage:</th>
-                                <td><?php echo htmlspecialchars($opp['sales_stage']) ?></td>
-                            </tr>
-                            <tr>
-                                <th>Forecast Amount:</th>
-                                <td><?php echo htmlspecialchars(number_format($opp['forecast_amount'],2)) ?></td>
-                            </tr>
-                            <tr>
-                                <th>Amount:</th>
-                                <td><?php echo htmlspecialchars(number_format($opp['tprice'],2)) ?></td>
-                            </tr>
-                            <tr>
-                                <th>Assigned To:</th>
-                                <td><?php echo htmlspecialchars($opp['users']) ?></td>
-                            </tr>
-                            <tr>
-                                <th>Date Created:</th>
-                                <td><?php echo htmlspecialchars($opp['date_created']) ?></td>
-                            </tr>
-                            <tr>
-                                <th>Date Modified:</th>
-                                <td><?php echo htmlspecialchars($opp['date_modified']) ?></td>
-                            </tr>
-                            <tr>
-                                <th>Description:</th>
-                                <td><?php echo htmlspecialchars($opp['description']) ?></td>
-                            </tr>
+                          </thead>
+                          <tbody>
+                                            <?php                                              
+                                                $opportunities=$con->myQuery("SELECT 
+                                                prod.product_name,
+                                                sd.quantity,
+                                                prod.current_quantity AS available,
+                                                sd.unit_cost,
+                                                sd.discount,
+                                                sd.tax,
+                                                (SELECT SUM(sd.total_cost) FROM sales_details sd WHERE sd.sales_master_id=sm.sales_master_id) AS total
+                                                FROM sales_master sm
+                                                INNER JOIN customers ON sm.customer_id=customers.customer_id
+                                                INNER JOIN sales_status ss ON sm.sales_status_id=ss.sales_status_id
+                                                INNER JOIN sales_details sd ON sm.sales_master_id=sd.sales_master_id
+                                                INNER JOIN products prod ON prod.product_id=sd.product_id
+                                                WHERE sm.sales_master_id=?",array($_GET['id']))->fetchAll(PDO::FETCH_ASSOC);
+                                                foreach ($opportunities as $row):
+                                            ?>
+                                            <tr>
+                                                        <?php
+                                                            foreach ($row as $key => $value):  
+                                                        ?>
+                                                        <?php
+                                                            if($key=='unit_cost'):
+                                                        ?> 
+                                                            <td class='text-right'>
+                                                                <?php echo htmlspecialchars(number_format($row['unit_cost'],2))?></a>
+                                                            </td>
+                                                        <?php
+                                                            elseif($key=='total'):
+                                                        ?>  
+                                                            <td class='text-right'>
+                                                                <?php echo htmlspecialchars(number_format($row['total'],2))?></a>
+                                                            </td>
+                                                        <?php
+                                                            else:
+                                                        ?> 
+                                                            <td>
+                                                                <?php
+                                                                    echo htmlspecialchars($value);
+                                                                ?>
+                                                            </td>
+                                                        <?php
+                                                            endif;
+                                                            endforeach;
+                                                        ?>
+                                                </tr>
+                                                <?php
+                                                endforeach;
+                                            ?>
+                            
+                          </tbody>
                         </table>
 
-
-
-
-
-
-
-
-
-
-                    <!-- <?php
-                        switch ($tab) {
-                            case '1':
-                                #PERSONAL INFORMATION
-                                $form='org_detailed.php';
-                                break;
-                            case '2':
-                                #EDUCATION
-                                $form='education.php';
-                                break;
-                            default:
-                                $form='personal_information.php';
-                                break;
-                        }
-                        //require_once("admin/employee/".$form);
-                    ?> -->
                   </div><!-- /.tab-pane -->
                 </div><!-- /.tab-content -->
               </div><!-- /.nav-tabs-custom -->
@@ -163,12 +216,13 @@
 <script type="text/javascript">
   $(function () {
         $('#ResultTable').DataTable({
-               dom: 'Bfrtip',
+               dom: 'Bfrtip'
+               ,
                     buttons: [
-                        {
-                            extend:"excel",
-                            text:"<span class='fa fa-download'></span> Download as Excel File "
-                        }
+                        // {
+                        //     extend:"excel",
+                        //     text:"<span class='fa fa-download'></span> Download as Excel File "
+                        // }
                         ]
         });
       });
