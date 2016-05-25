@@ -1,11 +1,13 @@
 <?php
     require_once("support/config.php");
-     if(!isLoggedIn()){
+     if(!isLoggedIn())
+     {
         toLogin();
         die();
      }
 
-    if(!AllowUser(array(1))){
+    if(!AllowUser(array(1)))
+    {
          redirect("index.php");
     }
     $data=$con->myQuery("SELECT
@@ -48,14 +50,10 @@
                 <div class="box-body">
                   <div class="row">
                     <div class="col-sm-12">
-                        <div class='col-ms-12 text-right'>
+                       <!-- <div class='col-ms-12 text-right'>
                           <a href='frm_products.php' class='btn btn-success'> Create New <span class='fa fa-plus'></span> </a>
                         </div>
-                        </br>
-                        <?php
-                          Alert();
-                        ?>
-                        <br/>
+                      -->
                         <table id='ResultTable' class='table table-bordered table-striped'>
                           <thead>
                             <tr>
@@ -63,11 +61,9 @@
                               <th class='text-center'>Product Name</th>
                               <th class='text-center'>Description</th>
                               <th class='text-center'>Category</th>
-                              <th class='text-center'>Selling Price</th>
-                              <th class='text-center'>Wholesale Price</th>
-                              <th class='text-center'>Current Quantity</th>
-                              <th class='text-center'>Barcode</th>
-                              <th class='text-center'>Action</th>
+                              <th class='text-center'>Total Quantity</th>
+                              <th class='text-center'>Allocated Stocks</th>
+                              <th class='text-center'>Stock on hand</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -75,18 +71,13 @@
                               while($row = $data->fetch(PDO::FETCH_ASSOC)):
                             ?>
                               <tr>
-                                <td><?php echo htmlspecialchars($row['product_code'])?></td>
+                                <td><a href="product_inventory_details.php?id=<?php echo $row['product_id']; ?>"><i class="fa fa-cube"></i> <?php echo htmlspecialchars($row['product_code'])?></a></td>
                                 <td><?php echo htmlspecialchars($row['product_name'])?></td>
                                 <td><?php echo htmlspecialchars($row['description'])?></td>
                                 <td><?php echo htmlspecialchars($row['category_name'])?></td>
-                                <td><?php echo htmlspecialchars($row['selling_price'])?></td>
-                                <td><?php echo htmlspecialchars($row['wholesale_price'])?></td>
                                 <td><?php echo htmlspecialchars($row['quantity'])?></td>
-                                <td><?php echo htmlspecialchars($row['barcode'])?></td>
-                                <td class='text-center'>
-                                  <a href='frm_products.php?id=<?php echo $row['product_id']; ?>' class='btn btn-success btn-sm'><span class='fa fa-pencil'></span></a>
-                                  <a href='delete.php?id=<?php echo $row['product_id']; ?>&t=prod' onclick="return confirm('This record will be deleted.')" class='btn btn-danger btn-sm'><span class='fa fa-trash'></span></a>
-                                </td>
+                                <td>#</td>
+                                <td>#</td>
                               </tr>
                             <?php
                               endwhile;

@@ -8,15 +8,30 @@
 	if(!AllowUser(array(1,2))){
         redirect("index.php");
     }
-	if(empty($_GET['id']) || empty($_GET['t'])){
+    //echo $_GET['id'];
+    //echo $_GET['t'];
+    //die();	
+    if(empty($_GET['id']) || empty($_GET['t'])){
 		redirect('index.php');
 		die;
-	}
+	}	
 	else
 	{
 
 		$table="";
-		switch ($_GET['t']) {
+		$id="";
+		switch ($_GET['t'])
+		{
+			case 'prod':
+				$table="products";
+				$page="products.php";
+				$id="product_id";
+				break;
+			case 'prod_sup':
+				$table="supplier_products";
+				$page="frm_products.php?id={$_GET['phpid']}&tab=2";
+				$id="supplier_product_id";
+				break;
 			case 'org':
 				$table="organizations";
 				$page="customers.php";
@@ -97,7 +112,11 @@
 				redirect("index.php");
 				break;
 		}
-		$con->myQuery("UPDATE {$table} SET is_deleted=1 WHERE id=?",array($_GET['id']));
+		//var_dump($_GET);
+		//echo "<br>".$table."<br>".$id;
+		//die();
+
+		$con->myQuery("UPDATE {$table} SET is_deleted=1 WHERE {$id}=?",array($_GET['id']));
 		Alert("Delete Successful.","success");
 		redirect($page);
 

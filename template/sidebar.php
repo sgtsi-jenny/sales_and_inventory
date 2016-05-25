@@ -10,8 +10,8 @@
               </a>
             </li>
             <li class='header'>INVENTORY</li>
-            <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="products.php" || (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="products.php"?"active":"";?>">
-              <a href="products.php">
+            <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="products_inventory.php" || (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="products_inventory.php"?"active":"";?>">
+              <a href="products_inventory.php">
                 <i class="fa fa-cube"></i> <span>Products</span>
               </a>
             </li>
@@ -32,8 +32,8 @@
               </a>
             </li>
             <li class='header'>ACCOUNTS</li>
-            <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="customer_maintenance.php" || (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="customer_maintenance.php"?"active":"";?>">
-              <a href="customer_maintenance.php">
+            <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="customers.php" || (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="customers.php"?"active":"";?>">
+              <a href="customers.php">
                 <i class="fa fa-cart-arrow-down"></i> <span>Customers</span>
               </a>
             </li>
@@ -47,15 +47,20 @@
               if(AllowUser(array(1,5))):
             ?>    
             <li class='header'>SETTINGS</li>
-            <li class='treeview <?php echo (in_array(substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1), array("categories_maintenances.php","measurement_maintenance.php","users.php","settings_users.php","tax.php","backup_restore")))?"active":"";?>'>
+            <li class='treeview <?php echo (in_array(substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1), array("products.php","categories.php","measurements.php","users.php","settings_users.php","tax.php","backup_restore")))?"active":"";?>'>
               <a href=''><i class="fa fa-cubes"></i><span>Administrator</span><i class="fa fa-angle-left pull-right"></i></a>
               <ul class='treeview-menu'>
-                <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="categories_maintenances.php"?"active":"";?>">
-                  <a href="categories_maintenances.php">
+                <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="products.php"?"active":"";?>">
+                  <a href="products.php">
+                    <i class="fa fa-cube"></i> <span>Products</span>
+                  </a>
+                <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="categories.php"?"active":"";?>">
+                  <a href="categories.php">
                     <i class="fa fa-folder-open-o"></i> <span>Categories</span>
                   </a>
-                <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="measurement_maintenance.php"?"active":"";?>">
-                  <a href="measurement_maintenance.php">
+                </li>
+                <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="measurements.php"?"active":"";?>">
+                  <a href="measurements.php">
                     <i class="fa fa-columns"></i> <span>Measurements</span>
                   </a>
                 </li>
