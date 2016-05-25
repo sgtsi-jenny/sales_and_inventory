@@ -1,1 +1,1 @@
-# hrisv2
+# Sales and Inventory System
