@@ -22,6 +22,7 @@
                           p.wholesale_price,
                           p.current_quantity AS total_stock,
                           p.measurement_id,
+                          m.name AS measurement_name,
                           p.minimum_quantity,
                           p.maximum_quantity,
                           p.barcode
@@ -63,7 +64,68 @@
                     <div class="col-sm-12">
                       <table>
                           <tr>  
-                              <p>Product Description: <?php echo $data['product_description']; ?></p> 
+                              <td width="300px">
+                                <p>Product Description: </p> 
+                              </td>
+                              <td>
+                                <p><?php echo $data['product_description']; ?></p> 
+                              </td>
+                          </tr>
+                          <tr>  
+                              <td width="50px">
+                                <p>Category: </p> 
+                              </td>
+                              <td>
+                                <p><?php echo $data['category_name']; ?></p> 
+                              </td>
+                          </tr>
+                          <tr>  
+                              <td width="50px">
+                                <p>Selling Price (Retail): </p> 
+                              </td>
+                              <td>
+                                <p><?php echo "PHP ".number_format($data['selling_price'],2,".",","); ?></p> 
+                              </td>
+                          </tr>
+                          <tr>  
+                              <td width="50px">
+                                <p>Wholesale  Price: </p> 
+                              </td>
+                              <td>
+                                <p><?php echo "PHP ".number_format($data['wholesale_price'],2,".",","); ?></p> 
+                              </td>
+                          </tr>
+                          <tr>  
+                              <td width="50px">
+                                <p>Unit: </p> 
+                              </td>
+                              <td>
+                                <p><?php echo $data['measurement_name']; ?></p> 
+                              </td>
+                          </tr>
+                          <tr>  
+                              <td width="50px">
+                                <p>Total Stock: </p> 
+                              </td>
+                              <td>
+                                <p><?php echo $data['total_stock']; ?></p> 
+                              </td>
+                          </tr>
+                          <tr>  
+                              <td width="50px">
+                                <p>Stock on-hand: </p> 
+                              </td>
+                              <td>
+                                <p>#</p> 
+                              </td>
+                          </tr>
+                          <tr>  
+                              <td width="50px">
+                                <p>Allocated Stocks: </p> 
+                              </td>
+                              <td>
+                                <p>#</p> 
+                              </td>
                           </tr>
                       <table>
                       <!--

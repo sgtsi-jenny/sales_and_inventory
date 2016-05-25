@@ -20,6 +20,8 @@
                           p.selling_price,
                           p.wholesale_price,
                           CONCAT(p.current_quantity,' ',m.abv) AS quantity,
+                          IFNULL((SELECT SUM(quantity) FROM sales_details sd INNER JOIN sales_master sm ON sm.sales_master_id=sd.sales_master_id
+                            WHERE sd.product_id=p.product_id AND sm.sales_status_id=2),'0') AS allocated,
                           p.barcode
                         FROM products p
                         INNER JOIN categories c
@@ -76,8 +78,12 @@
                                 <td><?php echo htmlspecialchars($row['description'])?></td>
                                 <td><?php echo htmlspecialchars($row['category_name'])?></td>
                                 <td><?php echo htmlspecialchars($row['quantity'])?></td>
-                                <td>#</td>
-                                <td>#</td>
+                                <td><?php echo htmlspecialchars($row['allocated'])?></td>
+                                <td>
+                                  <?php
+                                    echo intval($row['quantity'])-intval($row['allocated']);
+                                  ?>
+                                </td>
                               </tr>
                             <?php
                               endwhile;
