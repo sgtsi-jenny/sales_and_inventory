@@ -16,7 +16,7 @@
               </a>
             </li>
             <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="stock_adjustments.php" || (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="stock_adjustments.php"?"active":"";?>">
-              <a href="stock_adjustments.php">
+              <a href="stock_adjustments_main.php">
                 <i class="fa fa-cubes"></i> <span>Stock Adjustments</span>
               </a>
             </li>

@@ -5,44 +5,94 @@
 		toLogin();
 		die();
 	}
-    
-	if(!AllowUser(array(1,2,5))){
-		redirect("index.php");
-	}
 
+	// if(!AllowUser(array(1,2,5))){
+	// 	redirect("index.php");
+	// }
+	
 	if(!empty($_POST)){
 		//Validate form inputs
 		$inputs=$_POST;
 
 		$errors="";
 		
-		var_dump($inputs);
-		die;
-
-		
+		// echo count($inputs['product_id']);
+		// die;		
+		if (empty($inputs['customer_id'])){
+			$errors.="Select customer name. <br/>";
+		}
 
 		if($errors!=""){
 
-			Alert($errors,"danger");
-			if(empty($inputs['supplier_id'])){
-				redirect("frm_supplier.php");
-			}
-			else{
-				redirect("frm_supplier.php?supplier_id=".urlencode($inputs['supplier_id']));
-			}
-			die;
+			Alert("You have the following error(/s): <br/>".$errors,"danger");
+				if(empty($inputs['sales_master_id'])){
+					redirect("frm_sales.php");
+				}
+				else{
+					redirect("frm_sales.php?id=".urlencode($inputs['sales_master_id']));
+				}
+				die;
 		}
 		else{
 			//IF id exists update ELSE insert
-			if(empty($inputs['supplier_id'])){
+			if(empty($inputs['sales_master_id'])){
 				//Insert
-				$inputs=$_POST;
-				unset($inputs['supplier_id']);
-				//$userid=$_SESSION[WEBAPP]['user']['id'];
-				// var_dump($inputs);
-				// die;
-				$con->myQuery("INSERT INTO suppliers(name,description, contact_number,address, email) VALUES (:name,:description, :contact_number,:address, :email)", $inputs);					
 				
+				unset($inputs['sales_master_id']);
+				//$userid=$_SESSION[WEBAPP]['user']['id'];
+				date_default_timezone_set('Asia/Manila');
+				$now = new DateTime();
+				$date_issue=date_format($now, 'Ymd');	
+				$customer_id=$inputs['customer_id'];
+				$description=$inputs['description'];
+				$user_id=$_SESSION[WEBAPP]['user']['user_id'];
+
+				$total_cost = 0;
+				foreach($inputs['total_price'] as $key=>$value)
+				{
+				   $total_cost+= $value;
+				}
+
+				
+				unset($inputs['customer_id']);
+				unset($inputs['description']);
+				unset($inputs['current_quantity']);
+				unset($inputs['total_price']);
+				unset($inputs['prod_name']);
+
+				//echo $arr_count=count($inputs);
+				//echo count($inputs['product_id']);
+				//die();
+				$field_count=count($inputs);
+				$arr_count=count($inputs['product_id']);
+				
+				//var_dump($inputs);
+				//die;
+
+				$con->myQuery("INSERT INTO sales_master (date_issue,total_amount,customer_id,user_id,sales_status_id,payment_status_id,description) VALUES ('$date_issue','$total_cost','$customer_id','$user_id','1','1','$description')", $inputs);
+
+				$file_id=$con->lastInsertId();
+				//var_dump($file_id);
+				//die;
+				//arr_count=count($inputs);
+				for ($i=0; $i < $arr_count; $i++) { 
+					// var_dump($inputs['product_id'][$i]);
+					// var_dump($inputs['prod_name'][$i]);
+					// echo '<br>';
+					$params=array(
+						'product_id' => $inputs['product_id'][$i],
+						'qty' => $inputs['quantity'][$i], 
+						'selling_price' => $inputs['selling_price'][$i],
+						'discount' => $inputs['discount'][$i],
+						'tax' => $inputs['tax'][$i],
+						'file_id' => $file_id,
+						'total_cost' => $total_cost
+						);
+					// var_dump($params);
+					// die;
+					$con->myQuery("INSERT INTO sales_details (product_id,sales_master_id,quantity,unit_cost,total_cost,discount,tax) VALUES (:product_id,:file_id,:qty,:total_cost,:selling_price,:discount,:tax)", $params);		
+				}			
+				//die;
 				Alert("Save succesful","success");
 				
 
@@ -54,7 +104,7 @@
 				Alert("Update successful","success");
 				}
 			
-			redirect("suppliers.php");
+			redirect("sales.php");
 		}
 		die();
 		

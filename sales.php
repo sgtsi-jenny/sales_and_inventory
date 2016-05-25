@@ -56,16 +56,16 @@
                           <tbody>
                                             <?php
                                                 $sales=$con->myQuery("SELECT 
-sm.sales_master_id,
-customers.customer_name AS customer,
-ss.name AS status_name,
-ps.name AS payment_name,
-(SELECT SUM(sd.total_cost) FROM sales_details sd WHERE sd.sales_master_id=sm.sales_master_id) AS total,
-(SELECT SUM(sp.amount) FROM sales_payments sp WHERE sp.sales_master_id=sm.sales_master_id) AS paymed_amount
-FROM sales_master sm
-INNER JOIN customers ON sm.customer_id=customers.customer_id
-INNER JOIN sales_status ss ON sm.sales_status_id=ss.sales_status_id
-INNER JOIN payment_status ps ON sm.payment_status_id=ps.payment_status_id
+                                                sm.sales_master_id,
+                                                customers.customer_name AS customer,
+                                                ss.name AS status_name,
+                                                ps.name AS payment_name,
+                                                (SELECT SUM(sd.total_cost) FROM sales_details sd WHERE sd.sales_master_id=sm.sales_master_id) AS total,
+                                                (SELECT SUM(sp.amount) FROM sales_payments sp WHERE sp.sales_master_id=sm.sales_master_id) AS paymed_amount
+                                                FROM sales_master sm
+                                                INNER JOIN customers ON sm.customer_id=customers.customer_id
+                                                INNER JOIN sales_status ss ON sm.sales_status_id=ss.sales_status_id
+                                                INNER JOIN payment_status ps ON sm.payment_status_id=ps.payment_status_id
 
 ")->fetchAll(PDO::FETCH_ASSOC);
                                                 foreach ($sales as $row):
@@ -77,11 +77,19 @@ INNER JOIN payment_status ps ON sm.payment_status_id=ps.payment_status_id
                                                       foreach ($row as $key => $value):
                                                     ?>
                                                     <?php
-                                                        if($key=='sales_master_id'):
+                                                      if($key=='sales_master_id'):
                                                     ?>
                                                     <td class='text-center'> 
                                                                 <a href='sales_order_details.php?id=<?= $row['sales_master_id']?>'><img width="36" height="36" class="" src="uploads/so_id.png">SO<?php echo htmlspecialchars($value)?></a>
                                                     </td>
+                                                    <?php
+                                                      elseif($key=='total'):
+                                                    ?>
+                                                    <td class='text-right'><?php echo htmlspecialchars(number_format($row['total'],2)) ?></td>
+                                                    <?php
+                                                      elseif($key=='paymed_amount'):
+                                                    ?>
+                                                    <td class='text-right'><?php echo htmlspecialchars(number_format($row['paymed_amount'],2)) ?></td>
                                                     <?php
                                                             else:
                                                     ?>
