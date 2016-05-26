@@ -101,7 +101,7 @@
                           </div>
                           -->
                 <div class= "row">
-            	<div class = "col-md-5">
+            	<div class = "col-md-4">
 					<div class="box box-primary">
 		                <div class="box-body">
 		                <form method="post">
@@ -154,7 +154,7 @@
 
 		                </form>
 		                <section align = "right">
-		                	<button type="button" class="btn btn-brand" onclick="AddToTable()">Add</button>
+		                	<button type="button" class="btn btn-brand" id="addRow" >Add</button>
 		                  	<button type="button" class="btn btn-default" onclick="AddToTable()">Cancel</button>
 		                </section>
 		                  
@@ -162,7 +162,7 @@
 		                </div>
 					</div>
             	</div>
-            	<div class = "col-md-7">
+            	<div class = "col-md-8">
 					<div class="box box-primary">
 		                <div class="box-body">
 		                	 <table id='ResultTable' class='table table-bordered table-striped'>
@@ -195,14 +195,35 @@
      </section>
 </div>
 <script type="text/javascript">
-	function AddToTable() {
+	$(document).ready(function() {
+    var t = $('#ResultTable').DataTable();
+    	
+    	/*
 		select_1_val=$("select[name='select_1']").val();
 		select_1_text=$("select[name='select_1'] :selected").text()
 		text_quantity=$("input[name='quantity_received']").val();
 		text_stockOnhand = $("input[name='stock_onhand']").val();
 		text_after = $("input[name='after']").val();
+		*/
+		$('#addRow').on( 'click', function () {
+        t.row.add( [
+            select_1_val=$("select[name='select_1']").val() ,
+			select_1_text=$("select[name='select_1'] :selected").text() , 
+			text_quantity=parseInt($("input[name='quantity_received']").val()),
+			text_stockOnhand = parseInt($("input[name='stock_onhand']").val()),
+			text_after = parseInt($("input[name='after']").val()),
+			buttons = "<button type='button' onclick='' class='btn btn-primary fa fa-edit'></button><button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button>" 
+        ] ).draw( false );
+ 
+        
+    } );
+		//$('#addRow').click();
 
 
+
+	
+} );
+		
 		/*
 			See those group of letters up there^?
 			They just get the M@#$%^&*# Values of the M%*!@#*!@# Form on the modal.
@@ -214,14 +235,15 @@
 		*/
 
 
-		input="<input type='hidden' name='select_1[]' value='"+select_1_val+"'> <input type='hidden' name='text_quantity[]' value='"+text_quantity+"'><input type='hidden' name='text_stockOnhand[]' value='"+text_stockOnhand+"'><input type='hidden' name='after[]' value='"+text_after+"'>" ;
+		/*input="<input type='hidden' name='select_1[]' value='"+select_1_val+"'> <input type='hidden' name='text_quantity[]' value='"+text_quantity+"'><input type='hidden' name='text_stockOnhand[]' value='"+text_stockOnhand+"'><input type='hidden' name='after[]' value='"+text_after+"'>" ;
+
 		/*
 			SEE THIS SHIT RIGHT HERE ^?
 			Thats what gets sent for saving. 
 			See the M*@#$%^&* square brackets? They allow the data to be passed as an array. That shit is important.
 		*/
 
-		$("#table_container").append("<tr><td>"+select_1_val+"</td><td>"+select_1_text+"</td><td>"+text_quantity+"</td><td>"+text_stockOnhand+"</td><td>"+text_after+"</td><td><button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button></td></tr>");
+		/*$("#table_container").append("<tr><td>"+select_1_val+"</td><td>"+select_1_text+"</td><td>"+text_quantity+"</td><td>"+text_stockOnhand+"</td><td>"+text_after+"</td><td><button type='button' onclick='' class='btn btn-primary fa fa-edit'></button><button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button> </td>");
 		/*
 			UPTOP ^?
 			This is what adds the data to the table.
@@ -230,29 +252,28 @@
 		*/
 
 		
-	}
-
-	function removeRow(del_button) {
-		// body...
-		if(confirm('Remove this row?')){
-		$(del_button).parent().parent().remove();
-			
-		}
-		return false;
-		/*
-				^
-			Get theat row out of here.;
-		*/
-	}
+	
 </script>
 <script type="text/javascript">
-  $(function () {
-        $('#ResultTable').DataTable({
-
-        });
-      });
-
-   
+	function removeRow(del_button) {
+			// body...
+			if(confirm('Remove this row?')){
+				var table = $('#ResultTable').DataTable();
+	 
+				$('#ResultTable tbody').on( 'click', function () {
+				    table
+				        .row( $(del_button).parents('tr') )
+				        .remove()
+				        .draw();
+				} );
+			}
+			
+			
+			/*
+					^
+				Get theat row out of here.;
+			*/
+		}	
 </script>
 
 <?php
