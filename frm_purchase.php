@@ -57,11 +57,9 @@
 											<br><br>
 											<div class='form-group'>
 												<div class ="row">
-													<div class = "col-md-3">
-														<label class='control-label'> Select Supplier: * </label>
-													</div>
+													<label class='col-md-3 control-label'> Select Supplier: * </label>
 													<div class = "col-md-8">
-														<select class='form-control select2' name='supplier' data-placeholder="Select product"
+														<select class='form-control select2' name='supplier' data-placeholder="Select product">
 															<?php
 																echo makeOptions($supplier,'Select Supplier')
 															?>
@@ -69,6 +67,13 @@
 													</div>
 												</div>
 											</div>
+									<!--		<div class="form-group">
+												<label for="description" class="col-md-3 control-label">Delivery Address: *</label>
+												<div class="col-md-8">
+													<textarea class='form-control' name='description' id='description'  required><?php //echo !empty($data)?htmlspecialchars($data['description']):''; ?></textarea>
+												</div>
+										    </div>
+									-->
 										</div>
 									</div>
 								</div>
@@ -152,6 +157,18 @@
 </div>
 
 <script type="text/javascript">
+	function get_supplier () 
+	{
+		var supplier = document.getElementById("supplier").value;
+	}
+	
+	function get_price2()
+	{   
+        $("#selling_price").val($("#product_id option:selected").data("price"));
+        $("#current_quantity").val($("#product_id option:selected").data("qty"));        
+        $("#prod_name2").val($("#product_id option:selected").html());
+    }
+    
 	function AddToTable() 
 	{
 		select_1_val=$("select[name='select_1']").val();
