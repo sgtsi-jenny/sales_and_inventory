@@ -77,7 +77,7 @@
     </section>
     <section class="content-header">
         <h1>
-            <img src="uploads/summary_Oppurtunities.png" width="50" height="50" title="" alt="" /> 
+            <img src="uploads/summary_organizations.png" width="50" height="50" title="" alt="" /> 
             <?php echo htmlspecialchars($po['supplier_name']) ?> <!-- SUPPLIER NAME -->
         </h1>
     </section>
@@ -98,16 +98,18 @@
                 <strong>Contact Number: </strong>
                 <em><?php echo htmlspecialchars($po['supplier_contact'])?></em> <!-- SUPPLIER'S CONTACT NUMBER -->
             </div>
-            <br>
+        </div>
+        <br>
+        <div class='row'>
             <div class='col-xs-12'>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <strong>Bill To: </strong> 
-                <em><?php //echo htmlspecialchars($sale['bill_to'])?></em> <!-- REQUESTOR'S ADDRESS -->
+                <em><?php echo htmlspecialchars($po['bill_to'])?></em> <!-- REQUESTOR'S ADDRESS -->
             </div>
             <div class='col-xs-12'>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <strong>Purchased Date: </strong>
-                <em><?php //echo htmlspecialchars($sale['date_issue'])?></em> <!--PURCHASED DATE-->
+                <em><?php echo htmlspecialchars($po['purchased_date'])?></em> <!--PURCHASED DATE-->
             </div>
 
 
@@ -124,12 +126,12 @@
                                 <thead>
                                     <tr>
                                         <th class='text-center' style='min-width:200px'>Product Name</th>
-                                        <th class='text-center'>Quantity</th>
-                                        <th class='text-center'>Available</th>
+                                        <th class='text-center'>Order Quantity</th>
+                                        <th class='text-center'>Quantity Received</th>
                                         <th class='text-center'>Price (Php)</th>
                                         <th class='text-center'>Discount</th>
-                                        <th class='text-center'>Tax</th>
                                         <th class='text-center'>Total (Php)</th>
+                                        <th class='text-center'>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>

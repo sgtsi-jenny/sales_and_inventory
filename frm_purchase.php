@@ -21,6 +21,11 @@
 								ON p.product_id=sp.product_id
 							WHERE sp.supplier_id=1");*/
    // $data=$con->myQuery("SELECT stock_adjmaster_id FROM stock_adj_master WHERE is_deleted=0 AND stock_adjmaster_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
+	
+	if (isset($_POST['supplier'])) {
+		//echo $_POST['supplier'];
+		//die;
+	}
 
     makeHead("Purchase Order");
 ?>
@@ -55,18 +60,22 @@
 												echo htmlspecialchars("{$_SESSION[WEBAPP]['user']['last_name']}, {$_SESSION[WEBAPP]['user']['first_name']} {$_SESSION[WEBAPP]['user']['middle_name']}")
 											?>
 											<br><br>
-											<div class='form-group'>
-												<div class ="row">
-													<label class='col-md-3 control-label'> Select Supplier: * </label>
-													<div class = "col-md-8">
-														<select class='form-control select2' name='supplier' data-placeholder="Select product">
-															<?php
-																echo makeOptions($supplier,'Select Supplier')
-															?>
-														</select>
+											<form method='post'>
+												<div class='form-group'>
+													<div class ="row">
+														<label class='col-md-3 control-label'> Select Supplier: * </label>
+														<div class = "col-md-8">
+															<select class='form-control select2' name='supplier' data-placeholder="Select product" required>
+																<?php
+																	echo makeOptions($supplier,'Select Supplier')
+																?>
+															</select>
+															<input type="submit" value="submit"/>
+														</div>
 													</div>
 												</div>
-											</div>
+
+											</form>
 									<!--		<div class="form-group">
 												<label for="description" class="col-md-3 control-label">Delivery Address: *</label>
 												<div class="col-md-8">
