@@ -9,7 +9,7 @@
          redirect("index.php");
     }
     
-    makeHead("Sales");
+    makeHead("Sales Order");
 ?>
 
 <?php
@@ -191,6 +191,7 @@
 <?php
   endif;
 ?>
+
 <?php
     Modal();
     makeFoot();
