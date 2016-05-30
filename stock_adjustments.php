@@ -9,7 +9,7 @@
          redirect("index.php");
     }
     $reason=$con->myQuery("SELECT adj_status_id, name FROM adjustment_status")->fetchAll(PDO::FETCH_ASSOC);
-    $product=$con->myQuery("SELECT product_id, product_name FROM products")->fetchAll(PDO::FETCH_ASSOC);
+    $product=$con->myQuery("SELECT product_id, product_name,current_quantity FROM products")->fetchAll(PDO::FETCH_ASSOC);
    // $data=$con->myQuery("SELECT stock_adjmaster_id FROM stock_adj_master WHERE is_deleted=0 AND stock_adjmaster_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
 
     makeHead("Stock Adjustment");
@@ -111,13 +111,17 @@
 			                			<label class='control-label'> Select product:* </label>
 			                		</div>
 			                		<div class = "col-md-8">
-			                			<select class='form-control' 
-			                			 name='select_1' data-placeholder="Select product" 
-				            				<?php echo!(empty($product))?"data-selected='".$product['product_id']."'":NULL ?> required>
-			                            	<?php
-			                                	echo makeOptions($product,'Select product',NULL,'',!(empty($product))?$product['product_id']:NULL)
-			                            	?>
-		                				</select>
+			                			<select class='form-control' id='select_1' onchange='getStockOnHand()' name='select_1' data-placeholder="Select a product" <?php echo!(empty($data))?"data-selected='".$data['product_id']."'":NULL ?>style='width:100%' required >
+                                                <option>Select Product</option>
+                                                <?php
+                                                    foreach ($product as $key => $row):
+                                                ?>
+                                                    <option data-qty='<?php echo $row['current_quantity'] ?>' placeholder="Select product" value='<?php echo $row['product_id']?>' <?php echo (!empty($data) && $row['product_id']==$data['product_id']?'selected':'') ?> ><?php echo $row['product_name']?></option>                                                    
+                                                <?php
+                                                    endforeach;
+                                                ?>
+                                                <input type='hidden' id='prod_name2' name='prod_name' value=''>
+                                            </select>
 			                		</div>
 			                	</div>
                            </div>
@@ -137,7 +141,7 @@
 			                			<label class='control-label'> Stock on hand: </label>
 			                		</div>
 			                		<div class = "col-md-8">
-			                			<input type="text" class="form-control " id="product_code" placeholder="Stock on hand" name='stock_onhand' value='<?php echo !empty($data)?htmlspecialchars($data['stock_adjmaster_id']):''; ?>' required readonly>
+			                			<input type="text" class="form-control " id="current_quantity" placeholder="Stock on hand" name='current_quantity' value='<?php echo !empty($data)?htmlspecialchars($data['stock_adjmaster_id']):''; ?>' required readonly>
 			                		</div>
 			                	</div>
                            </div>
@@ -274,6 +278,11 @@
 				Get theat row out of here.;
 			*/
 		}	
+	 function getStockOnHand(){
+        
+        $("#current_quantity").val($("#select_1 option:selected").data("qty"));        
+        $("#prod_name2").val($("#select_1 option:selected").html());
+    }
 </script>
 
 <?php
