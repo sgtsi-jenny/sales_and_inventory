@@ -21,6 +21,18 @@
 								ON p.product_id=sp.product_id
 							WHERE sp.supplier_id=1");*/
    // $data=$con->myQuery("SELECT stock_adjmaster_id FROM stock_adj_master WHERE is_deleted=0 AND stock_adjmaster_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
+	$product="";
+	if (isset($_POST['supplier'])) {
+		$product=$con->myQuery("SELECT
+								p.product_id,
+								CONCAT(p.product_name,' ',p.description) AS product
+							FROM supplier_products sp
+							INNER JOIN products p
+								ON p.product_id=sp.product_id
+							WHERE sp.supplier_id=?",array($_POST['supplier']))->fetchAll(PDO::FETCH_ASSOC);
+		//echo $_POST['supplier'];
+		//die;
+	}
 
     makeHead("Purchase Order");
 ?>
@@ -55,20 +67,29 @@
 												echo htmlspecialchars("{$_SESSION[WEBAPP]['user']['last_name']}, {$_SESSION[WEBAPP]['user']['first_name']} {$_SESSION[WEBAPP]['user']['middle_name']}")
 											?>
 											<br><br>
-											<div class='form-group'>
-												<div class ="row">
-													<div class = "col-md-3">
-														<label class='control-label'> Select Supplier: * </label>
-													</div>
-													<div class = "col-md-8">
-														<select class='form-control select2' name='supplier' data-placeholder="Select product"
-															<?php
-																echo makeOptions($supplier,'Select Supplier')
-															?>
-														</select>
+											<form method='post'>
+												<div class='form-group'>
+													<div class ="row">
+														<label class='col-md-3 control-label'> Select Supplier: * </label>
+														<div class = "col-md-8">
+															<select class='form-control select2' name='supplier' data-placeholder="Select product" required>
+																<?php
+																	echo makeOptions($supplier,'Select Supplier')
+																?>
+															</select>
+															<input type="submit" value="submit"/>
+														</div>
 													</div>
 												</div>
-											</div>
+
+											</form>
+									<!--		<div class="form-group">
+												<label for="description" class="col-md-3 control-label">Delivery Address: *</label>
+												<div class="col-md-8">
+													<textarea class='form-control' name='description' id='description'  required><?php //echo !empty($data)?htmlspecialchars($data['description']):''; ?></textarea>
+												</div>
+										    </div>
+									-->
 										</div>
 									</div>
 								</div>
@@ -88,7 +109,7 @@
 														<select class='form-control select2' name='product' data-placeholder="Select product" 
 															<?php //echo!(empty($product))?"data-selected='".$product['product_id']."'":NULL ?> required>
 															<?php
-																echo makeOptions('','Select Product')
+																echo makeOptions($product,'Select Product')
 															?>
 														</select>
 													</div>
@@ -152,6 +173,18 @@
 </div>
 
 <script type="text/javascript">
+	function get_supplier () 
+	{
+		var supplier = document.getElementById("supplier").value;
+	}
+	
+	function get_price2()
+	{   
+        $("#selling_price").val($("#product_id option:selected").data("price"));
+        $("#current_quantity").val($("#product_id option:selected").data("qty"));        
+        $("#prod_name2").val($("#product_id option:selected").html());
+    }
+    
 	function AddToTable() 
 	{
 		select_1_val=$("select[name='select_1']").val();

@@ -70,7 +70,7 @@
                                     ?>
                                     <tr>
                                         <td class='text-center'> 
-                                            <a href='#'><img width="36" height="36" class="" src="uploads/so_id.png">PO<?php echo htmlspecialchars($row['po_master_id'])?></a>
+                                            <a href='purchase_order_details.php?id=<?php echo $row['po_master_id']; ?>'><img width="36" height="36" class="" src="uploads/so_id.png">PO<?php echo htmlspecialchars($row['po_master_id'])?></a>
                                         </td>
                                         <td class='text_center'><?php echo htmlspecialchars($row['supplier']); ?></td>
                                         <td class='text_center'><?php echo htmlspecialchars($row['purchased_date']); ?></td>
