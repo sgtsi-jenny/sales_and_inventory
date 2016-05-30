@@ -108,6 +108,11 @@
           <a href='' class='btn btn-default'>Void</a>
           <?php
             }
+            elseif($sale['sales_status_id']==1){
+          ?>
+          <a href='frm_sales.php?id=<?php echo $_GET['id'];?>' class='btn btn-default'>Edit Order</a>
+          <?php
+            }
             ?>
         </section>
         <section class="content-header">
@@ -117,89 +122,7 @@
                                       </h1>
         </section>
         <section class="content-header">
-                <!-- <div class='row'>
-                            <div class='col-xs-12'>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <strong>Order Number: </strong>
-                                <?php echo htmlspecialchars('#'.$sale['sales_master_id'])?>
-                            </div>
-                            <div class='col-xs-12'>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <strong>Bill To: </strong>
-                                <em><?php echo htmlspecialchars($sale['bill_to'])?></em>
-                            </div>
-                            <div class='col-xs-12'>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <strong>Ship To: </strong>
-                                <em><?php echo htmlspecialchars($sale['ship_to'])?></em>
-                            </div>
-                            <div class='col-xs-12'>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <strong>Issue Date: </strong>
-                                <em><?php echo htmlspecialchars($sale['date_issue'])?></em>
-                            </div>
-                            <div class='col-xs-12'>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <strong>Email: </strong>
-                                <em><?php echo htmlspecialchars($sale['email'])?></em>
-                            </div>
-                            <div class='col-xs-12'>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <strong>Fax: </strong>
-                                <em><?php echo htmlspecialchars($sale['fax'])?></em>
-                            </div>
-                            <div class='col-xs-12'>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <strong>Mobile Number: </strong>
-                                <em><?php echo htmlspecialchars($sale['mobile_number'])?></em>
-                            </div>
-                            <div class='col-xs-12'>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <strong>Telephone Number: </strong>
-                                <em><?php echo htmlspecialchars($sale['telephone_number'])?></em>
-                            </div>
-                            <div class='col-xs-12'>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <strong>Assigned To: </strong>
-                                <em>
-                                    <?php
-                                            echo htmlspecialchars("{$_SESSION[WEBAPP]['user']['last_name']}, {$_SESSION[WEBAPP]['user']['first_name']} {$_SESSION[WEBAPP]['user']['middle_name']}")
-                                            ?>
-                                </em>
-                            </div>
-                            <div class='col-xs-12'>
-                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                <strong>Order Status: </strong>
-                                <?php echo htmlspecialchars($sale['status_name'])?>
-                            </div>
-                            <?php
-                                if($sale['sales_status_id']==1){
-                            ?>
-                            <div class='col-xs-12'>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                  <a href='sales.php' class='btn btn-default'> Allocate</a>
-                            </div>
-                            <?php
-                                }
-                                elseif($sale['sales_status_id']==2){
-                            ?>
-                            <div class='col-xs-12'>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                  <a href='sales.php' class='btn btn-default'> Invoice</a>
-                            </div>
-                            <?php
-                                }
-                                elseif($sale['sales_status_id']==3){
-                            ?>
-                            <div class='col-xs-12'>
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                  <a href='sales.php' class='btn btn-default'> Ship</a>
-                            </div>
-                            <?php
-                                }
-                            ?>
-                </div> -->
-                                    <div class="row">
+                    <div class="row">
                     <div class='col-sm-12'>
                                 <input type='hidden' name='sales_master_id' value='<?php echo !empty($supplier)?$supplier['supplier_id']:""?>'>
                                 <?php
@@ -212,14 +135,6 @@
                                     </div>
                                 </div>
                                 <br>
-                                <!-- 
-                                <label class='col-md-2 text-left' > Customer</label>
-                                <div class='form-group'>
-                                    <div class='col-sm-12 col-md-3'>
-                                        <?php echo htmlspecialchars('#'.$sale['customer'])?>
-                                    </div>
-                                </div>
-                                <br> -->
                                           
                                 <label class='col-md-2 text-left' > Order creation date:</label>
                                 <div class='form-group'>
@@ -404,7 +319,7 @@
                                                     <?php
                                                         echo makeOptions($customer_add,'Select Customer')
                                                     ?>
-                                        </select>
+                                    </select>
                             </div>
 
                             <div class="form-group">

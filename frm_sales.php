@@ -4,60 +4,55 @@
         toLogin();
         die();
      }
-    if(!AllowUser(array(1))){
-         redirect("index.php");
-    }
-    $tab="1";
-    if(!empty($_GET['tab']) && !is_numeric($_GET['tab'])){
-        redirect("frm_sales.php".(!empty($sales_order)?'?id='.$sales_order['id']:''));
-        die;
-    }
-    else{
-        if(!empty($_GET['tab'])){
-            if($_GET['tab'] >0 && $_GET['tab']<=9){
-                $tab=$_GET['tab'];
-            }
-            else{
-                #invalid TAB
-                redirect("frm_employee.php".(!empty($products)?'?id='.$products['id']:''));
-            }
-        }
-    }
+    // if(!AllowUser(array(1))){
+    //      redirect("index.php");
+    // }
     
-    if(!empty($_GET['id']))
-    {
-        $sales_order=$con->myQuery("SELECT 
-                                                sm.sales_master_id,
-                                                customers.customer_name AS customer,
-                                                ss.name AS status_name,
-                                                ps.name AS payment_name,
-                                                (SELECT SUM(sd.total_cost) FROM sales_details sd WHERE sd.sales_master_id=sm.sales_master_id) AS total,
-                                                (SELECT SUM(sp.amount) FROM sales_payments sp WHERE sp.sales_master_id=sm.sales_master_id) AS paymed_amount
-                                                FROM sales_master sm
-                                                INNER JOIN customers ON sm.customer_id=customers.customer_id
-                                                INNER JOIN sales_status ss ON sm.sales_status_id=ss.sales_status_id
-                                                INNER JOIN payment_status ps ON sm.payment_status_id=ps.payment_status_id")->fetchAll(PDO::FETCH_ASSOC);
+    
+    if(!empty($_GET['id'])){
+        $sales_customer=$con->myQuery("SELECT
+        customers.customer_id,
+        customers.customer_name,
+        DATE_FORMAT(sm.date_issue,'%m/%d/%Y') as date_issue,
+        DATE_FORMAT(sm.date_modified,'%m/%d/%Y') as date_modified,
+        sm.description
+        FROM sales_master sm
+        INNER JOIN customers ON sm.customer_id=customers.customer_id
+        WHERE sm.sales_master_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
+
+        $sales_order=$con->myQuery("SELECT
+        prod.product_id,
+        prod.product_name,
+        sd.quantity,
+        prod.current_quantity AS available,
+        sd.unit_cost,
+        sd.discount,
+        sd.tax,
+        sd.total_cost,
+        sm.description
+        FROM sales_master sm
+        INNER JOIN customers ON sm.customer_id=customers.customer_id
+        INNER JOIN sales_status ss ON sm.sales_status_id=ss.sales_status_id
+        INNER JOIN sales_details sd ON sm.sales_master_id=sd.sales_master_id
+        INNER JOIN products prod ON prod.product_id=sd.product_id
+        WHERE sm.sales_master_id=?",array($_GET['id']))->fetchAll(PDO::FETCH_ASSOC);
         if(empty($sales_order)){
-            Modal("Invalid Record Selected");
+            //Modal("Invalid Record Selected");
             redirect("sales.php");
             die;
         }
     }
-    else{
-        if($tab>"1"){
-            Modal("Sales Order information must be saved first.");
-            redirect("frm_sales.php");
-        }
-    }
 
+    // var_dump($sales_customer);
+    // die;
 
         if(!empty($_SESSION[WEBAPP]['frm_inputs'])){
-        if(!empty($organization)){
-            $old_org=$organization;
+        if(!empty($sales_order)){
+            $old_sales_order=$sales_order;
         }
-        $organization=$_SESSION[WEBAPP]['frm_inputs'];
-        if(!empty($old_org)){
-            $organization['id']=$old_org['id'];
+        $sales_order=$_SESSION[WEBAPP]['frm_inputs'];
+        if(!empty($old_sales_order)){
+            $sales_order['id']=$old_sales_order['id'];
         }
         }
 
@@ -109,15 +104,6 @@
           <div class="row">
             <div class='col-md-12'>
               <div class="nav-tabs-custom">
-                <!-- <ul class="nav nav-tabs">
-                    <?php
-                        $no_order_msg=' Sales Order information must be saved.';
-                    ?>
-                    <li <?php echo $tab=="1"?'class="active"':''?>><a href="frm_products.php<?php echo !empty($sales_order)?"?id={$sales_order['product_id']}":''; ?>" >Sales Order Details</a>
-                    </li>
-                    <li <?php echo empty($sales_order)?'class="disabled"':''; ?> <?php echo $tab=="2"?'class="active"':''?> ><a href="?tab=2<?php echo !empty($sales_order)?"&id={$sales_order['product_id']}":''; ?>" <?php echo empty($sales_order)?'onclick="alert(\''.$no_order_msg.'\');return false;"':''; ?>>Payments</a>
-                    </li>
-                </ul> -->
                 <div class="tab-content">
                   <div class="active tab-pane" >
 
@@ -133,10 +119,11 @@
                                 <label class='col-md-2 text-left' > Customer</label>
                                 <div class='form-group'>
                                     <div class='col-sm-12 col-md-3'>
-                                        <select class='form-control' name='customer_id' id='customer_id'  onchange='get_address()' data-placeholder="Select a Customer" <?php echo!(empty($sales_order))?"data-selected='".$sales_order['customer']."'":NULL ?> required>
-                                                    <?php
-                                                        echo makeOptions($customer,'Select Customer')
-                                                    ?>
+                                        <select class='form-control' name='customer_id' id='customer_id'  onchange='get_address()' data-placeholder="Select a Customer" <?php echo!(empty($sales_customer))?"data-selected='".$sales_customer['customer_id']."'":NULL ?> required>
+                                                <?php
+                                                    // echo makeOptions($customer,'Select Customer')
+                                                    echo makeOptions($customer,'Select Customer',NULL,'',!(empty($sales_customer))?$sales_customer['customer_id']:NULL)
+                                                ?>
                                         </select>
                                     </div>
                                 </div>
@@ -144,25 +131,52 @@
                                 <label class='col-md-2 text-left' > Order creation date:</label>
                                 <div class='form-group'>
                                   <div class='col-sm-12 col-md-3'>
-                                        <?php
+                                        <!-- <?php
                                           // $php_timestamp = date("m/d/Y");
                                           $php_timestamp_date = date("m/d/Y");
                                           echo $php_timestamp_date;
-                                           ?>
+                                           ?> -->
+                                        <?php
+                                        $date_issue="";
+                                         if(!empty($sales_customer)){
+                                            $date_issue=$sales_customer['date_issue'];
+                                            if($date_issue=="00000000"){
+                                                $date_issue="";
+                                            }
+                                             else
+                                            {
+                                                $date_issue=inputmask_format_date($date_issue);
+                                                echo $date_issue;
+                                            }
+                                        }
+                                        
+                                         
+                                                                               
+                                    ?>
                                   </div>
                                 </div>
 
-                                <!-- <label class='col-md-2 text-left'> Order last updated date:</label>
+                                <label class='col-md-2 text-left' > Order modified date:</label>
                                 <div class='form-group'>
                                   <div class='col-sm-12 col-md-3'>
                                         <?php
-                                          $php_timestamp = time();
-                                          $php_timestamp_date = date("F d, Y l h:i A", $php_timestamp);
-                                          echo $php_timestamp_date;
-                                           ?>
+                                        $date_modified="";
+                                         if(!empty($sales_customer)){
+                                            $date_modified=$sales_customer['date_modified'];
+                                            if($date_modified=="00000000"){
+                                                $date_modified="";
+                                            }
+                                             else
+                                            {
+                                                $date_modified=inputmask_format_date($date_modified);
+                                                echo $date_modified;
+                                            }
+                                        }                                       
+                                                                               
+                                    ?>
                                   </div>
                                 </div>
-                                 -->
+
                                 <label class='col-md-2 text-left'> Order Status:</label>
                                 <div class='form-group'>
                                   <div class='col-sm-12 col-md-3'>
@@ -189,7 +203,7 @@
                                                 <?php
                                                     foreach ($prod as $key => $row):
                                                 ?>
-                                                    <option data-price='<?php echo $row['selling_price'] ?>' data-qty='<?php echo $row['current_quantity'] ?>' placeholder="Select product" value='<?php echo $row['product_id']?>' <?php echo (!empty($data) && $row['product_id']==$data['product_id']?'selected':'') ?> ><?php echo $row['product_name']?></option>                                                    
+                                                    <option data-price='<?php echo $row['selling_price'] ?>' data-qty='<?php echo $row['current_quantity'] ?>' placeholder="Select product" value='<?php echo $sales_order['product_id']?>' <?php echo (!empty($data) && $row['product_id']==$data['product_id']?'selected':'') ?> ><?php echo $row['product_name']?></option>                                                    
                                                 <?php
                                                     endforeach;
                                                 ?>
@@ -296,7 +310,6 @@
                                     <div class='form-group'>
                                     <div class='col-sm-12 col-md-9 col-md-offset-3 '>
                                         <button type='submit' class='btn btn-brand'> <span class='fa fa-check'></span> Save</button>
-                                        <a href='sales.php' class='btn btn-default'>Save as Draft</a>
                                         <a href='sales.php' class='btn btn-default'>Cancel</a>
                                     </div>                                    
                                 </div>
