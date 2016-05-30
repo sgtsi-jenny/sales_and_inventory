@@ -21,8 +21,15 @@
 								ON p.product_id=sp.product_id
 							WHERE sp.supplier_id=1");*/
    // $data=$con->myQuery("SELECT stock_adjmaster_id FROM stock_adj_master WHERE is_deleted=0 AND stock_adjmaster_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
-	
+	$product="";
 	if (isset($_POST['supplier'])) {
+		$product=$con->myQuery("SELECT
+								p.product_id,
+								CONCAT(p.product_name,' ',p.description) AS product
+							FROM supplier_products sp
+							INNER JOIN products p
+								ON p.product_id=sp.product_id
+							WHERE sp.supplier_id=?",array($_POST['supplier']))->fetchAll(PDO::FETCH_ASSOC);
 		//echo $_POST['supplier'];
 		//die;
 	}
@@ -102,7 +109,7 @@
 														<select class='form-control select2' name='product' data-placeholder="Select product" 
 															<?php //echo!(empty($product))?"data-selected='".$product['product_id']."'":NULL ?> required>
 															<?php
-																echo makeOptions('','Select Product')
+																echo makeOptions($product,'Select Product')
 															?>
 														</select>
 													</div>
