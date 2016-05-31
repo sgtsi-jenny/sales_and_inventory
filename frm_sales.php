@@ -36,11 +36,12 @@
         INNER JOIN sales_details sd ON sm.sales_master_id=sd.sales_master_id
         INNER JOIN products prod ON prod.product_id=sd.product_id
         WHERE sm.sales_master_id=?",array($_GET['id']))->fetchAll(PDO::FETCH_ASSOC);
-        if(empty($sales_order)){
-            //Modal("Invalid Record Selected");
-            redirect("sales.php");
-            die;
-        }
+
+            if(empty($sales_order)){
+                //Modal("Invalid Record Selected");
+                redirect("sales.php");
+                die;
+            }
     }
 
     // var_dump($sales_customer);
@@ -203,7 +204,7 @@
                                                 <?php
                                                     foreach ($prod as $key => $row):
                                                 ?>
-                                                    <option data-price='<?php echo $row['selling_price'] ?>' data-qty='<?php echo $row['current_quantity'] ?>' placeholder="Select product" value='<?php echo $sales_order['product_id']?>' <?php echo (!empty($data) && $row['product_id']==$data['product_id']?'selected':'') ?> ><?php echo $row['product_name']?></option>                                                    
+                                                    <option data-price='<?php echo $row['selling_price'] ?>' data-qty='<?php echo $row['current_quantity'] ?>' placeholder="Select product" value='<?php echo $row['product_id']?>' <?php echo (!empty($data)?'selected':'') ?> ><?php echo $row['product_name']?></option>                                                    
                                                 <?php
                                                     endforeach;
                                                 ?>
@@ -265,7 +266,7 @@
 
                         <section align = "right">
                             <button type="button" class="btn btn-brand" onclick="AddToTable()">Add</button>
-                            <!-- <button type="reset" class="btn btn-default" onclick="">Reset</button> -->
+                            <button type="reset" class="btn btn-default" onclick="reset()">Cancel</button>
                         </section>
                           
                             
@@ -292,7 +293,46 @@
                                           <th class='text-center'>Action </th>
                                            
                                     </thead>
-                                    <tbody id='table_container'>                    
+                                    <tbody id='table_container'>
+                                    <?php
+                                            if(!empty($sales_order)){
+                                                foreach ($sales_order as $row):
+                                                    $input="<input type='hidden' name='product_id[]' value='{$row['product_id']}'>";
+                                                    $input.="<input type='hidden' name='quantity[]' value='{$row['quantity']}'>";
+
+                                                    $input.="<input type='hidden' name='current_quantity[]' value='{$row['available']}'>";
+
+                                                    $input.="<input type='hidden' name='selling_price[]' value='{$row['unit_cost']}'>";
+
+                                                    $input.="<input type='hidden' name='discount[]' value='{$row['discount']}'>";
+
+                                                    $input.="<input type='hidden' name='prod_name[]' value='{$row['product_name']}'>";
+
+                                                    $input.="<input type='hidden' name='tax[]' value='{$row['tax']}'>";
+
+                                                    $input.="<input type='hidden' name='total_price[]' value='{$row['total_cost']}'>";
+                                                ?>
+                                                    <tr>
+                                                        <td>
+                                                            <?php echo $input;?>
+                                                            <?php echo $row['product_name'] ?>
+                                                        </td>
+                                                        <td><?php echo $row['quantity'] ?></td>
+                                                        <td><?php echo $row['available'] ?></td>
+                                                        <td><?php echo $row['unit_cost'] ?></td>
+                                                        <td><?php echo !empty($row['discount'])?$row['discount']:'' ?></td>
+                                                        <td><?php echo !empty($row['tax'])?$row['tax']:'' ?></td>
+                                                        <td><?php echo $row['total_cost'] ?></td>
+                                                        <td>
+                                                        <button type='button' onclick='edit(this)'><span class='fa fa-pencil'></span></button>
+                                                            <button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button>
+                                                        </td>
+                                                    </tr>
+                                                    
+                                                <?php
+                                                endforeach;
+                                            }
+                                    ?>
                                     </tbody>
                              </table>
                         </div>
@@ -302,7 +342,7 @@
 
                                 <div class='form-group'>
                                     <div class='col-sm-12 col-md-5'>
-                                        <textarea class='form-control' name='description' placeholder='Message to Customer' value=''><?php echo !empty($supplier)?$supplier['description']:"" ?></textarea>
+                                        <textarea class='form-control' name='description' placeholder='Message to Customer' value=''><?php echo !empty($sales_customer)?$sales_customer['description']:"" ?></textarea>
                                     </div>
                                 </div>
 
@@ -349,7 +389,7 @@
         prod_name = $("input[name='prod_name']").val();
         input="<input type='hidden' name='product_id[]' value='"+select_1_val+"'> <input type='hidden' name='quantity[]' value='"+quantity+"'><input type='hidden' name='current_quantity[]' value='"+current_quantity+"'><input type='hidden' name='selling_price[]' value='"+selling_price+"'><input type='hidden' name='discount[]' value='"+discount+"'><input type='hidden' name='prod_name[]' value='"+prod_name+"'><input type='hidden' name='tax[]' value='"+tax+"'><input type='hidden' name='total_price[]' value='"+(quantity*selling_price)+"'>" ;
    
-        $("#table_container").append("<tr><td>"+input+select_1_text+"</td><td>"+quantity+"</td><td>"+current_quantity+"</td><td>"+selling_price+"</td><td>"+discount+"</td><td>"+tax+"</td><td>"+(quantity*selling_price)+"</td><td><button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button></td></tr>");
+        $("#table_container").append("<tr><td>"+input+select_1_text+"</td><td>"+quantity+"</td><td>"+current_quantity+"</td><td>"+selling_price+"</td><td>"+discount+"</td><td>"+tax+"</td><td>"+(quantity*selling_price)+"</td><td> <button type='button' onclick='edit(this)'><span class='fa fa-pencil'></span></button><button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button></td></tr>");
 
         $("#product_id").val('');
         $("#quantity").val('');
@@ -359,6 +399,14 @@
         $("#tax").val('');
         
     }
+    function reset(){
+        $("#product_id").val('');
+        $("#quantity").val('');
+        $("#selling_price").val('');
+        $("#current_quantity").val('');
+        $("#discount").val('');
+        $("#tax").val('');
+    }
     function removeRow(del_button) {
         // body...
         if(confirm('Remove this item?')){
@@ -366,6 +414,37 @@
             
         }
         return false;
+    }
+
+    function edit(edit_button){
+        $("#product_id").val('');
+        $("#product_id").children(0).attr("selected");
+        $("#quantity").val('');
+        $("#selling_price").val('');
+        $("#current_quantity").val('');
+        $("#discount").val('');
+        $("#tax").val('');
+
+        row=$(edit_button).parent().parent();
+        inputs=$(row).children(1).children();
+
+       //console.log(inputs);
+
+        $("#product_id").val($(inputs[0]).val()).change();
+        // $("#product_id").children().each(function(d,i){
+
+        //     //$(i).removeAttr("selected");
+
+        //     if($(inputs[5]).val()==$(i).html()){
+        //         $(i).attr("selected","true");
+        //     }
+        // });
+        $("#product_id").attr("disabled",true);
+        $("#quantity").val($(inputs[1]).val());
+        $("#current_quantity").val($(inputs[2]).val());
+        $("#selling_price").val($(inputs[3]).val());
+        $("#discount").val($(inputs[4]).val());
+        $("#tax").val($(inputs[6]).val());
     }
 </script>
 <?php

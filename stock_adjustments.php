@@ -69,12 +69,23 @@
 				            					
 				            				</div>
 				            				<div class = 'col-md-10'>
-				            					<select class='form-control' name='adj_status_id' data-placeholder="Select Reason" 
+				            					<!-- <select class='form-control' id='adj_status_id' name='adj_status_id' onchange='getReason()'> data-placeholder="Select Reason" 
 						            				<?php echo!(empty($reason))?"data-selected='".$reason['adj_status_id']."'":NULL ?> required>
 					                            	<?php
 					                                	echo makeOptions($reason,'Select reason',NULL,'',!(empty($reason))?$reason['adj_status_id']:NULL)
 					                            	?>
-			                        			</select>
+			                        			</select> -->
+			                        			<select class='form-control' id='adj_status_id' onchange='compute()' name='adj_status_id' data-placeholder="Select reason" <?php echo!(empty($data))?"data-selected='".$data['adj_status_id']."'":NULL ?>style='width:100%'  >
+                                                <option value=''>Select Reason</option>
+                                                <?php
+                                                    foreach ($reason as $key => $row):
+                                                ?>
+                                                    <option data-price='<?php echo $row['selling_price'] ?>' placeholder="Select reason" value='<?php echo $row['adj_status_id']?>' <?php echo (!empty($data)?'selected':'') ?> ><?php echo $row['name']?></option>                                                    
+                                                <?php
+                                                    endforeach;
+                                                ?>
+                                                <!-- <input type='hidden' id='reason_name2' name='reason_name' value=''> -->
+                                            	</select>
 				            				</div>
 				            				
 				            			</div>
@@ -131,7 +142,7 @@
 			                			<label class='control-label'> Quantity received:* </label>
 			                		</div>
 			                		<div class = "col-md-8">
-			                			<input type="text" class="form-control" id="product_code" placeholder="Quantity received" name='quantity_received' value='<?php echo !empty($data)?htmlspecialchars($data['stock_adjmaster_id']):''; ?>' required>
+			                			<input type="text" class="form-control" id="quantity_received" placeholder="Quantity received" onblur='compute()' name='quantity_received' value='<?php echo !empty($data)?htmlspecialchars($data['stock_adjmaster_id']):''; ?>' required>
 			                		</div>
 			                	</div>
                            </div>
@@ -151,7 +162,7 @@
 			                			<label class='control-label'> After: </label>
 			                		</div>
 			                		<div class = "col-md-8">
-			                			<input type="text" class="form-control " id="product_code" placeholder="Stock on hand" name='after' value='<?php echo !empty($data)?htmlspecialchars($data['stock_adjmaster_id']):''; ?>' required readonly>
+			                			<input type="text" class="form-control " id="stock_after" placeholder="Stock after" name='stock_after' value='<?php echo !empty($data)?htmlspecialchars($data['stock_adjmaster_id']):''; ?>' required readonly>
 			                		</div>
 			                	</div>
                            </div>
@@ -282,6 +293,46 @@
         
         $("#current_quantity").val($("#select_1 option:selected").data("qty"));        
         $("#prod_name2").val($("#select_1 option:selected").html());
+        $("#stock_after").val("");
+        compute();
+    }
+
+    function getReason(){
+    	return $( "#adj_status_id" ).val();
+    }
+
+    function compute(){
+        $("#stock_after").val("");
+
+    	reason=getReason();
+    	alert(reason);
+    	received=$("#quantity_received").val();
+    	stock_onhand=$("#current_quantity").val();
+    	// if(isNaN(received) || isNaN(stock_onhand)){
+    	// 	return false;
+    	// }
+    	// else{
+    	// 	alert('asd');
+    	// }
+    	//alert(getReason());
+    	if(reason==''){
+    		return false;
+    	}
+    	value=0;
+    	switch(reason){
+    		case '5':
+    			value=stock_onhand-received;
+    		break;
+    		default:
+    			value=parseInt(stock_onhand)+parseInt(received);
+    		break;
+    	}
+    	if(isNaN(value)){
+    		return false;
+    	}
+    	else{
+    		$("#stock_after").val(value);
+    	}
     }
 </script>
 

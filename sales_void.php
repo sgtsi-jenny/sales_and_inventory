@@ -1,22 +1,21 @@
 <?php
 	require_once 'support/config.php';
 	
-	if(!isLoggedIn()){
-		toLogin();
-		die();
-	}
-
-	// if(!AllowUser(array(1,2,5))){
-	// 	redirect("index.php");
+	// if(!isLoggedIn()){
+	// 	toLogin();
+	// 	die();
 	// }
-		$inputs['sales_master_id']=$_GET['id'];
-		//$inputs['qty']=$_GET['qty'];
 
-		$sales_status_id=2;
-				// var_dump($inputs['qty']);
-				// var_dump($inputs);
 
-            $sales=$con->myQuery("SELECT 
+	// if(!empty($_POST)){
+		//Validate form inputs
+		// $inputs=$_POST;
+		
+				$sm['sales_master_id']=$_GET['id'];
+				// var_dump($sm['sales_master_id']);
+				// die;
+
+				$sales=$con->myQuery("SELECT 
                 sd.quantity,
                 sd.product_id,
                 prod.current_quantity AS available
@@ -28,20 +27,25 @@
             
                     $qty=htmlspecialchars($row['quantity']);
                     $available=htmlspecialchars($row['available']);
-                    $total=$available-$qty;
+                    $total=$available+$qty;
                     $product_id=htmlspecialchars($row['product_id']);
                     // var_dump($product_id);
                     // var_dump($total);
                     $con->myQuery("UPDATE products SET current_quantity='$total' WHERE product_id=$product_id",$inputs);
                
                 endforeach;
-				// die;
-				
-				$con->myQuery("UPDATE sales_master SET sales_status_id='$sales_status_id' WHERE sales_master_id=:sales_master_id",$inputs);
-				
-				Alert("Your inventory has been allocated","success");
-				redirect("sales_order_details.php?id=".$inputs['sales_master_id']);
-				
-	
+                // die;
+				$is_void=1;
+				$con->myQuery("UPDATE sales_master SET is_void='$is_void' WHERE sales_master_id=:sales_master_id",$sm);
+
+				Alert("SO".$sm['sales_master_id']." was successfully voided.","success");
+			
+				redirect("sales.php");
 		
+	// }
+	// else{
+	// 	redirect('index.php');
+	// 	die();
+	// }
+	// redirect('index.php');
 ?>

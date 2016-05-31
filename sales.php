@@ -65,7 +65,7 @@
                                                 FROM sales_master sm
                                                 INNER JOIN customers ON sm.customer_id=customers.customer_id
                                                 INNER JOIN sales_status ss ON sm.sales_status_id=ss.sales_status_id
-                                                INNER JOIN payment_status ps ON sm.payment_status_id=ps.payment_status_id
+                                                INNER JOIN payment_status ps ON sm.payment_status_id=ps.payment_status_id where sm.is_deleted=0 AND sm.is_void=0
 
 ")->fetchAll(PDO::FETCH_ASSOC);
                                                 foreach ($sales as $row):

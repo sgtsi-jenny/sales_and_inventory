@@ -47,13 +47,13 @@
         ss.sales_status_id,
         ss.name AS status_name,
         DATE_FORMAT(sm.date_issue,'%m/%d/%Y') as date_issue,
-         DATE_FORMAT(sm.date_modified,'%m/%d/%Y') as date_modified,
+        DATE_FORMAT(sm.date_modified,'%m/%d/%Y') as date_modified,
         sd.quantity,
         prod.current_quantity AS available,
         sd.unit_cost,
         sd.discount,
         sd.tax,
-        (SELECT SUM(sd.quantity) FROM sales_details sd WHERE sd.sales_master_id=sm.sales_master_id) AS quantity,
+        (SELECT SUM(sd.quantity) FROM sales_details sd WHERE sd.sales_master_id=sm.sales_master_id) AS t_qty,
         (SELECT SUM(sd.total_cost) FROM sales_details sd WHERE sd.sales_master_id=sm.sales_master_id) AS total,
         (SELECT address FROM customer_address c_add WHERE sm.bill_to=c_add.customer_add_id) AS bill_to,
         (SELECT address FROM customer_address c_add WHERE sm.ship_to=c_add.customer_add_id) AS ship_to
@@ -103,9 +103,9 @@
           <a href='sales.php' class='btn btn-default'><span class='glyphicon glyphicon-arrow-left'></span> Back to Sales List</a>
           <a href='frm_sales.php' class='btn btn-brand'> New Sales Order &nbsp;<span class='fa fa-plus'></span> </a>
           <?php
-            if($sale['sales_status_id']==2){
+            if($sale['sales_status_id']==2 || $sale['sales_status_id']==3 || $sale['sales_status_id']==4){
           ?>
-          <a href='' class='btn btn-default'>Void</a>
+          <a href='sales_void.php?id=<?=$_GET['id']?>' class='btn btn-default' onclick='return confirm("Click confirm to void this order. This will also rollback any fulfillments and revert any stock movements.")'>Void</a>
           <?php
             }
             elseif($sale['sales_status_id']==1){
@@ -168,8 +168,8 @@
                                 ?>
                                 <div class='col-xs-12'>
                                     <p>Allocate your stock to this order. <br>
-                                    Once allocated, the sales order will be locked and no additions will be possible.</p>
-                                      <a href='sale_allocate.php?id=<?= $_GET['id']?>' class='btn btn-default'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Allocate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+                                    Once allocated, the sales order will be locked and no additions will be possible.</p>                                        
+                                      <a href='sale_allocate.php?id=<?=$_GET['id']?>' class='btn btn-default'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Allocate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
                                 </div>
                                 <?php
                                     }
