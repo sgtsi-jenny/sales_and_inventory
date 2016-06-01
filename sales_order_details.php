@@ -205,13 +205,21 @@
             <div class='col-md-12'>
               <div class="nav-tabs-custom">
                 <ul class="nav nav-tabs">
-                    <!-- <?php
-                        $no_employee_msg=' Personal Information must be saved.';
-                    ?> -->
+                    <?php
+                        $no_msg=' Sales order must be invoiced.';
+                    ?>
                     <li <?php echo $tab=="1"?'class="active"':''?>><a href="" >Sales Order Details</a>
                     </li>
-                    <li> <a href="sales_payments.php?id=<?php echo $_GET['id'] ?>">Payments</a>
+
+                   <!--  <li>
+                        <?php
+                        // var_dump($sale['sales_status_id']<>3);
+                    ?>
+                    </li> -->
+                    <li <?php echo ($sale['sales_status_id']<>3)?'class="disabled"':''; ?> <?php echo $tab=="2"?'class="active"':''?> ><a href="sales_payments.php?id=<?php echo $_GET['id'] ?>" <?php echo ($sale['sales_status_id']<>3)?'onclick="alert(\''.$no_msg.'\');return false;"':''; ?>>Payments</a>
                     </li>
+                   <!--  <li> <a href="sales_payments.php?id=<?php echo $_GET['id'] ?>">Payments</a>
+                    </li> -->
                     
                 </ul>
                 <div class="tab-content">
@@ -303,11 +311,14 @@
                  
                       <div class="modal-body"> 
                         <form action='save_invoice.php' method='POST'>
-                            <input type='hidden' name='invoice_master_id' value='<?php echo !empty($invoice)?$invoice['invoice_master_id']:""?>'>
+                            <input type='hidden' name='invoice_master_id' value=''>
                             <input type='hidden' name='sales_master_id' value='<?php echo htmlspecialchars($_GET['id']) ?>'>
                             <input type='hidden' name='customer_id' value='<?php echo !empty($sale)?$sale['customer_id']:""?>'>
                             <input type='hidden' name='date_issue' value='<?php echo !empty($sale)?$sale['date_issue']:""?>'>
-                            <input type='hidden' name='quantity' value='<?php echo !empty($sale)?$sale['quantity']:""?>'>
+                            <input type='hidden' name='quantity' value='<?php echo !empty($sale)?$sale['t_qty']:""?>'>
+                            <!-- <?php
+                                // var_dump($sale['t_qty']);
+                            ?> -->
                             <div class="form-group">
                                 <label>Due Payement</label>
                                 <input type="date" class="form-control" id="due_payment"  name='due_payment' value='<?php echo !empty($sale)?htmlspecialchars($sale['due_payment']):''; ?>' required>
@@ -317,7 +328,7 @@
                                 <label>Bill To</label>
                                     <select class='form-control' name='bill_to' id='bill_to'  onchange='get_address()' data-placeholder="Select a Customer" <?php echo!(empty($customer_add))?"data-selected='".$customer_add['label_address']."'":NULL ?> required>
                                                     <?php
-                                                        echo makeOptions($customer_add,'Select Customer')
+                                                        echo makeOptions($customer_add,'Select Billing address')
                                                     ?>
                                     </select>
                             </div>
@@ -326,7 +337,7 @@
                                 <label>Ship To</label>
                                     <select class='form-control' name='ship_to' id='ship_to'  onchange='get_address()' data-placeholder="Select a Customer" <?php echo!(empty($customer_add))?"data-selected='".$customer_add['label_address']."'":NULL ?> required>
                                                     <?php
-                                                        echo makeOptions($customer_add,'Select Customer')
+                                                        echo makeOptions($customer_add,'Select Shipping address')
                                                     ?>
                                         </select>
                             </div>
