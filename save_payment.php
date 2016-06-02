@@ -21,7 +21,12 @@
 		}
 		else{
 
+			// var_dump($_GET['p_id']);
+			// var_dump($inputs['payment_id']);
+
 			if(empty($inputs['payment_id'])){
+				// var_dump("ADD PAYMENT");
+				// die;
 				//Insert
 				// $inputs=$_POST;
 				unset($inputs['payment_id']);
@@ -48,11 +53,13 @@
                                 WHERE sp.sales_master_id=?",array($sales_master_id))->fetch(PDO::FETCH_ASSOC);
 				$tc=$total_cost['total'];
 				$tp=$total_payment['total_payment'];
-				// var_dump($tc==$tp);
+				// var_dump($tc);
+				// var_dump($tp);
+				// var_dump($tc<=$tp);
 				// die;
 				$sm['sales_master_id']=$inputs['sales_master_id'];
 				$sm['date_modified']=$now->format('Ymd');
-				if ($tc==$tp){
+				if ($tc<=$tp){
 					$payment_status_id=2;
 					$con->myQuery("UPDATE sales_master SET payment_status_id='$payment_status_id',date_modified=:date_modified WHERE sales_master_id=:sales_master_id",$sm);
 				}
@@ -60,7 +67,9 @@
 
 				Alert("Payment was successfully processed.","success");
 			}
-			else{				
+			else{	
+				var_dump("UPDATE PAYMENT");
+				die;			
 				//Update
 				// $con->myQuery("UPDATE users SET user_type_id=:user_type_id,first_name=:name,middle_name=:middle_name,last_name=:last_name,username=:username,password=:password,email=:email,contact_no=:contact_no WHERE id=:id",$inputs);
 				// Alert("Update successful","success");

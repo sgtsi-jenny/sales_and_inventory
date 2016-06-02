@@ -11,6 +11,7 @@
     
     if(!empty($_GET['id'])){
         $sales_customer=$con->myQuery("SELECT
+        sm.sales_master_id,
         customers.customer_id,
         customers.customer_name,
         DATE_FORMAT(sm.date_issue,'%m/%d/%Y') as date_issue,
@@ -113,7 +114,7 @@
                     <div class="box-body">
                     <div class="row">
                     <div class='col-sm-12'>
-                                <input type='hidden' name='sales_master_id' value='<?php echo !empty($supplier)?$supplier['supplier_id']:""?>'>
+                                <input type='hidden' name='sales_master_id' value='<?php echo !empty($sales_customer)?$sales_customer['sales_master_id']:""?>'>
                                 <?php
                                     alert();
                                 ?>
@@ -266,7 +267,7 @@
 
                         <section align = "right">
                             <button type="button" class="btn btn-brand" onclick="AddToTable()">Add</button>
-                            <button type="reset" class="btn btn-default" onclick="reset()">Cancel</button>
+                            <button type="button" class="btn btn-default" onclick="resetTable()">Cancel</button>
                         </section>
                           
                             
@@ -324,8 +325,8 @@
                                                         <td><?php echo !empty($row['tax'])?$row['tax']:'' ?></td>
                                                         <td><?php echo $row['total_cost'] ?></td>
                                                         <td>
-                                                        <button type='button' onclick='edit(this)'><span class='fa fa-pencil'></span></button>
-                                                            <button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button>
+                                                        <button type='button' onclick='edit(this)' class='btn btn-brand fa fa-pencil'></span></button>
+                                                        <button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button>
                                                         </td>
                                                     </tr>
                                                     
@@ -389,7 +390,7 @@
         prod_name = $("input[name='prod_name']").val();
         input="<input type='hidden' name='product_id[]' value='"+select_1_val+"'> <input type='hidden' name='quantity[]' value='"+quantity+"'><input type='hidden' name='current_quantity[]' value='"+current_quantity+"'><input type='hidden' name='selling_price[]' value='"+selling_price+"'><input type='hidden' name='discount[]' value='"+discount+"'><input type='hidden' name='prod_name[]' value='"+prod_name+"'><input type='hidden' name='tax[]' value='"+tax+"'><input type='hidden' name='total_price[]' value='"+(quantity*selling_price)+"'>" ;
    
-        $("#table_container").append("<tr><td>"+input+select_1_text+"</td><td>"+quantity+"</td><td>"+current_quantity+"</td><td>"+selling_price+"</td><td>"+discount+"</td><td>"+tax+"</td><td>"+(quantity*selling_price)+"</td><td> <button type='button' onclick='edit(this)'><span class='fa fa-pencil'></span></button><button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button></td></tr>");
+        $("#table_container").append("<tr><td>"+input+select_1_text+"</td><td>"+quantity+"</td><td>"+current_quantity+"</td><td>"+selling_price+"</td><td>"+discount+"</td><td>"+tax+"</td><td>"+(quantity*selling_price)+"</td><td> <button type='button' onclick='edit(this)' class='btn btn-brand fa fa-pencil'></span></button><button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button></td></tr>");
 
         $("#product_id").val('');
         $("#quantity").val('');
@@ -399,13 +400,16 @@
         $("#tax").val('');
         
     }
-    function reset(){
+    function resetTable(){
+        
         $("#product_id").val('');
         $("#quantity").val('');
         $("#selling_price").val('');
         $("#current_quantity").val('');
         $("#discount").val('');
         $("#tax").val('');
+        $("#product_id").val('Select Product');
+        $("#product_id").attr("disabled",false);
     }
     function removeRow(del_button) {
         // body...
@@ -431,14 +435,6 @@
        //console.log(inputs);
 
         $("#product_id").val($(inputs[0]).val()).change();
-        // $("#product_id").children().each(function(d,i){
-
-        //     //$(i).removeAttr("selected");
-
-        //     if($(inputs[5]).val()==$(i).html()){
-        //         $(i).attr("selected","true");
-        //     }
-        // });
         $("#product_id").attr("disabled",true);
         $("#quantity").val($(inputs[1]).val());
         $("#current_quantity").val($(inputs[2]).val());

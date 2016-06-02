@@ -42,15 +42,18 @@
 		}
 		else{
 			$sales_id=$inputs['sales_master_id'];
+			
 			//IF id exists update ELSE insert
 			if(empty($inputs['sales_master_id'])){
+
 				//Insert
 				
 				unset($inputs['sales_master_id']);
 				//$userid=$_SESSION[WEBAPP]['user']['id'];
 				date_default_timezone_set('Asia/Manila');
 				$now = new DateTime();
-				$date_issue=date_format($now, 'Ymd');	
+				$date_issue=date_format($now, 'Ymd');
+				$date_modified=date_format($now, 'Ymd');
 				$customer_id=$inputs['customer_id'];
 				$description=$inputs['description'];
 				$user_id=$_SESSION[WEBAPP]['user']['user_id'];
@@ -71,23 +74,15 @@
 				unset($inputs['total_price']);
 				unset($inputs['prod_name']);
 
-				//echo $arr_count=count($inputs);
-				//echo count($inputs['product_id']);
-				//die();
-				$field_count=count($inputs);
-				$arr_count=count($inputs['product_id']);
-				
 				// var_dump($inputs);
 				// die;
 
-				$con->myQuery("INSERT INTO sales_master (date_issue,total_amount,customer_id,user_id,sales_status_id,payment_status_id,description) VALUES ('$date_issue','$total_cost','$customer_id','$user_id','1','1','$description')", $inputs);
+				$con->myQuery("INSERT INTO sales_master (date_issue,total_amount,customer_id,user_id,sales_status_id,payment_status_id,description,date_modified) VALUES ('$date_issue','$total_cost','$customer_id','$user_id','1','1','$description','$date_modified')", $inputs);
 
 				$file_id=$con->lastInsertId();
-				//var_dump($file_id);
-				//die;
-				//arr_count=count($inputs);
-				// var_dump($inputs);
-				// die;
+
+				$field_count=count($inputs);
+				$arr_count=count($inputs['product_id']);
 
 				for ($i=0; $i < $arr_count; $i++) { 
 					// var_dump($inputs['product_id'][$i]);
@@ -107,14 +102,64 @@
 					$con->myQuery("INSERT INTO sales_details (product_id,sales_master_id,quantity,unit_cost,total_cost,discount,tax) VALUES (:product_id,:file_id,:qty,:selling_price,:total_cost,:discount,:tax)", $params);		
 				}			
 				//die;
-				Alert("Save succesful","success");
+				Alert("Sales Order ".$file_id." succesfully created","success");
 				redirect("sales_order_details.php?id=".$file_id);
 				
 
 			}
 			else{
+				// var_dump("UPDATE");
+				// var_dump($inputs);
+				// die;
+
+				date_default_timezone_set('Asia/Manila');
+				$now = new DateTime();
+				$date_issue=date_format($now, 'Ymd');
+				$date_modified=date_format($now, 'Ymd');
+				$customer_id=$inputs['customer_id'];
+				$description=$inputs['description'];
+				$user_id=$_SESSION[WEBAPP]['user']['user_id'];
+
+				// var_dump($inputs);
+				// die;
+
+				$total_cost = 0;
+				foreach($inputs['total_price'] as $key=>$value)
+				{
+				   $total_cost+= $value;
+				}
+
 				
-				$con->myQuery("UPDATE suppliers SET name=:name,description=:description, contact_number=:contact_number,address=:address, email=:email WHERE supplier_id=:supplier_id",$inputs);
+				// unset($inputs['customer_id']);
+				// unset($inputs['description']);
+				// unset($inputs['current_quantity']);
+				// unset($inputs['total_price']);
+				// unset($inputs['prod_name']);
+
+
+				$field_count=count($inputs);
+				$arr_count=count($inputs['product_id']);
+
+				for ($i=0; $i < $arr_count; $i++) { 
+					// var_dump($inputs['product_id'][$i]);
+					// var_dump($inputs['prod_name'][$i]);
+					// echo '<br>';
+					$params=array(
+						'product_id' => $inputs['product_id'][$i],
+						'qty' => $inputs['quantity'][$i], 
+						'selling_price' => $inputs['selling_price'][$i],
+						'discount' => $inputs['discount'][$i],
+						'tax' => $inputs['tax'][$i],
+						'sales_master_id' => $inputs['sales_master_id'],
+						'total_cost' => $total_cost
+						);
+					var_dump($params);
+					
+					// $con->myQuery("INSERT INTO sales_details (product_id,sales_master_id,quantity,unit_cost,total_cost,discount,tax) VALUES (:product_id,:file_id,:qty,:selling_price,:total_cost,:discount,:tax)", $params);		
+				}	
+				die;
+
+				$con->myQuery("UPDATE sales_details SET product_id,sales_master_id,quantity,unit_cost,total_cost,discount,tax WHERE supplier_id=:supplier_id",$inputs);
 				
 				Alert("Update successful","success");
 				redirect("sales_order_details.php?id=".$inputs['sales_master_id']);

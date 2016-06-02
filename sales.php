@@ -61,7 +61,7 @@
                                                 ss.name AS status_name,
                                                 ps.name AS payment_name,
                                                 (SELECT SUM(sd.total_cost) FROM sales_details sd WHERE sd.sales_master_id=sm.sales_master_id) AS total,
-                                                (SELECT SUM(sp.amount) FROM sales_payments sp WHERE sp.sales_master_id=sm.sales_master_id) AS paymed_amount
+                                                (SELECT SUM(sp.amount) FROM sales_payments sp WHERE sp.is_voided=0 AND sp.sales_master_id=sm.sales_master_id) AS paymed_amount
                                                 FROM sales_master sm
                                                 INNER JOIN customers ON sm.customer_id=customers.customer_id
                                                 INNER JOIN sales_status ss ON sm.sales_status_id=ss.sales_status_id
