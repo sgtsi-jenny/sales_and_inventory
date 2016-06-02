@@ -13,27 +13,16 @@
     
     $po_num=$con->myQuery("SELECT po_master_id FROM po_master ORDER BY po_master_id DESC LIMIT 1")->fetch(PDO::FETCH_ASSOC);
     $supplier=$con->myQuery("SELECT supplier_id, CONCAT(description,' (',name,')') as name FROM suppliers")->fetchAll(PDO::FETCH_ASSOC);
-    /*$product=$con->myQuery("SELECT
-								CONCAT(p.product_name,' ',p.description) AS product,
-								sp.unit_cost
-							FROM supplier_products sp
-							INNER JOIN products p
-								ON p.product_id=sp.product_id
-							WHERE sp.supplier_id=1");*/
-   // $data=$con->myQuery("SELECT stock_adjmaster_id FROM stock_adj_master WHERE is_deleted=0 AND stock_adjmaster_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
-	$product="";
-	if (isset($_POST['supplier'])) {
-		$product=$con->myQuery("SELECT
-								p.product_id,
-								CONCAT(p.product_name,' ',p.description) AS product
-							FROM supplier_products sp
-							INNER JOIN products p
-								ON p.product_id=sp.product_id
-							WHERE sp.supplier_id=?",array($_POST['supplier']))->fetchAll(PDO::FETCH_ASSOC);
-		//echo $_POST['supplier'];
-		//die;
-	}
-
+    
+	$prod=$con->myQuery("SELECT
+						products.product_id,
+						products.product_name AS `name`,
+						supplier_products.unit_cost
+						FROM
+						supplier_products
+						INNER JOIN suppliers ON suppliers.supplier_id = supplier_products.supplier_id
+						INNER JOIN products ON products.product_id = supplier_products.product_id
+						WHERE suppliers.supplier_id")->fetchAll(PDO::FETCH_ASSOC);
     makeHead("Purchase Order");
 ?>
 <?php
@@ -67,17 +56,22 @@
 												echo htmlspecialchars("{$_SESSION[WEBAPP]['user']['last_name']}, {$_SESSION[WEBAPP]['user']['first_name']} {$_SESSION[WEBAPP]['user']['middle_name']}")
 											?>
 											<br><br>
-											<form method='post'>
+
+							<!-- SUPPLIER FORM -->
+											<form method="GET">
 												<div class='form-group'>
 													<div class ="row">
 														<label class='col-md-3 control-label'> Select Supplier: * </label>
 														<div class = "col-md-8">
-															<select class='form-control select2' name='supplier' data-placeholder="Select product" required>
+															<select class='form-control select2' id='supplier' name='supplier' data-placeholder="Select product" onchange="get_suppID();" required>
 																<?php
+																	
 																	echo makeOptions($supplier,'Select Supplier')
 																?>
 															</select>
-															<input type="submit" value="submit"/>
+															
+															<!--<input type="submit" value="Add" class="btn btn-default pull-right" />-->
+															
 														</div>
 													</div>
 												</div>
@@ -106,11 +100,20 @@
 														<label class='control-label'> Select Product: * </label>
 													</div>
 													<div class = "col-md-8">
-														<select class='form-control select2' name='product' data-placeholder="Select product" 
-															<?php //echo!(empty($product))?"data-selected='".$product['product_id']."'":NULL ?> required>
+														<select class='form-control select2' name='product_id' id='product_id' data-placeholder="Select a product" <?php echo!(empty($data))?"data-selected='".$data['product_id']."'":NULL?>
+															onchange="get_prodIDCost()" required>
 															<?php
-																echo makeOptions($product,'Select Product')
+																//echo makeOptions($product,'Select Product')
 															?>
+															<option>Select Product</option>
+					                                        <?php
+					                                            foreach ($prod as $key => $row):
+					                                        ?>
+					                                            <option data-cost='<?php echo $row['unit_cost'] ?>'  placeholder="Select product" value='<?php echo $row['product_id']?>' <?php echo (!empty($data) && $row['product_id']==$data['product_id']?'selected':'') ?> ><?php echo $row['name']?></option>                                                   
+					                                        <?php
+					                                            endforeach;
+					                                        ?>
+					                                        <input type='hidden' id='prod_name2' name='prod_name' value=''>
 														</select>
 													</div>
 												</div>
@@ -121,7 +124,7 @@
 														<label class='control-label'> Unit Cost: </label>
 													</div>
 													<div class = "col-md-8">
-														<input type="text" class="form-control " id="unit_cost" placeholder="Unit Cost" name='unit_cost' value='<?php //echo !empty($data)?htmlspecialchars($data['stock_adjmaster_id']):''; ?>' required readonly>
+														<input type="text" class="form-control " id="unit_cost" placeholder="Unit Cost" name='unit_cost' value='<?php echo !empty($data)?htmlspecialchars($row['unit_cost']):''; ?>' required readonly>
 													</div>
 												</div>
 											</div>
@@ -146,10 +149,10 @@
 							<div class = "col-md-7">
 								<div class="box box-primary">
 									<div class="box-body">
-										<table id='ResultTable' class='table table-bordered table-striped'>
+										<table class='table table-bordered table-striped'>
 											<thead>
 												<tr>
-												<th class='text-center'>Product ID</th>
+												
 												<th class='text-center'>Product name</th>
 												<th class='text-center'>Quantity</th>
 												<th class='text-center'>Unit Cost</th>
@@ -161,6 +164,11 @@
 
 											</tbody>
 										</table>
+										<br>
+										<section align = "right">
+											<button type='submit' class='btn btn-brand'> <span class='fa fa-check'></span> Save</button>
+											
+										</section>
 									</div>
 								</div>
 							</div>
@@ -171,52 +179,37 @@
 		</div>
 	</section>
 </div>
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script type="text/javascript">
-	function get_supplier () 
+
+	function get_suppID()
 	{
-		var supplier = document.getElementById("supplier").value;
+	    var supplierid = document.getElementById("supplier").value;
+	    $("#product").load("ajax/products.php?id="+supplierid)
+	    
 	}
-	
-	function get_price2()
-	{   
-        $("#selling_price").val($("#product_id option:selected").data("price"));
-        $("#current_quantity").val($("#product_id option:selected").data("qty"));        
-        $("#prod_name2").val($("#product_id option:selected").html());
-    }
+	function get_prodIDCost()
+	{
+	   //var prodid = document.getElementById("product").value;
+	    $("#unit_cost").val($("#product_id option:selected").data("cost"));  
+	    $("#prod_name2").val($("#product_id option:selected").html());
+	}
     
 	function AddToTable() 
 	{
-		select_1_val=$("select[name='select_1']").val();
-		select_1_text=$("select[name='select_1'] :selected").text()
-		text_quantity=$("input[name='quantity_received']").val();
-		text_stockOnhand = $("input[name='stock_onhand']").val();
-		text_after = $("input[name='after']").val();
+        select_1_val=$("select[name='product_id']").val();
+        select_1_text=$("select[name='product_id'] :selected").text()
+        unit_cost=$("input[name='unit_cost']").val();
+        quantity = $("input[name='qty']").val();
+        total_cost = unit_cost * quantity;
+        prod_name = $("input[name='prod_name']").val();
+        input="<input type='hidden' name='product_id[]' value='"+select_1_val+"'> <input type='hidden' name='unit_cost[]' value='"+unit_cost+"'><input type='hidden' name='quantity[]' value='"+quantity+"'><input type='hidden' name='prod_name[]' value='"+prod_name+"'>" ;
+   
+        $("#table_container").append("<tr><td>"+input+select_1_text+"</td><td>"+unit_cost+"</td><td>"+quantity+"</td><td>"+total_cost+"</td><td><button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button></td></tr>");
 
-		/*
-		See those group of letters up there^?
-		They just get the M@#$%^&*# Values of the M%*!@#*!@# Form on the modal.
-		More inputs?
-		Just add them there.
-
-		Also YOU should validate that shit.
-		Make sure the data is not already int the table.
-		*/
-
-		input="<input type='hidden' name='select_1[]' value='"+select_1_val+"'> <input type='hidden' name='text_quantity[]' value='"+text_quantity+"'><input type='hidden' name='text_stockOnhand[]' value='"+text_stockOnhand+"'><input type='hidden' name='after[]' value='"+text_after+"'>" ;
-		/*
-		SEE THIS SHIT RIGHT HERE ^?
-		Thats what gets sent for saving. 
-		See the M*@#$%^&* square brackets? They allow the data to be passed as an array. That shit is important.
-		*/
-
-		$("#table_container").append("<tr><td>"+select_1_val+"</td><td>"+select_1_text+"</td><td>"+text_quantity+"</td><td>"+text_stockOnhand+"</td><td>"+text_after+"</td><td><button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button></td></tr>");
-		/*
-		UPTOP ^?
-		This is what adds the data to the table.
-
-		that in the end? That deletes the whole row.
-		*/
+        $("#product_id").val('');
+        $("#qty").val('');
+        $("#unit_cost").val('');
 	}
 
 	function removeRow(del_button) 
