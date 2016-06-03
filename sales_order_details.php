@@ -221,7 +221,7 @@
                         // var_dump($sale['sales_status_id']<>3);
                     ?>
                     </li> -->
-                    <li <?php echo ($sale['sales_status_id']<>3)?'class="disabled"':''; ?> <?php echo $tab=="2"?'class="active"':''?> ><a href="sales_payments.php?id=<?php echo $_GET['id'] ?>" <?php echo ($sale['sales_status_id']<>3)?'onclick="alert(\''.$no_msg.'\');return false;"':''; ?>>Payments</a>
+                    <li <?php echo ($sale['sales_status_id']==1 || $sale['sales_status_id']==2)?'class="disabled"':''; ?> <?php echo $tab=="2"?'class="active"':''?> ><a href="sales_payments.php?id=<?php echo $_GET['id'] ?>" <?php echo ($sale['sales_status_id']==1 || $sale['sales_status_id']==2)?'onclick="alert(\''.$no_msg.'\');return false;"':''; ?>>Payments</a>
                     </li>
                    <!--  <li> <a href="sales_payments.php?id=<?php echo $_GET['id'] ?>">Payments</a>
                     </li> -->

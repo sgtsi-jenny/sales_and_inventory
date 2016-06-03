@@ -32,13 +32,16 @@
                     $product_id=htmlspecialchars($row['product_id']);
                     // var_dump($product_id);
                     // var_dump($total);
-                    $con->myQuery("UPDATE products SET current_quantity='$total' WHERE product_id=$product_id",$inputs);
+                    // $con->myQuery("UPDATE products SET current_quantity='$total' WHERE product_id=$product_id",$inputs);
                
                 endforeach;
 				// die;
 				date_default_timezone_set('Asia/Manila');
 				$now = new DateTime();
+				$inputs['date_modified']=$now->format('Ymd');
 				$inputs['sales_master_id']=$inputs['sales_master_id'];
+				// var_dump($inputs);
+				// die;
 				$con->myQuery("UPDATE sales_master SET sales_status_id='$sales_status_id',date_modified=:date_modified WHERE sales_master_id=:sales_master_id",$inputs);
 				
 				Alert("Your inventory has been allocated","success");

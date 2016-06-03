@@ -108,9 +108,7 @@
 
 			}
 			else{
-				// var_dump("UPDATE");
-				// var_dump($inputs);
-				// die;
+				// UPDATE
 
 				date_default_timezone_set('Asia/Manila');
 				$now = new DateTime();
@@ -140,6 +138,8 @@
 				$field_count=count($inputs);
 				$arr_count=count($inputs['product_id']);
 
+				$con->myQuery("DELETE FROM sales_details WHERE sales_master_id=?",array($inputs['sales_master_id']));
+
 				for ($i=0; $i < $arr_count; $i++) { 
 					// var_dump($inputs['product_id'][$i]);
 					// var_dump($inputs['prod_name'][$i]);
@@ -153,13 +153,13 @@
 						'sales_master_id' => $inputs['sales_master_id'],
 						'total_cost' => $total_cost
 						);
-					var_dump($params);
+					// var_dump($params);
 					
-					// $con->myQuery("INSERT INTO sales_details (product_id,sales_master_id,quantity,unit_cost,total_cost,discount,tax) VALUES (:product_id,:file_id,:qty,:selling_price,:total_cost,:discount,:tax)", $params);		
+					$con->myQuery("INSERT INTO sales_details (product_id,sales_master_id,quantity,unit_cost,total_cost,discount,tax) VALUES (:product_id,:sales_master_id,:qty,:selling_price,:total_cost,:discount,:tax)", $params);		
 				}	
-				die;
+				// die;
 
-				$con->myQuery("UPDATE sales_details SET product_id,sales_master_id,quantity,unit_cost,total_cost,discount,tax WHERE supplier_id=:supplier_id",$inputs);
+				// $con->myQuery("UPDATE sales_details SET product_id,sales_master_id,quantity,unit_cost,total_cost,discount,tax WHERE supplier_id=:supplier_id",$inputs);
 				
 				Alert("Update successful","success");
 				redirect("sales_order_details.php?id=".$inputs['sales_master_id']);

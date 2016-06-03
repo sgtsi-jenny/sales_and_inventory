@@ -109,7 +109,7 @@
                 <div class="tab-content">
                   <div class="active tab-pane" >
 
-                <form class='form-horizontal' method='POST' action='save_sales_order.php'>
+                <form class='form-horizontal' method='POST' action='save_sales_order.php' id="product_temp">
                 <div class="box box-primary">
                     <div class="box-body">
                     <div class="row">
@@ -201,7 +201,7 @@
                                     </div>
                                     <div class = "col-md-8  ">
                                         <select class='form-control' id='product_id' onchange='get_price2()' name='product_id' data-placeholder="Select a product" <?php echo!(empty($data))?"data-selected='".$data['product_id']."'":NULL ?>style='width:100%'  >
-                                                <option>Select Product</option>
+                                                <option value=''>Select Product</option>
                                                 <?php
                                                     foreach ($prod as $key => $row):
                                                 ?>
@@ -369,6 +369,8 @@
   </div>
 
 <script type="text/javascript">
+var is_edit=false;
+var current_row="";
   $(function () {
         $('#ResultTable').DataTable();
       });
@@ -378,8 +380,54 @@
         $("#current_quantity").val($("#product_id option:selected").data("qty"));        
         $("#prod_name2").val($("#product_id option:selected").html());
     }
-  
+  function validate_add_to_table() {
+    var return_value=true;
+    $("input[name='product_id[]']").each(function (d,i) {
+
+        if($("#product_id").val()==$(i).val()){
+            return_value=false;
+        }
+    });
+        return return_value;
+  }
+  function validate_form() {
+    var return_value=true;
+    var str_error="";
+      if($("#product_id").val()=='' || $("#product_id").val()==0){
+        str_error+="Please select a product.\n";
+        return_value=false;
+      }
+
+      if($("#quantity").val()=='' || $("#quantity").val()==0){
+        str_error+="Invalid quantity.\n";
+        return_value=false;
+      }
+
+      if($("#selling_price").val()=='' || $("#selling_price").val()==0){
+        str_error+="Invalid price.\n";
+        return_value=false;
+      }
+      if(str_error!==""){
+        alert("You have the following error: \n"+str_error);
+      }
+      return return_value;
+  }
   function AddToTable() {
+        if(validate_form()==false){
+            return false;
+        }
+        // console.log(current_row);
+        // console.log(validate_add_to_table());
+
+        if(validate_add_to_table()===false && current_row===""){
+            alert("This product is already added.");
+            return false;
+        }
+
+        if(current_row!==""){
+            $(current_row).remove();
+        }
+        // return false;
         select_1_val=$("select[name='product_id']").val();
         select_1_text=$("select[name='product_id'] :selected").text()
         quantity=$("input[name='quantity']").val();
@@ -389,7 +437,7 @@
         tax = $("input[name='tax']").val();
         prod_name = $("input[name='prod_name']").val();
         input="<input type='hidden' name='product_id[]' value='"+select_1_val+"'> <input type='hidden' name='quantity[]' value='"+quantity+"'><input type='hidden' name='current_quantity[]' value='"+current_quantity+"'><input type='hidden' name='selling_price[]' value='"+selling_price+"'><input type='hidden' name='discount[]' value='"+discount+"'><input type='hidden' name='prod_name[]' value='"+prod_name+"'><input type='hidden' name='tax[]' value='"+tax+"'><input type='hidden' name='total_price[]' value='"+(quantity*selling_price)+"'>" ;
-   
+
         $("#table_container").append("<tr><td>"+input+select_1_text+"</td><td>"+quantity+"</td><td>"+current_quantity+"</td><td>"+selling_price+"</td><td>"+discount+"</td><td>"+tax+"</td><td>"+(quantity*selling_price)+"</td><td> <button type='button' onclick='edit(this)' class='btn btn-brand fa fa-pencil'></span></button><button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button></td></tr>");
 
         $("#product_id").val('');
@@ -398,6 +446,7 @@
         $("#current_quantity").val('');
         $("#discount").val('');
         $("#tax").val('');
+        resetTable();
         
     }
     function resetTable(){
@@ -410,6 +459,7 @@
         $("#tax").val('');
         $("#product_id").val('Select Product');
         $("#product_id").attr("disabled",false);
+        current_row="";
     }
     function removeRow(del_button) {
         // body...
@@ -432,7 +482,7 @@
         row=$(edit_button).parent().parent();
         inputs=$(row).children(1).children();
 
-       //console.log(inputs);
+       current_row=$(edit_button).parent().parent();
 
         $("#product_id").val($(inputs[0]).val()).change();
         $("#product_id").attr("disabled",true);
