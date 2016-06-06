@@ -78,15 +78,18 @@
     $invoice=$con->myQuery("SELECT invoice_master_id FROM invoice_master im INNER JOIN sales_master sm ON sm.sales_master_id=im.sales_master_id")->fetchAll(PDO::FETCH_ASSOC);
     $prod=$con->myQuery("SELECT product_id,product_name,selling_price,current_quantity FROM products")->fetchAll(PDO::FETCH_ASSOC);
     $sales_stat=$con->myQuery("SELECT name FROM sales_status where sales_status_id=1")->fetchAll(PDO::FETCH_ASSOC);
+    $payment_type=$con->myQuery("SELECT payment_type_id,name FROM sales_payment_type")->fetchAll(PDO::FETCH_ASSOC);
     
+    // var_dump ($invoice_id);
+    // die;
     
-    makeHead("Sales");
+    makeHead("Sales Payment");
 ?>
 <script type="application/javascript">
   function isNumberKey(evt)
       {
          var charCode = (evt.which) ? evt.which : event.keyCode
-         if (charCode > 31 && (charCode < 48 || charCode > 57))
+         if (charCode > 31 && (charCode < 46 || charCode > 57))
             return false;
          return true;
       }
@@ -123,11 +126,11 @@
         </section>
         <section class="content-header">
                     <div class="row">
-                    <div class='col-sm-12'>
-                                <input type='hidden' name='sales_master_id' value='<?php echo !empty($supplier)?$supplier['supplier_id']:""?>'>
-                                <?php
+                    <?php
                                     alert();
                                 ?>
+                    <div class='col-sm-12'>
+                                <input type='hidden' name='sales_master_id' value='<?php echo !empty($supplier)?$supplier['supplier_id']:""?>'>
                                 <label class='col-md-2 text-left' > Order Number</label>
                                 <div class='form-group'>
                                     <div class='col-sm-12 col-md-3'>
@@ -196,9 +199,8 @@
                     </div>
                     </div>
         </section>
-                            <?php
-                                Alert();
-                            ?>
+                            
+
         <section class="content">
           <!-- Main row -->
           <div class="row">
@@ -217,54 +219,85 @@
                 </ul>
                 <div class="tab-content">
                   <div class="active tab-pane" >
+                            <div class='panel-body'>
+                                    <div class='col-md-12 text-right'>
+                                        <div class='col-md-12 text-right'>
+                                        <!-- <button class='btn btn-brand' data-toggle="collapse" data-target="#collapseForm" aria-expanded="false" aria-controls="collapseForm"> -->
+                                        <button type="button" class="btn btn-brand" data-toggle="modal" data-target="#myModal">Add Payment <span class='fa fa-plus'></span> </button>
+                                        </div>                            
+                                    </div> 
+                            </div>
 
                     <table id='ResultTable' class='table table-bordered table-striped'>
                           <thead>
                             <tr>
-                                                <th class='text-center' style='min-width:200px'>Product Name</th>
-                                                <th class='text-center'>Quantity</th>
-                                                <th class='text-center'>Available</th>
-                                                <th class='text-center'>Price (Php)</th>
-                                                <th class='text-center'>Discount</th>
-                                                <th class='text-center'>Tax</th>
-                                                <th class='text-center'>Total (Php)</th>
+                                                <th class='text-left' style='min-width:200px'>Payment Type</th>
+                                                <th class='text-center'>Amount (Php)</th>
+                                                <th class='text-center'>Payment Date</th>
+                                                <th class='text-center'>Balance</th>
+                                                <th class='text-center'>Reference</th>
+                                                <th class='text-center'>Action</th>
                                                 
                             </tr>
                           </thead>
                           <tbody>
-                                            <?php                                              
-                                                $opportunities=$con->myQuery("SELECT 
-                                                prod.product_name,
-                                                sd.quantity,
-                                                prod.current_quantity AS available,
-                                                sd.unit_cost,
-                                                sd.discount,
-                                                sd.tax,
-                                                sd.total_cost
-                                                FROM sales_master sm
-                                                INNER JOIN customers ON sm.customer_id=customers.customer_id
-                                                INNER JOIN sales_status ss ON sm.sales_status_id=ss.sales_status_id
-                                                INNER JOIN sales_details sd ON sm.sales_master_id=sd.sales_master_id
-                                                INNER JOIN products prod ON prod.product_id=sd.product_id
+                                            <?php
+                                                $t_amount=0;                                           
+                                                $payments=$con->myQuery("SELECT 
+                                                spt.name,
+                                                sp.amount,
+                                                DATE_FORMAT(sp.pay_date,'%m/%d/%Y') as pay_date,
+                                                sp.amount as balance,
+                                                sp.reference,
+                                                (SELECT SUM(sd.total_cost) FROM sales_details sd WHERE sd.sales_master_id=sm.sales_master_id) AS total,
+                                                sp.sales_payment_id
+                                                FROM sales_payments sp
+                                                INNER JOIN sales_master sm ON sp.sales_master_id=sm.sales_master_id
+                                                INNER JOIN invoice_master im ON sp.invoice_master_id=im.invoice_master_id
+                                                INNER JOIN sales_payment_type spt ON spt.payment_type_id=sp.type
                                                 WHERE sm.sales_master_id=?",array($_GET['id']))->fetchAll(PDO::FETCH_ASSOC);
-                                                foreach ($opportunities as $row):
+                                                foreach ($payments as $row):
                                             ?>
                                             <tr>
                                                         <?php
                                                             foreach ($row as $key => $value):  
                                                         ?>
                                                         <?php
-                                                            if($key=='unit_cost'):
+                                                            if($key=='amount'):
                                                         ?> 
                                                             <td class='text-right'>
-                                                                <?php echo htmlspecialchars(number_format($row['unit_cost'],2))?></a>
+                                                                <?php echo htmlspecialchars(number_format($row['amount'],2))?></a>
+                                                            </td>
+                                                        <?php
+                                                            elseif($key=='pay_date'):
+                                                        ?> 
+                                                            <td class='text-right'>
+                                                                <?php echo htmlspecialchars($row['pay_date'])?></a>
                                                             </td>
                                                         <?php
                                                             elseif($key=='total'):
-                                                        ?>  
+                                                        ?> 
+                                                            
+                                                        <?php
+                                                            elseif($key=='balance'):
+                                                        ?>
                                                             <td class='text-right'>
-                                                                <?php echo htmlspecialchars(number_format($row['total'],2))?></a>
+                                                                <?php
+                                                                    $amount=$row['amount'];
+                                                                    $t_amount+=$amount;
+                                                                    $total_cost=$row['total'];
+                                                                    $balance=$total_cost-$t_amount;
+                                                                    echo (number_format($balance,2));
+                                                                ?>
                                                             </td>
+                                                        <?php
+                                                            elseif($key=='sales_payment_id'):
+                                                        ?>
+                                                            <td>
+                                                                <a class='btn btn-sm btn-brand' href='sales_payments.php?id=<?php echo $_GET['id'];?>&p_id=<?php echo $row['sales_payment_id'] ?>'><span class='fa fa-pencil'></span></a>
+                                                                <a class='btn btn-sm btn-danger' href='delete.php?id=<?php echo $value?>&t=org' onclick='return confirm("This customer will be deleted.")'><span class='fa fa-trash'></span></a>
+                                                            </td>
+
                                                         <?php
                                                             else:
                                                         ?> 
@@ -280,9 +313,13 @@
                                                 </tr>
                                                 <?php
                                                 endforeach;
-                                            ?>
+                                                ?>
                             
                           </tbody>
+                          <?php
+
+                          // echo $amount;
+                          ?>
                         </table>
 
                   </div><!-- /.tab-pane -->
@@ -299,48 +336,97 @@
                 <div class="modal-content">
                   <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Add Invoice</h4>
+                    <h4 class="modal-title" id="myModalLabel">Add Payment</h4>
                   </div>
                  
                       <div class="modal-body"> 
-                        <form action='save_invoice.php' method='POST'>
-                            <input type='hidden' name='invoice_master_id' value='<?php echo !empty($invoice)?$invoice['invoice_master_id']:""?>'>
+                        <form action='save_payment.php' method='POST'>
+                            <?php                                              
+                                $row=$con->myQuery("SELECT 
+                                spt.name,
+                                sum(sp.amount) as amount,
+                                sp.amount as amount1,
+                                sp.pay_date,
+                                sp.amount AS balance,
+                                sp.reference,
+                                (SELECT SUM(sd.total_cost) FROM sales_details sd WHERE sd.sales_master_id=sm.sales_master_id) AS total
+                                FROM sales_payments sp
+                                INNER JOIN sales_master sm ON sp.sales_master_id=sm.sales_master_id
+                                INNER JOIN invoice_master im ON sp.invoice_master_id=im.invoice_master_id
+                                INNER JOIN sales_payment_type spt ON spt.payment_type_id=sp.type
+                                WHERE sp.sales_master_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
+                                // foreach ($payments as $row):
+
+                                $total_cost=$con->myQuery("SELECT 
+                                (SELECT SUM(sd.total_cost) FROM sales_details sd WHERE sd.sales_master_id=sm.sales_master_id) AS total FROM sales_master sm
+                                WHERE sm.sales_master_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
+
+                                $invoice_id=$con->myQuery("SELECT im.invoice_master_id FROM invoice_master im INNER JOIN sales_master sm ON im.sales_master_id=sm.sales_master_id WHERE sm.sales_master_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
+                                if(!empty($_GET['p_id'])){
+                                    $sales_payment=$con->myQuery("SELECT type,amount,DATE_FORMAT(pay_date,'%m/%d/%Y')as pay_date,reference FROM sales_payments WHERE sales_payment_id=?",array($_GET['p_id']))->fetch(PDO::FETCH_ASSOC);
+                                    // var_dump($sales_payment);
+                                }
+
+                                // foreach ($invoice_id as $rows):
+                            ?>
+
+
+                            <section align='right'>
+                                <label>Amount to Pay: </label>
+                                    <?php
+                                        // $amount=0;
+                                        $total=$total_cost['total'];
+                                        if(empty($payments)){
+                                            $amount=0;
+                                            $balance=$total-$amount;
+                                        }
+                                        else{
+                                            $amount=$row['amount'];
+                                            $balance=$total-$amount;
+                                        }
+                                        echo (number_format($balance,2));
+                                    ?>
+                                <!-- <input type="text" id="total_cost" name='total_cost' value='' readonly> -->
+                            </section>
+                            <input type='hidden' name='payment_id' value=''>
                             <input type='hidden' name='sales_master_id' value='<?php echo htmlspecialchars($_GET['id']) ?>'>
-                            <input type='hidden' name='customer_id' value='<?php echo !empty($sale)?$sale['customer_id']:""?>'>
-                            <input type='hidden' name='date_issue' value='<?php echo !empty($sale)?$sale['date_issue']:""?>'>
-                            <input type='hidden' name='quantity' value='<?php echo !empty($sale)?$sale['quantity']:""?>'>
+                            <?php
+                                $i_id=$invoice_id['invoice_master_id'];
+                                // var_dump($row);
+                                // echo ($i_id);
+                            ?>
+                            <input type='hidden' name='invoice_master_id' value='<?php echo $i_id ?>'>
                             <div class="form-group">
-                                <label>Due Payement</label>
-                                <input type="date" class="form-control" id="due_payment"  name='due_payment' value='<?php echo !empty($sale)?htmlspecialchars($sale['due_payment']):''; ?>' required>
+                                <label>Payment Date</label>
+                                <input type="date" class="form-control" id="pay_date"  name='pay_date' value='<?php echo !empty($sales_payment)?htmlspecialchars($sales_payment['pay_date']):''; ?>' required>
                             </div>
 
                             <div class="form-group">
-                                <label>Bill To</label>
-                                    <select class='form-control' name='bill_to' id='bill_to'  onchange='get_address()' data-placeholder="Select a Customer" <?php echo!(empty($customer_add))?"data-selected='".$customer_add['label_address']."'":NULL ?> required>
-                                                    <?php
-                                                        echo makeOptions($customer_add,'Select Customer')
-                                                    ?>
-                                    </select>
+                                <label>Payment Type</label>
+                                <select class='form-control' name='payment_type' data-placeholder="Select Payment Type" <?php echo!(empty($payment_type))?"data-selected='".$payment_type['payment_type_id']."'":NULL ?> required>
+                                        <?php
+                                            echo makeOptions($payment_type,'Select Payment Type',NULL,'',!(empty($sales_payment))?$sales_payment['type']:NULL)
+                                        ?>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Amount</label>
+                                <input type="text" class="form-control" id="amount" placeholder="0" name='amount' value='<?php echo !empty($sales_payment)?htmlspecialchars($sales_payment['amount']):''; ?>'  onkeypress='return isNumberKey(event)' required>
                             </div>
 
                             <div class="form-group">
-                                <label>Ship To</label>
-                                    <select class='form-control' name='ship_to' id='ship_to'  onchange='get_address()' data-placeholder="Select a Customer" <?php echo!(empty($customer_add))?"data-selected='".$customer_add['label_address']."'":NULL ?> required>
-                                                    <?php
-                                                        echo makeOptions($customer_add,'Select Customer')
-                                                    ?>
-                                        </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label>Comment</label>
-                                <textarea class='form-control' name='description' placeholder='Enter comments to your customer' value='<?php echo !empty($organization)?$organization['description']:"" ?>'></textarea>
+                                <label>Reference</label>
+                                <textarea class='form-control' name='reference' placeholder='Payment Reference' value='<?php echo !empty($sales_payment)?$sales_payment['reference']:"" ?>'><?php echo !empty($sales_payment)?$sales_payment['reference']:"" ?></textarea>
                             </div>
 
                             <div class="modal-footer">
                                 <button class="btn btn-brand" type="submit" ">Save</button>
                                 <button type="button" class="btn btn-default"  data-dismiss="modal">Cancel</button>
                             </div>
+                            <?php
+                                // endforeach;
+                                // endforeach;
+                            ?>
                         </form>
                   </div>
                 </div>
@@ -371,8 +457,8 @@
             if(field.value==""){
             
                 switch(field.name){
-                    case "due_payment":
-                        str_error+="Please provide due payment date. \n";
+                    case "pay_date":
+                        str_error+="Please provide payment date. \n";
                         break;
                 }
                 
@@ -387,6 +473,17 @@
             return true
         }
     }
+
+
+<?php
+    if(!empty($sales_payment)):
+?>
+    $(document).ready(function(){
+        $("#myModal").modal("show");
+    });
+<?php
+    endif;
+?>
 </script>
 
 <?php

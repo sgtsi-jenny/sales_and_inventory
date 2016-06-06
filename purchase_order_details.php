@@ -127,29 +127,30 @@
                                     <tr>
                                         <th class='text-center' style='min-width:200px'>Product Name</th>
                                         <th class='text-center'>Order Quantity</th>
-                                        <th class='text-center'>Quantity Received</th>
-                                        <th class='text-center'>Price (Php)</th>
-                                        <th class='text-center'>Discount</th>
-                                        <th class='text-center'>Total (Php)</th>
-                                        <th class='text-center'>Action</th>
+                                        <th class='text-center'>Unit Cost</th>
+                                        <th class='text-center'>Total Cost</th>
+                                        <th class='text-center'>PO Status</th>
+                                        <th class='text-center'>Payment Status</th>
+                                       
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php                                              
-                                        $opportunities=$con->myQuery("SELECT 
-                                            prod.product_name,
-                                            sd.quantity,
-                                            prod.current_quantity AS available,
-                                            sd.unit_cost,
-                                            sd.discount,
-                                            sd.tax,
-                                            (SELECT SUM(sd.total_cost) FROM sales_details sd WHERE sd.sales_master_id=sm.sales_master_id) AS total
-                                            FROM sales_master sm
-                                            INNER JOIN customers ON sm.customer_id=customers.customer_id
-                                            INNER JOIN sales_status ss ON sm.sales_status_id=ss.sales_status_id
-                                            INNER JOIN sales_details sd ON sm.sales_master_id=sd.sales_master_id
-                                            INNER JOIN products prod ON prod.product_id=sd.product_id
-                                            WHERE sm.sales_master_id=?",array($_GET['id']))->fetchAll(PDO::FETCH_ASSOC);
+                                        $opportunities=$con->myQuery("SELECT
+                                        products.product_name as 'Name',
+                                        po_details.qty_ordered 'Quantity Ordered',
+                                        po_details.unit_cost as 'Unit Cost',
+                                        po_details.total_cost as 'Total Cost',
+                                        po_status.`name` as 'PO Status',
+                                        payment_status.`name` as 'Payment Status'
+                                        FROM
+                                        po_master
+                                        INNER JOIN po_details ON po_master.po_master_id = po_details.po_master_id
+                                        INNER JOIN suppliers ON po_master.supplier_id = suppliers.supplier_id
+                                        INNER JOIN payment_status ON po_master.payment_status_id = payment_status.payment_status_id
+                                        INNER JOIN po_status ON po_master.po_status_id = po_status.po_status_id
+                                        INNER JOIN products ON po_details.product_id = products.product_id
+                                        WHERE po_master.po_master_id=?",array($_GET['id']))->fetchAll(PDO::FETCH_ASSOC);
                                         foreach ($opportunities as $row):
                                     ?>
                                     <tr>

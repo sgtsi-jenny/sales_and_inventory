@@ -36,8 +36,10 @@
                
                 endforeach;
 				// die;
-				
-				$con->myQuery("UPDATE sales_master SET sales_status_id='$sales_status_id' WHERE sales_master_id=:sales_master_id",$inputs);
+				date_default_timezone_set('Asia/Manila');
+				$now = new DateTime();
+				$inputs['sales_master_id']=$inputs['sales_master_id'];
+				$con->myQuery("UPDATE sales_master SET sales_status_id='$sales_status_id',date_modified=:date_modified WHERE sales_master_id=:sales_master_id",$inputs);
 				
 				Alert("Your inventory has been allocated","success");
 				redirect("sales_order_details.php?id=".$inputs['sales_master_id']);
