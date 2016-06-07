@@ -69,14 +69,14 @@
 				   $total_cost+= $value;
 				}
 
-				
+				$total_unit_cost=$inputs['total_price'];
 				unset($inputs['customer_id']);
 				unset($inputs['description']);
 				unset($inputs['current_quantity']);
 				unset($inputs['total_price']);
 				unset($inputs['prod_name']);
 
-				// var_dump($inputs);
+				// var_dump($total_unit_cost);
 				// die;
 
 				$con->myQuery("INSERT INTO sales_master (date_issue,total_amount,customer_id,user_id,sales_status_id,payment_status_id,description,date_modified) VALUES ('$date_issue','$total_cost','$customer_id','$user_id','1','1','$description','$date_modified')", $inputs);
@@ -97,13 +97,13 @@
 						'discount' => $inputs['discount'][$i],
 						'tax' => $inputs['tax'][$i],
 						'file_id' => $file_id,
-						'total_cost' => $total_cost
+						'total_cost' => $total_unit_cost[$i]
 						);
 					// var_dump($params);
 					// die;
 					$con->myQuery("INSERT INTO sales_details (product_id,sales_master_id,quantity,unit_cost,total_cost,discount,tax) VALUES (:product_id,:file_id,:qty,:selling_price,:total_cost,:discount,:tax)", $params);		
 				}			
-				//die;
+				// die;
 				Alert("Sales Order ".$file_id." succesfully created","success");
 				redirect("sales_order_details.php?id=".$file_id);
 				

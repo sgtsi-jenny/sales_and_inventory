@@ -56,7 +56,8 @@
         (SELECT SUM(sd.quantity) FROM sales_details sd WHERE sd.sales_master_id=sm.sales_master_id) AS t_qty,
         (SELECT SUM(sd.total_cost) FROM sales_details sd WHERE sd.sales_master_id=sm.sales_master_id) AS total,
         (SELECT address FROM customer_address c_add WHERE sm.bill_to=c_add.customer_add_id) AS bill_to,
-        (SELECT address FROM customer_address c_add WHERE sm.ship_to=c_add.customer_add_id) AS ship_to
+        (SELECT address FROM customer_address c_add WHERE sm.ship_to=c_add.customer_add_id) AS ship_to,
+        sm.terms
         FROM sales_master sm
         INNER JOIN customers ON sm.customer_id=customers.customer_id
         INNER JOIN sales_status ss ON sm.sales_status_id=ss.sales_status_id
@@ -305,7 +306,7 @@
         </section><!-- /.content -->
   </div>
 
-  <!-- Modal -->
+  <!-- Invoice Modal -->
             <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -324,6 +325,16 @@
                             <!-- <?php
                                 // var_dump($sale['t_qty']);
                             ?> -->
+                            <div class="form-group">
+                                <label>Terms</label>
+                                <input type="text" class="form-control" id="terms"  name='terms' placeholder="Enter number of days" value='<?php echo !empty($sale)?htmlspecialchars($sale['terms']):''; ?>' onkeypress='return isNumberKey(event)' required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Due Issued</label>
+                                <input type="date" class="form-control" id="issued_date"  name='due_payment' value='' required>
+                            </div>
+
                             <div class="form-group">
                                 <label>Due Payement</label>
                                 <input type="date" class="form-control" id="due_payment"  name='due_payment' value='<?php echo !empty($sale)?htmlspecialchars($sale['due_payment']):''; ?>' required>
@@ -361,7 +372,7 @@
                 </div>
               </div>
             </div>
-            <!-- End Modal -->
+            <!-- End Invoice Modal -->
 
 
 
@@ -475,7 +486,7 @@
                                 <label>Bill To</label>
                                     <select class='form-control' name='bill_to' id='bill_to'  onchange='get_address()' data-placeholder="Select a Customer" <?php echo!(empty($customer_add))?"data-selected='".$customer_add['label_address']."'":NULL ?> required>
                                                     <?php
-                                                        echo makeOptions($customer_add,'Select Billing address')
+                                                        echo makeOptions($customer_add,'Select Billing address of customer')
                                                     ?>
                                     </select>
                             </div>
@@ -484,14 +495,14 @@
                                 <label>Ship To</label>
                                     <select class='form-control' name='ship_to' id='ship_to'  onchange='get_address()' data-placeholder="" <?php echo!(empty($customer_add))?"data-selected='".$customer_add['label_address']."'":NULL ?> required>
                                                     <?php
-                                                        echo makeOptions($customer_add,'Select Shipping address')
+                                                        echo makeOptions($customer_add,'Select Shipping address of customer')
                                                     ?>
                                         </select>
                             </div>
 
                             <div class="form-group">
                                 <label>Ship From</label>
-                                <input type="text" class="form-control" id="ship_from" placeholder="" name='ship_from' value='<?php echo !empty($shipment)?htmlspecialchars($shipment['ship_from']):''; ?>'>
+                                <input type="text" class="form-control" id="ship_from" placeholder="Enter Shipping Address of Company" name='ship_from' value='<?php echo !empty($shipment)?htmlspecialchars($shipment['ship_from']):''; ?>'>
                             </div>
 
                             <div class="form-group">

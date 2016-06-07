@@ -43,7 +43,7 @@
 				// var_dump($inputs);
 				// die;
 				//$inputs['name']=$_POST['name'];
-				$con->myQuery("INSERT INTO invoice_master(sales_master_id,bill_to,ship_to,customer_id,payment_due,date_issued,total_units,description) VALUES(:sales_master_id,:bill_to,:ship_to,:customer_id,:due_payment,:date_issue,:quantity,:description)",$inputs);
+				$con->myQuery("INSERT INTO invoice_master(sales_master_id,bill_to,ship_to,customer_id,payment_due,date_issued,total_units,description,terms) VALUES(:sales_master_id,:bill_to,:ship_to,:customer_id,:due_payment,:date_issue,:quantity,:description,:terms)",$inputs);
 				date_default_timezone_set('Asia/Manila');
 				$now = new DateTime();
 				$sm['sales_master_id']=$inputs['sales_master_id'];
