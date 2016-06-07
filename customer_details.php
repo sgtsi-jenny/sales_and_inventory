@@ -10,8 +10,7 @@
     // }
 
     $tab="1";
-       
-    if(empty($_GET['id'])){
+     if(empty($_GET['id'])){
         //Modal("No Account Selected");
         redirect("customers.php");
         die();

@@ -40,6 +40,7 @@
 		<!-- Main row -->
 		<div class="row">
 			<div class='col-sm-12 col-md-12'>
+			<form method='POST' action='save_purchase_order.php'>
 				<div class="box box-primary">
 					<div class="box-body">
 						<div class='form-group'>
@@ -47,6 +48,10 @@
 								<div class = 'col-md-6' >
 									<div class = 'row'>
 										<div class = 'col-md-10'>
+											<input type='hidden' name='po_master_id' value=''>
+			                                <?php
+			                                    alert();
+			                                ?>
 											<br>
 											<h4 class='control-label'> PO Number:  <?php echo 'PO'.$po_num['po_master_id'];?></h4>
 											<label class = 'control-label'>Date created: </label><?php echo date("m/d/Y");?>
@@ -74,6 +79,16 @@
 															
 														</div>
 													</div>
+													<div class='form-group'>
+													<div class ="row">
+														<div class = "col-md-3">
+															<label class='control-label'> Ship To: </label>
+														</div>
+														<div class = "col-md-8">
+															<input type="text" class="form-control " id="ship_to" placeholder="Ship To" name='ship_to' value='' required >
+														</div>
+													</div>
+											</div>
 												</div>
 
 											</form>
@@ -175,6 +190,7 @@
 						</div>
 					</div>
 				</div>  
+				</form>
 			</div>
 		</div>
 	</section>
@@ -203,9 +219,9 @@
         quantity = $("input[name='qty']").val();
         total_cost = unit_cost * quantity;
         prod_name = $("input[name='prod_name']").val();
-        input="<input type='hidden' name='product_id[]' value='"+select_1_val+"'> <input type='hidden' name='unit_cost[]' value='"+unit_cost+"'><input type='hidden' name='quantity[]' value='"+quantity+"'><input type='hidden' name='prod_name[]' value='"+prod_name+"'>" ;
+        input="<input type='hidden' name='product_id[]' value='"+select_1_val+"'> <input type='hidden' name='quantity[]' value='"+quantity+"'><input type='hidden' name='unit_cost[]' value='"+unit_cost+"'><input type='hidden' name='total_cost[]' value='"+total_cost+"'><input type='hidden' name='prod_name[]' value='"+prod_name+"'>" ;
    
-        $("#table_container").append("<tr><td>"+input+select_1_text+"</td><td>"+unit_cost+"</td><td>"+quantity+"</td><td>"+total_cost+"</td><td><button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button></td></tr>");
+        $("#table_container").append("<tr><td>"+input+select_1_text+"</td><td>"+quantity+"</td><td>"+unit_cost+"</td><td>"+total_cost+"</td><td><button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button></td></tr>");
 
         $("#product_id").val('');
         $("#qty").val('');

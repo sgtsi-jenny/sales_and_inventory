@@ -15,6 +15,7 @@
 		//Validate form inputs
 		$inputs=$_POST;	
 
+		
        // $required_fieds=array(
 		//	"c_id"=>"Select Contact Name. <br/>"
 		//	);
@@ -34,10 +35,10 @@
 		if($errors!=""){
 			Alert("You have the following errors: <br/>".$errors,"danger");
 			if(empty($inputs['customer_id'])){
-				redirect("customer_maintenance.php");
+				redirect("customers.php");
 			}
 			else{
-				redirect("customer_maintenance.php");
+				redirect("customers.php");
 			}
 			die;
 		}

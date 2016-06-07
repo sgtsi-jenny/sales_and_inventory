@@ -10,7 +10,8 @@
     // }
 
     //echo $_GET['id'];
-    //die();
+    //  var_dump($_GET['p_id']);
+    // die();
 
     $tab="1";
     if(!empty($_GET['tab']) && !is_numeric($_GET['tab']))
@@ -35,7 +36,7 @@
     if(empty($_GET['id']))
     {
         //Modal("No Account Selected");
-        redirect("sales.php");
+        redirect("purchases.php");
         die();
     }
     else{
@@ -46,7 +47,6 @@
                             s.address AS supplier_address,
                             s.email AS supplier_email,
                             s.contact_number AS supplier_contact,
-                            pm.bill_to,
                             pm.purchased_date,
                             ps.name AS po_status
                         FROM po_master pm
@@ -75,7 +75,10 @@
     <section class="content-header" align="right">
         <a href='purchases.php' class='btn btn-default'><span class='glyphicon glyphicon-arrow-left'></span> Back</a>
     </section>
+
+    
     <section class="content-header">
+
         <h1>
             <img src="uploads/summary_organizations.png" width="50" height="50" title="" alt="" /> 
             <?php echo htmlspecialchars($po['supplier_name']) ?> <!-- SUPPLIER NAME -->
@@ -101,11 +104,11 @@
         </div>
         <br>
         <div class='row'>
-            <div class='col-xs-12'>
+            <!--<div class='col-xs-12'>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <strong>Bill To: </strong> 
-                <em><?php echo htmlspecialchars($po['bill_to'])?></em> <!-- REQUESTOR'S ADDRESS -->
-            </div>
+                <em><?php echo htmlspecialchars($po['bill_to'])?></em>--> <!-- REQUESTOR'S ADDRESS -->
+            <!--</div>-->
             <div class='col-xs-12'>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <strong>Purchased Date: </strong>
@@ -120,42 +123,75 @@
         <div class="row">
             <div class='col-md-12'>
                 <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs">
+                    <!-- <?php
+                        $no_employee_msg=' Personal Information must be saved.';
+                    ?> -->
+                    <li <?php echo $tab=="1"?'class="active"':''?>><a href="" >Purchase Details</a>
+                    </li>
+                    <li> <a href="po_payments.php?id=<?php echo $_GET['id'] ?>">Payments</a>
+               
+                </ul>
                     <div class="tab-content">
                         <div class="active tab-pane" >
                             <table id='ResultTable' class='table table-bordered table-striped'>
                                 <thead>
                                     <tr>
+                                        <th class='text-center'>id</th>
                                         <th class='text-center' style='min-width:200px'>Product Name</th>
                                         <th class='text-center'>Order Quantity</th>
+                                        <th class='text-center'>Received Quantity</th>
                                         <th class='text-center'>Unit Cost</th>
-                                        <th class='text-center'>Total Cost</th>
-                                        <th class='text-center'>PO Status</th>
-                                        <th class='text-center'>Payment Status</th>
+                                        <th class='text-center'>Total Cost</th>                 
+                                        <th>Action</th> 
                                        
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php                                              
-                                        $opportunities=$con->myQuery("SELECT
-                                        products.product_name as 'Name',
-                                        po_details.qty_ordered 'Quantity Ordered',
-                                        po_details.unit_cost as 'Unit Cost',
-                                        po_details.total_cost as 'Total Cost',
-                                        po_status.`name` as 'PO Status',
-                                        payment_status.`name` as 'Payment Status'
+                                        $po_details=$con->myQuery("SELECT
+                                        po.product_id,
+                                        po.Name,
+                                        po.QuantityOrdered,
+                                        qtyReceived.qty_received as 'QuantityReceived',
+                                        po.UnitCost,
+                                        po.TotalCost
                                         FROM
-                                        po_master
-                                        INNER JOIN po_details ON po_master.po_master_id = po_details.po_master_id
-                                        INNER JOIN suppliers ON po_master.supplier_id = suppliers.supplier_id
-                                        INNER JOIN payment_status ON po_master.payment_status_id = payment_status.payment_status_id
-                                        INNER JOIN po_status ON po_master.po_status_id = po_status.po_status_id
-                                        INNER JOIN products ON po_details.product_id = products.product_id
-                                        WHERE po_master.po_master_id=?",array($_GET['id']))->fetchAll(PDO::FETCH_ASSOC);
-                                        foreach ($opportunities as $row):
+                                        (SELECT
+                                            po_master.po_master_id,
+                                            products.product_id,
+                                            products.product_name AS `Name`,
+                                            po_details.qty_ordered AS `QuantityOrdered`,
+                                            po_details.unit_cost AS `UnitCost`,
+                                            po_details.total_cost AS `TotalCost`
+                                            FROM
+                                            po_master
+                                            INNER JOIN po_details ON po_master.po_master_id = po_details.po_master_id
+                                            INNER JOIN suppliers ON po_master.supplier_id = suppliers.supplier_id
+                                            INNER JOIN po_status ON po_master.po_status_id = po_status.po_status_id
+                                            INNER JOIN products ON po_details.product_id = products.product_id
+                                            WHERE po_master.po_master_id = ?
+                                            ORDER BY
+                                            products.product_id ASC) as po
+                                            LEFT OUTER JOIN (SELECT 
+                                                            po_master.po_master_id,
+                                                            po_details.product_id,
+                                                            sum(po_received.qty_received) as 'qty_received'
+                                                            FROM
+                                                            po_master
+                                                            INNER JOIN po_received ON po_master.po_master_id = po_received.po_master_id
+                                                            INNER JOIN po_details ON po_details.product_id = po_received.product_id AND po_master.po_master_id = po_details.po_master_id
+                                                            WHERE
+                                                            po_master.po_master_id=?
+                                                            GROUP BY po_details.product_id) as qtyReceived 
+                                            ON qtyReceived.product_id=po.product_id and qtyReceived.po_master_id=po.po_master_id
+                                            ORDER BY po.product_id",array($_GET['id'],$_GET['id']))->fetchAll(PDO::FETCH_ASSOC);
+                                            foreach ($po_details as $row):
                                     ?>
                                     <tr>
                                         <?php
                                             foreach ($row as $key => $value):  
+
                                         ?>
                                         <?php
                                             if($key=='unit_cost'):
@@ -175,16 +211,34 @@
                                         <td>
                                             <?php
                                                 echo htmlspecialchars($value);
+                                                
                                             ?>
                                         </td>
+
                                         <?php
                                             endif;
                                             endforeach;
+                                            if ($row['QuantityOrdered'] > $row['QuantityReceived'])
+                                            {
+                                        ?>
+                                         <td>
+
+                                            <a class="btn btn-brand" href="purchase_order_details.php?id=<?php echo $_GET['id'];?>&p_id=<?php echo $row['product_id'] ?>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Receive&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a>
+
+                                            
+                                        </td>   
+                                    
+                                        <?php
+                                           }
+                                           else
+                                           {
+                                        ?>
+                                            <td></td>
+                                        <?php
+                                            }   
+                                            endforeach;
                                         ?>
                                     </tr>
-                                    <?php
-                                        endforeach;
-                                    ?>
                                 </tbody>
                             </table>
                         </div><!-- /.tab-pane -->
@@ -195,19 +249,72 @@
     </section><!-- /.content -->
 </div>
 
+ <!-- Modal -->
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Received</h4>
+                  </div>
+                 
+                      <div class="modal-body"> 
+                        <form action='save_po_received.php' method='POST'>
+                          
+                            <input type='hidden' name='id' value='<?php echo !empty($po)?$po['po_master_id']:""?>'>    
+                            
+                            <input type='hidden' name='p_id' value='<?php echo $_GET['p_id']; ?>'>   
+                          
+
+                            <div class='form-group'>
+                                <label> Quantity Received*</label>
+                                <div>
+                                   <input name="qtyReceived" type="text" class='form-control' placeholder="Enter Quantity Received"  required>
+                                </div>
+                            </div>
+                            <div class='form-group'>
+                                <label> Reference Number*</label>
+                                <div>
+                                   <input name="RefNo" type="text" class='form-control' placeholder="Enter Reference Number"  required>
+                                </div>
+                            </div>
+
+                            <div class='form-group'>
+                                <label> Remarks</label>
+                                <div>
+                                   <input name="remarks" type="text" class='form-control' placeholder="Enter Remarks"  >
+                                </div>
+                            </div>
+
+                         
+
+                            <div class="modal-footer">
+                                <button class="btn btn-brand" type="submit" ">Save</button>
+                                <button type="button" class="btn btn-default"  data-dismiss="modal">Cancel</button>
+                            </div>
+                            
+                        </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- End Modal -->
+
 <script type="text/javascript">
 $(function () {
-$('#ResultTable').DataTable({
-dom: 'Bfrtip'
-,
-buttons: [
-// {
-//     extend:"excel",
-//     text:"<span class='fa fa-download'></span> Download as Excel File "
-// }
-]
+$('#ResultTable').DataTable();
 });
-});
+
+<?php
+    if(!empty($_GET['p_id'])):
+?>
+    $(document).ready(function(){
+        $("#myModal").modal("show");
+    });
+<?php
+    endif;
+?>
+
 </script>
 
 <?php

@@ -16,7 +16,7 @@
                         if(previousmonth.previousmonth > 0 ,previousmonth.previousmonth,'0') as 'previousmonth',
                         if(last2months.last2months > 0, last2months.last2months,'0') as 'last2months',
                         FORMAT((sum(CM.currentmonth + if(previousmonth.previousmonth > 0 ,previousmonth.previousmonth,'0') + if(last2months.last2months > 0, last2months.last2months,'0')) / 3),2) as avesales,
-                        if((sum(CM.currentmonth + if(previousmonth.previousmonth > 0 ,previousmonth.previousmonth,'0') + if(last2months.last2months > 0, last2months.last2months,'0')) / 3) > CM.currentmonth,'Fast Moving','Slow Moving') as 'status'
+                        if((sum(CM.currentmonth + if(previousmonth.previousmonth > 0 ,previousmonth.previousmonth,'0') + if(last2months.last2months > 0, last2months.last2months,'0')) / 3) >= CM.currentmonth,'Fast Moving','Slow Moving') as 'status'
                         FROM (SELECT
                             products.product_id,
                             products.product_name,
@@ -33,12 +33,12 @@
                             INNER JOIN categories ON products.category_id = categories.category_id
                             WHERE
                             sales_master.sales_status_id = '4' AND
-                            DATE_FORMAT(shipments.date_delivered - INTERVAL 1 MONTH, '%m%Y') = DATE_FORMAT( CURRENT_DATE - INTERVAL 1 MONTH, '%m%Y')
+                            DATE_FORMAT(shipments.date_delivered, '%m%Y') = DATE_FORMAT(CURRENT_DATE, '%m%Y')
                             GROUP BY
                             sales_details.product_id
                             ORDER BY
                             products.product_name ASC ) as CM
-                            LEFT OUTER JOIN (SELECT products.product_id,sum(sales_details.quantity) as 'previousmonth' from sales_details 
+                            LEFT OUTER JOIN (SELECT products.product_id,sales_details.quantity as 'previousmonth' from sales_details 
                                 INNER JOIN sales_master ON sales_master.sales_master_id = sales_details.sales_master_id
                                 INNER JOIN shipments ON sales_master.shipment_id = shipments.shipment_id 
                                 INNER JOIN products ON sales_details.product_id = products.product_id
@@ -46,7 +46,7 @@
                                 DATE_FORMAT(shipments.date_delivered, '%m%Y' ) = DATE_FORMAT( CURRENT_DATE - INTERVAL 1 MONTH, '%m%Y') and 
                                 products.product_name = product_name) as previousmonth ON previousmonth.product_id=cm.product_id
 
-                            LEFT OUTER JOIN (SELECT products.product_id,sum(sales_details.quantity) as 'last2months' from sales_details 
+                            LEFT OUTER JOIN (SELECT products.product_id,sales_details.quantity as 'last2months' from sales_details 
                                 INNER JOIN sales_master ON sales_master.sales_master_id = sales_details.sales_master_id
                                 INNER JOIN shipments ON sales_master.shipment_id = shipments.shipment_id 
                                 INNER JOIN products ON sales_details.product_id = products.product_id

@@ -11,6 +11,8 @@
         redirect("index.php");
     }
 
+    
+    
     makeHead("Purchase");
 ?>
 
@@ -57,12 +59,13 @@
                                     <?php
                                         $po=$con->myQuery("SELECT
                                                             pm.po_master_id,
-                                                            pm.po_number,
+                                                            
                                                             (SELECT NAME FROM suppliers WHERE supplier_id=pm.supplier_id) AS supplier,
                                                             pm.purchased_date,
                                                             (SELECT NAME FROM po_status WHERE po_status_id=pm.po_status_id AND is_deleted=0) AS po_status,
                                                             (SELECT SUM(total_cost) FROM po_details WHERE po_master_id=pm.po_master_id AND is_deleted=0) AS total_cost,
-                                                            (SELECT NAME FROM payment_status WHERE payment_status_id=pm.payment_status_id) AS payment_status
+                                                            (SELECT NAME FROM payment_status WHERE payment_status_id=pm.payment_status_id) AS payment_status,
+                                                            DATE_FORMAT(date_modified,'%m/%d/%Y') as 'date_modified'
                                                           FROM po_master  pm
                                                           WHERE is_deleted=0");
                                           
@@ -77,7 +80,7 @@
                                         <td class='text_center'><?php echo htmlspecialchars($row['po_status']); ?></td>
                                         <td class='text_center pull-right'><?php echo "PHP ".number_format(($row['total_cost']),2,'.',','); ?></td>
                                         <td class='text_center'><?php echo htmlspecialchars($row['payment_status']); ?></td>
-                                        <td class='text_center'>#</td>
+                                        <td class='text_center'><?php echo htmlspecialchars($row['date_modified']); ?></td>
                                     </tr>
                                     <?php
                                         endwhile;
