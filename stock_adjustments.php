@@ -9,7 +9,9 @@
          redirect("index.php");
     }
     $reason=$con->myQuery("SELECT adj_status_id, name FROM adjustment_status")->fetchAll(PDO::FETCH_ASSOC);
-    $product=$con->myQuery("SELECT product_id, product_name,current_quantity FROM products")->fetchAll(PDO::FETCH_ASSOC);
+    $product=$con->myQuery("SELECT products.product_id as productID, product_name,current_quantity, unit_cost
+    	FROM products 
+    	INNER JOIN supplier_products ON products.product_id = supplier_products.product_id")->fetchAll(PDO::FETCH_ASSOC);
    // $data=$con->myQuery("SELECT stock_adjmaster_id FROM stock_adj_master WHERE is_deleted=0 AND stock_adjmaster_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
 
     makeHead("Stock Adjustment");
@@ -31,6 +33,9 @@
           	<div class='col-sm-12 col-md-12'>
           	<div class="box box-primary">
                 <div class="box-body">
+                
+                <form method="post" action="save_stock_adjustment.php">
+
                 
 	            	<div class='form-group'>
 		            	<div class = "row">
@@ -64,11 +69,12 @@
 		                      				<br>
 		                      				<br>
 				            			<div class ='row'>
+				            				<input type='hidden' name='stock_adjmaster_id' value='<?php echo !empty($supplier)?$supplier['supplier_id']:""?>'>
 				            				<div class = 'col-md-2' >
 				            					<h4 class='control-label'> Reason* </h4>
 				            					
 				            				</div>
-				            				<div class = 'col-md-10'>
+				            				<div class = 'col-md-8'>
 				            					<!-- <select class='form-control' id='adj_status_id' name='adj_status_id' onchange='getReason()'> data-placeholder="Select Reason" 
 						            				<?php echo!(empty($reason))?"data-selected='".$reason['adj_status_id']."'":NULL ?> required>
 					                            	<?php
@@ -88,6 +94,19 @@
                                             	</select>
 				            				</div>
 				            				
+				            			</div>
+				            			<div class ='row'>
+				            				<div class = 'col-md-2' >
+				            					<h4 class='control-label'> Notes* </h4>
+				            					
+				            				</div>
+				            				<div class = 'col-md-8'>
+				            					<textarea name='notes' rows = '4' cols="5" class='form-control'></textarea>
+				            				</div>
+				            				
+				            			</div>
+				            			<div class = "" >
+
 				            			</div>
 		            				</div>
 			            		</div>
@@ -115,19 +134,19 @@
             	<div class = "col-md-4">
 					<div class="box box-primary">
 		                <div class="box-body">
-		                <form method="post">
+		                
 		                	<div class='form-group'>
 			                	<div class ="row">
 			                		<div class = "col-md-4">
 			                			<label class='control-label'> Select product:* </label>
 			                		</div>
 			                		<div class = "col-md-8">
-			                			<select class='form-control' id='select_1' onchange='getStockOnHand()' name='select_1' data-placeholder="Select a product" <?php echo!(empty($data))?"data-selected='".$data['product_id']."'":NULL ?>style='width:100%' required >
+			                			<select class='form-control' id='select_1' onchange='getStockOnHand()' name='select_1' data-placeholder="Select a product" <?php echo!(empty($data))?"data-selected='".$data['productID']."'":NULL ?>style='width:100%'  >
                                                 <option>Select Product</option>
                                                 <?php
                                                     foreach ($product as $key => $row):
                                                 ?>
-                                                    <option data-qty='<?php echo $row['current_quantity'] ?>' placeholder="Select product" value='<?php echo $row['product_id']?>' <?php echo (!empty($data) && $row['product_id']==$data['product_id']?'selected':'') ?> ><?php echo $row['product_name']?></option>                                                    
+                                                    <option data-qty='<?php echo $row['current_quantity'] ?>' data-cost= '<?php echo $row['unit_cost'] ?>' placeholder="Select product" value='<?php echo $row['productID']?>' <?php echo (!empty($data) && $row['productID']==$data['productID']?'selected':'') ?> ><?php echo $row['product_name']?></option>                                                    
                                                 <?php
                                                     endforeach;
                                                 ?>
@@ -139,10 +158,20 @@
                            <div class='form-group'>
                            		<div class ="row">
 			                		<div class = "col-md-4">
-			                			<label class='control-label'> Quantity received:* </label>
+			                			<label class='control-label'> Quantity:* </label>
 			                		</div>
 			                		<div class = "col-md-8">
-			                			<input type="text" class="form-control" id="quantity_received" placeholder="Quantity received" onblur='compute()' name='quantity_received' value='<?php echo !empty($data)?htmlspecialchars($data['stock_adjmaster_id']):''; ?>' required>
+			                			<input type="text" class="form-control" id="quantity_received" placeholder="Quantity received" onblur='compute()' name='quantity_received' value='<?php echo !empty($data)?htmlspecialchars($data['stock_adjmaster_id']):''; ?>' >
+			                		</div>
+			                	</div>
+                           </div>
+                            <div class='form-group'>
+                           		<div class ="row">
+			                		<div class = "col-md-4">
+			                			<label class='control-label'> Unit Cost: </label>
+			                		</div>
+			                		<div class = "col-md-8">
+			                			<input type="text" class="form-control " id="unit_cost" placeholder="Unit cost" name='unit_cost' value='<?php echo !empty($data)?htmlspecialchars($data['unit_cost']):''; ?>'  readonly>
 			                		</div>
 			                	</div>
                            </div>
@@ -152,7 +181,7 @@
 			                			<label class='control-label'> Stock on hand: </label>
 			                		</div>
 			                		<div class = "col-md-8">
-			                			<input type="text" class="form-control " id="current_quantity" placeholder="Stock on hand" name='current_quantity' value='<?php echo !empty($data)?htmlspecialchars($data['stock_adjmaster_id']):''; ?>' required readonly>
+			                			<input type="text" class="form-control " id="current_quantity" placeholder="Stock on hand" name='current_quantity' value='<?php echo !empty($data)?htmlspecialchars($data['current_quantity']):''; ?>'  readonly>
 			                		</div>
 			                	</div>
                            </div>
@@ -162,14 +191,15 @@
 			                			<label class='control-label'> After: </label>
 			                		</div>
 			                		<div class = "col-md-8">
-			                			<input type="text" class="form-control " id="stock_after" placeholder="Stock after" name='stock_after' value='<?php echo !empty($data)?htmlspecialchars($data['stock_adjmaster_id']):''; ?>' required readonly>
+			                			<input type="text" class="form-control " id="stock_after" placeholder="Stock after" name='stock_after'  readonly>
 			                		</div>
 			                	</div>
                            </div>
 
-		                </form>
+		                
 		                <section align = "right">
-		                	<button type="button" class="btn btn-brand" id="addRow" >Add</button>
+		                <!--	<button type="button" class="btn btn-brand" id="addRow" >Add</button>	-->
+		                	<button type="button" class="btn btn-brand" onclick="AddToTable()" >Add</button>
 		                  	<button type="button" class="btn btn-default" onclick="AddToTable()">Cancel</button>
 		                </section>
 		                  
@@ -180,14 +210,16 @@
             	<div class = "col-md-8">
 					<div class="box box-primary">
 		                <div class="box-body">
-		                	 <table id='ResultTable' class='table table-bordered table-striped'>
+		                	 <table class='table table-bordered table-striped'>
 		                	 		<thead>
 	                                    <tr>
 	                                      <th class='text-center'>Product ID</th>
 	                                      <th class='text-center'>Product name</th>
 	                                      <th class='text-center'>Quantity received</th>
+	                                      <th class='text-center'>Unit cost</th>
 	                                      <th class='text-center'>Stock </th>
 	                                      <th class='text-center'>After </th>
+
 	                                      <th class='text-center'>Action </th>
                                            
                                     </thead>
@@ -199,7 +231,18 @@
 					</div>
             	</div>
             	
-            </div>
+            		</div>
+            		<div class = "row">
+            				<div class = "col-md-12">
+            					<section align = "right">
+		                            <button type='submit' class='btn btn-brand'>Save </button>
+		                            <button type="reset" class="btn btn-default" >Cancel
+		                            </button>
+		                        </section>
+            				</div>
+
+            		</div>
+            </form>
                 </div>
             </div>  
 
@@ -213,6 +256,10 @@
 	$(document).ready(function() {
     var t = $('#ResultTable').DataTable();
     	
+    	//some validations like empty textboxes...
+
+
+
     	/*
 		select_1_val=$("select[name='select_1']").val();
 		select_1_text=$("select[name='select_1'] :selected").text()
@@ -225,20 +272,33 @@
             select_1_val=$("select[name='select_1']").val() ,
 			select_1_text=$("select[name='select_1'] :selected").text() , 
 			text_quantity=parseInt($("input[name='quantity_received']").val()),
-			text_stockOnhand = parseInt($("input[name='stock_onhand']").val()),
-			text_after = parseInt($("input[name='after']").val()),
+			unit_cost=parseInt($("input[name='unit_cost']").val()),
+			text_stockOnhand = parseInt($("input[name='current_quantity']").val()),
+			text_after = parseInt($("input[name='stock_after']").val()),
 			buttons = "<button type='button' onclick='' class='btn btn-primary fa fa-edit'></button><button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button>" 
         ] ).draw( false );
  
         
     } );
 		//$('#addRow').click();
-
-
-
-	
 } );
-		
+	function AddToTable() {
+        select_1_val=$("select[name='select_1']	").val();
+        select_1_text=$("select[name='select_1'] :selected").text()
+        quantity=$("input[name='quantity_received']").val();
+        unit_cost=parseInt($("input[name='unit_cost']").val()), 
+        stock_onhand = $("input[name='current_quantity']").val();
+        after = $("input[name='stock_after']").val();
+        prod_name = $("input[name='prod_name']").val();
+        input="<input type='hidden' name='select_id[]' value='"+select_1_val+"'> <input type='hidden' name='quantity_received[]' value='"+quantity+"'><input type='hidden' name='current_quantity[]' value='"+stock_onhand+"'><input type='hidden' name='stock_after[]' value='"+after+"'><input type='hidden' name='prod_name[]' value='"+prod_name+"'>";
+   
+        $("#table_container").append("<tr><td>"+input+select_1_val+"</td><td>"+prod_name+"</td><td>"+quantity+"</td><td>"+stock_onhand+"</td><td>"+after+"</td><td> <button type='button' onclick='edit(this)'><span class='fa fa-pencil'></span></button><button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button></td></tr>");
+
+        $("#select_1").val('');
+        $("#quantity_received").val('');
+        $("#current_quantity").val('');
+        $("#stock_after").val('');
+    }
 		/*
 			See those group of letters up there^?
 			They just get the M@#$%^&*# Values of the M%*!@#*!@# Form on the modal.
@@ -293,6 +353,7 @@
         
         $("#current_quantity").val($("#select_1 option:selected").data("qty"));        
         $("#prod_name2").val($("#select_1 option:selected").html());
+        $("#unit_cost").val($("#select_1 option:selected").data("cost"));   
         $("#stock_after").val("");
         compute();
     }
@@ -305,7 +366,7 @@
         $("#stock_after").val("");
 
     	reason=getReason();
-    	alert(reason);
+    	//alert(reason);
     	received=$("#quantity_received").val();
     	stock_onhand=$("#current_quantity").val();
     	// if(isNaN(received) || isNaN(stock_onhand)){
@@ -318,11 +379,18 @@
     	if(reason==''){
     		return false;
     	}
+
     	value=0;
     	switch(reason){
     		case '5':
     			value=stock_onhand-received;
     		break;
+    		case '6':
+    			value=stock_onhand-received;
+    			break;
+    		case '4':
+    			value= stock_onhand;
+    			break;
     		default:
     			value=parseInt(stock_onhand)+parseInt(received);
     		break;

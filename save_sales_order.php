@@ -20,6 +20,8 @@
 
 		$errors="";
 		
+
+		
 		// echo count($inputs['product_id']);
 		// die;		
 		if (empty($inputs['customer_id'])){

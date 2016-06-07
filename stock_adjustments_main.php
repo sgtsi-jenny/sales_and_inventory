@@ -35,7 +35,11 @@
                 <div class='col-sm-12 col-md-12'>
                     <div class="box box-primary">
                         <div class="box-body">
+                        <?php
+                            alert();
+                        ?>
                             <div class="row">
+
                                 <div class="col-sm-12">
                                     <div class='col-ms-12 text-right'>
                                       <a href='stock_adjustments.php' class='btn btn-success btn-flat'> Create New <span class='fa fa-plus'></span> </a>
