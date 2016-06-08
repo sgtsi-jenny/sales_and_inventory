@@ -1,14 +1,13 @@
 <?php
 	require_once 'support/config.php';
-	if(!isLoggedIn()){
-			toLogin();
-			die();
+	if(!isLoggedIn())
+	{
+		toLogin();
+		die();
 	}
 
-
-
-if(!empty($_POST)){
-//Validate form inputs
+	if(!empty($_POST)){
+	//Validate form inputs
 		$inputs=$_POST;
 		$errors="";
 		// var_dump($inputs);
@@ -17,38 +16,38 @@ if(!empty($_POST)){
 		{
 			$errors.="No items in the list. <br/>";
 		}
-		if($errors!=""){
-
+		if($errors!="")
+		{
 			Alert($errors,"danger");
-				if(empty($inputs['select_id[]'])){
-					redirect("stock_adjustments.php");
-				}
-				else{
-					redirect("stock_adjustments.php?id=".urlencode($inputs['select_id[]']));
-				}
-				die;
-		}
-		else{
+			if(empty($inputs['select_id[]']))
+			{
+				redirect("stock_adjustments.php");
+			}else
+			{
+				redirect("stock_adjustments.php?id=".urlencode($inputs['select_id[]']));
+			}
+			die;
+		}else
+		{
 			$resu=$inputs['stock_adjmaster_id'];
 			//IF id exists update ELSE insert
 			// var_dump($resu);
 			// die(); 	
-			if(empty($inputs['stock_adjmaster_id'])){
-				//Insert
-				
+			if(empty($inputs['stock_adjmaster_id']))
+			{
+				//Insert				
 				unset($inputs['stock_adjmaster_id']);
 				date_default_timezone_set('Asia/Manila');
 				$now = new DateTime();
 				$date_adjusted=date_format($now, 'Ymd');
-				// var_dump($inputs);
-				// die;
+				var_dump($inputs);
+				die;
 
 				$total_cost = 0;
 				foreach($inputs['total_price'] as $key=>$value)
 				{
 				   $total_cost+= $value;
 				}
-
 				
 				unset($inputs['customer_id']);
 				unset($inputs['description']);
@@ -65,7 +64,7 @@ if(!empty($_POST)){
 				// var_dump($inputs);
 				// die;
 
-				$con->myQuery("INSERT INTO sales_master (date_issue,total_amount,customer_id,user_id,sales_status_id,payment_status_id,description) VALUES ('$date_issue','$total_cost','$customer_id','$user_id','1','1','$description')", $inputs);
+				$con->myQuery("INSERT INTO stock_adj_master (adj_status_id, date_adjusted,total_cost) VALUES ('$date_issue','$total_cost','$customer_id','$user_id','1','1','$description')", $inputs);
 
 				$file_id=$con->lastInsertId();
 				//var_dump($file_id);

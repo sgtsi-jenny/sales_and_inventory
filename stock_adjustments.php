@@ -81,7 +81,12 @@
 					                                	echo makeOptions($reason,'Select reason',NULL,'',!(empty($reason))?$reason['adj_status_id']:NULL)
 					                            	?>
 			                        			</select> -->
-			                        			<select class='form-control' id='adj_status_id' onchange='compute()' name='adj_status_id' data-placeholder="Select reason" <?php echo!(empty($data))?"data-selected='".$data['adj_status_id']."'":NULL ?>style='width:100%'  >
+			                        			<select class='form-control' id='adj_status_id' onchange='compute()' name='adj_status_id' data-placeholder="Select reason" 
+			                        			<?php 
+			                        			echo!(empty($data))?"data-selected='".$data['adj_status_id']."'":NULL 
+			                        			?>
+			                        			style='width:100%'  >
+
                                                 <option value=''>Select Reason</option>
                                                 <?php
                                                     foreach ($reason as $key => $row):
@@ -171,7 +176,21 @@
 			                			<label class='control-label'> Unit Cost: </label>
 			                		</div>
 			                		<div class = "col-md-8">
-			                			<input type="text" class="form-control " id="unit_cost" placeholder="Unit cost" name='unit_cost' value='<?php echo !empty($data)?htmlspecialchars($data['unit_cost']):''; ?>'  readonly>
+			                			<input type="text" class="form-control " id="unit_cost" placeholder="Unit cost" name='unit_cost' value='<?php 
+			                			echo !empty($data)?number_format($data['stock_adjmaster_id']):'';
+			                			/*	if(!empty($data))
+			                				{
+			                					 $x = $row['unit_cost'];
+                                                    $pos = strlen($x) - 2;
+                                                    $dec = substr($x, 0,$pos).'.'.substr($x, strlen($x) -2);
+                                                    echo htmlspecialchars(number_format($dec , 2));
+			                				}
+			                				else
+			                				{echo "";}
+			                				*/	
+			                					?>'  
+
+			                			readonly>
 			                		</div>
 			                	</div>
                            </div>
@@ -210,7 +229,7 @@
             	<div class = "col-md-8">
 					<div class="box box-primary">
 		                <div class="box-body">
-		                	 <table class='table table-bordered table-striped'>
+		                	 <table id = "tblMe" class='table table-bordered table-striped'>
 		                	 		<thead>
 	                                    <tr>
 	                                      <th class='text-center'>Product ID</th>
@@ -285,19 +304,21 @@
         select_1_val=$("select[name='select_1']	").val();
         select_1_text=$("select[name='select_1'] :selected").text()
         quantity=$("input[name='quantity_received']").val();
-        unit_cost=parseInt($("input[name='unit_cost']").val()), 
+        unit_cost=$("input[name='unit_cost']").val(), 
         stock_onhand = $("input[name='current_quantity']").val();
         after = $("input[name='stock_after']").val();
         prod_name = $("input[name='prod_name']").val();
-        input="<input type='hidden' name='select_id[]' value='"+select_1_val+"'> <input type='hidden' name='quantity_received[]' value='"+quantity+"'><input type='hidden' name='current_quantity[]' value='"+stock_onhand+"'><input type='hidden' name='stock_after[]' value='"+after+"'><input type='hidden' name='prod_name[]' value='"+prod_name+"'>";
+        input="<input type='hidden' name='select_id[]' value='"+select_1_val+"'> <input type='hidden' name='quantity_received[]' value='"+quantity+"'><input type='hidden' name='current_quantity[]' value='"+unit_cost+"'><input type='hidden' name='current_quantity[]' value='"+stock_onhand+"'><input type='hidden' name='stock_after[]' value='"+after+"'><input type='hidden' name='prod_name[]' value='"+prod_name+"'>";
    
-        $("#table_container").append("<tr><td>"+input+select_1_val+"</td><td>"+prod_name+"</td><td>"+quantity+"</td><td>"+stock_onhand+"</td><td>"+after+"</td><td> <button type='button' onclick='edit(this)'><span class='fa fa-pencil'></span></button><button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button></td></tr>");
+        $("#table_container").append("<tr><td>"+input+select_1_val+"</td><td>"+prod_name+"</td><td>"+quantity+"</td> <td>"+unit_cost+"</td> <td>"+stock_onhand+"</td><td>"+after+"</td><td> <button type='button'  class='btn btn-brand fa fa-pencil' onclick='edit(this)'></button><button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button></td></tr>");
 
         $("#select_1").val('');
         $("#quantity_received").val('');
         $("#current_quantity").val('');
         $("#stock_after").val('');
+        $("#unit_cost").val('');
     }
+		
 		/*
 			See those group of letters up there^?
 			They just get the M@#$%^&*# Values of the M%*!@#*!@# Form on the modal.
@@ -331,17 +352,11 @@
 <script type="text/javascript">
 	function removeRow(del_button) {
 			// body...
-			if(confirm('Remove this row?')){
-				var table = $('#ResultTable').DataTable();
-	 
-				$('#ResultTable tbody').on( 'click', function () {
-				    table
-				        .row( $(del_button).parents('tr') )
-				        .remove()
-				        .draw();
-				} );
-			}
-			
+			 if(confirm('Remove this product?')){
+        $(del_button).parent().parent().remove();
+            
+        }
+        return false;
 			
 			/*
 					^
@@ -349,17 +364,39 @@
 			*/
 		}	
 	 function getStockOnHand(){
-        
+        nums = parseInt($("#select_1 option:selected").data("cost")).toString();
         $("#current_quantity").val($("#select_1 option:selected").data("qty"));        
         $("#prod_name2").val($("#select_1 option:selected").html());
-        $("#unit_cost").val($("#select_1 option:selected").data("cost"));   
+        $("#unit_cost").val(addCommas(nums));   
         $("#stock_after").val("");
+        
+
         compute();
+
     }
 
     function getReason(){
     	return $( "#adj_status_id" ).val();
     }
+   
+
+    function addCommas(s) {
+		    //number before the decimal point
+	    num = s.substring(0,s.length-2);
+	    //number after the decimal point
+	    dec = s.substring(s.length-2,s.length);
+
+	    var amount = new String(num);
+	    amount = amount.split("").reverse();
+
+	    var output = "";
+	    for ( var i = 0; i <= amount.length-1; i++ ){
+	        output = amount[i] + output;
+	        if ((i+1) % 3 == 0 && (amount.length-1) !== i) output = ',' + output;
+	    }
+	output = output + "." + dec;
+	    return output;
+	}
 
     function compute(){
         $("#stock_after").val("");
