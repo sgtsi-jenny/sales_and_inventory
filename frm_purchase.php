@@ -68,7 +68,7 @@
 													<div class ="row">
 														<label class='col-md-3 control-label'> Select Supplier: * </label>
 														<div class = "col-md-8">
-															<select class='form-control select2' id='supplier' name='supplier' data-placeholder="Select product" onchange="get_suppID();" required>
+															<select class='form-control select2' id='supplier' name='supplier' data-placeholder="Select supplier" onchange="get_suppID();" required>
 																<?php
 																	
 																	echo makeOptions($supplier,'Select Supplier')
@@ -115,12 +115,12 @@
 														<label class='control-label'> Select Product: * </label>
 													</div>
 													<div class = "col-md-8">
-														<select class='form-control select2' name='product_id' id='product_id' data-placeholder="Select a product" <?php echo!(empty($data))?"data-selected='".$data['product_id']."'":NULL?>
+														<select class='form-control ' name='product_id' id='product_id' data-placeholder="Select product" <?php echo!(empty($data))?"data-selected='".$data['product_id']."'":NULL?>
 															onchange="get_prodIDCost()" required>
 															<?php
 																//echo makeOptions($product,'Select Product')
 															?>
-															<option>Select Product</option>
+															<option value=''>Select Product</option>
 					                                        <?php
 					                                            foreach ($prod as $key => $row):
 					                                        ?>
@@ -156,7 +156,7 @@
 										</form>
 									<section align = "right">
 										<button type="button" class="btn btn-brand" onclick="AddToTable()">Add</button>
-										<button type="button" class="btn btn-default" onclick="AddToTable()">Cancel</button>
+										<button type="button" class="btn btn-default" onclick="cleartxt()">Cancel</button>
 									</section>
 									</div>
 								</div>
@@ -181,7 +181,9 @@
 										</table>
 										<br>
 										<section align = "right">
+
 											<button type='submit' class='btn btn-brand'> <span class='fa fa-check'></span> Save</button>
+											<a href='purchases.php' class='btn btn-default'>Cancel</a>
 											
 										</section>
 									</div>
@@ -195,9 +197,10 @@
 		</div>
 	</section>
 </div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> -->
 <script type="text/javascript">
-
+var is_edit=false;
+var current_row="";
 	function get_suppID()
 	{
 	    var supplierid = document.getElementById("supplier").value;
@@ -210,9 +213,58 @@
 	    $("#unit_cost").val($("#product_id option:selected").data("cost"));  
 	    $("#prod_name2").val($("#product_id option:selected").html());
 	}
+
+	
+	function validate_add_to_table() {
+    var return_value=true;
+    $("input[name='product_id[]']").each(function (d,i) {
+
+        if($("#product_id").val()==$(i).val()){
+            return_value=false;
+        }
+    });
+        return return_value;
+  }
+	function validate_form() {
+    var return_value=true;
+    var str_error="";
+      if($("#product_id").val()=='' || $("#product_id").val()==0){
+        str_error+="Please select a product.\n";
+        return_value=false;
+      }
+
+      if($("#qty").val()=='' || $("#qty").val()==0){
+        str_error+="Invalid quantity.\n";
+        return_value=false;
+      }
+
+      if($("#unit_cost").val()=='' || $("#unit_cost").val()==0){
+        str_error+="Invalid Unit Cost.\n";
+        return_value=false;
+      }
+      if(str_error!==""){
+        alert("You have the following error: \n"+str_error);
+      }
+      return return_value;
+  }
     
 	function AddToTable() 
 	{
+		if(validate_form()==false){
+            return false;
+        }
+        // console.log(current_row);
+        // console.log(validate_add_to_table());
+
+        if(validate_add_to_table()===false && current_row===""){
+            alert("This product is already added.");
+            return false;
+        }
+
+        if(current_row!==""){
+            $(current_row).remove();
+        }
+
         select_1_val=$("select[name='product_id']").val();
         select_1_text=$("select[name='product_id'] :selected").text()
         unit_cost=$("input[name='unit_cost']").val();
@@ -221,12 +273,40 @@
         prod_name = $("input[name='prod_name']").val();
         input="<input type='hidden' name='product_id[]' value='"+select_1_val+"'> <input type='hidden' name='quantity[]' value='"+quantity+"'><input type='hidden' name='unit_cost[]' value='"+unit_cost+"'><input type='hidden' name='total_cost[]' value='"+total_cost+"'><input type='hidden' name='prod_name[]' value='"+prod_name+"'>" ;
    
-        $("#table_container").append("<tr><td>"+input+select_1_text+"</td><td>"+quantity+"</td><td>"+unit_cost+"</td><td>"+total_cost+"</td><td><button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button></td></tr>");
+        $("#table_container").append("<tr><td>"+input+select_1_text+"</td><td>"+quantity+"</td><td>"+unit_cost+"</td><td>"+total_cost+"</td><td><button type='button' onclick='edit(this)' class='btn btn-brand fa fa-pencil'></span></button><button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button></td></tr>");
 
         $("#product_id").val('');
         $("#qty").val('');
         $("#unit_cost").val('');
+        cleartxt();
 	}
+	function cleartxt()
+	{		
+		$("#unit_cost").val('');
+		$("#qty").val('');
+		$("#product_id").val('');
+        $("#product_id").val('Select Product');
+        $("#product_id").attr("disabled",false);
+        current_row="";
+
+	}
+	function edit(edit_button){
+        $("#product_id").val('');
+        $("#product_id").children(0).attr("selected");
+        $("#qty").val('');
+        $("#unit_cost").val('');
+      
+        row=$(edit_button).parent().parent();
+        inputs=$(row).children(1).children();
+
+       current_row=$(edit_button).parent().parent();
+
+        $("#product_id").val($(inputs[0]).val()).change();
+        $("#product_id").attr("disabled",true);
+        $("#qty").val($(inputs[1]).val());
+        $("#unit_cost").val($(inputs[2]).val());
+        
+    }
 
 	function removeRow(del_button) 
 	{
