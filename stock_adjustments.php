@@ -236,8 +236,7 @@
             				<div class = "col-md-12">
             					<section align = "right">
 		                            <button type='submit' class='btn btn-brand'>Save </button>
-		                            <button type="reset" class="btn btn-default" >Cancel
-		                            </button>
+		                            <button type="reset" class="btn btn-default" >Cancel</button> 
 		                        </section>
             				</div>
 

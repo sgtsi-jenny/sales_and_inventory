@@ -82,11 +82,11 @@
                     <?php
                         switch ($tab) {
                             case '1':
-                                #PERSONAL INFORMATION
+                                #Details
                                 $form='products_details.php';
                                 break;
                             case '2':
-                                #EDUCATION
+                                #suppliers
                                 $form='products_suppliers.php';
                                 break;
                             default:
