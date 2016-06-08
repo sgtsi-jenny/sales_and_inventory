@@ -10,14 +10,14 @@
 	// 	redirect("index.php");
 	// }
 
-				// var_dump($inputs);
-				// die;
+				
 
 	
 	if(!empty($_POST)){
 		//Validate form inputs
 		$inputs=$_POST;
-
+		// var_dump($inputs);
+		// 		die;
 		$errors="";
 		
 
@@ -95,13 +95,13 @@
 						'qty' => $inputs['quantity'][$i], 
 						'selling_price' => $inputs['selling_price'][$i],
 						'discount' => $inputs['discount'][$i],
-						'tax' => $inputs['tax'][$i],
+						// 'tax' => $inputs['tax'][$i],
 						'file_id' => $file_id,
 						'total_cost' => $total_unit_cost[$i]
 						);
 					// var_dump($params);
 					// die;
-					$con->myQuery("INSERT INTO sales_details (product_id,sales_master_id,quantity,unit_cost,total_cost,discount,tax) VALUES (:product_id,:file_id,:qty,:selling_price,:total_cost,:discount,:tax)", $params);		
+					$con->myQuery("INSERT INTO sales_details (product_id,sales_master_id,quantity,unit_cost,total_cost,discount) VALUES (:product_id,:file_id,:qty,:selling_price,:total_cost,:discount)", $params);		
 				}			
 				// die;
 				Alert("Sales Order ".$file_id." succesfully created","success");
@@ -128,14 +128,12 @@
 				{
 				   $total_cost+= $value;
 				}
-
-				
+				$total_unit_cost=$inputs['total_price'];
 				// unset($inputs['customer_id']);
 				// unset($inputs['description']);
 				// unset($inputs['current_quantity']);
 				// unset($inputs['total_price']);
 				// unset($inputs['prod_name']);
-
 
 				$field_count=count($inputs);
 				$arr_count=count($inputs['product_id']);
@@ -151,13 +149,13 @@
 						'qty' => $inputs['quantity'][$i], 
 						'selling_price' => $inputs['selling_price'][$i],
 						'discount' => $inputs['discount'][$i],
-						'tax' => $inputs['tax'][$i],
+						// 'tax' => $inputs['tax'][$i],
 						'sales_master_id' => $inputs['sales_master_id'],
-						'total_cost' => $total_cost
+						'total_cost' => $total_unit_cost[$i]
 						);
 					// var_dump($params);
 					
-					$con->myQuery("INSERT INTO sales_details (product_id,sales_master_id,quantity,unit_cost,total_cost,discount,tax) VALUES (:product_id,:sales_master_id,:qty,:selling_price,:total_cost,:discount,:tax)", $params);		
+					$con->myQuery("INSERT INTO sales_details (product_id,sales_master_id,quantity,unit_cost,total_cost,discount) VALUES (:product_id,:sales_master_id,:qty,:selling_price,:total_cost,:discount)", $params);		
 				}	
 				// die;
 

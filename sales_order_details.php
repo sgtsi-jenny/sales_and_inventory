@@ -239,20 +239,19 @@
                                                 <th class='text-center'>Available</th>
                                                 <th class='text-center'>Price (Php)</th>
                                                 <th class='text-center'>Discount</th>
-                                                <th class='text-center'>Tax</th>
+                                                <!-- <th class='text-center'>Tax</th> -->
                                                 <th class='text-center'>Total (Php)</th>
                                                 
                             </tr>
                           </thead>
                           <tbody>
                                             <?php                                              
-                                                $opportunities=$con->myQuery("SELECT 
+                                                $order_details=$con->myQuery("SELECT 
                                                 prod.product_name,
                                                 sd.quantity,
                                                 prod.current_quantity AS available,
                                                 sd.unit_cost,
                                                 sd.discount,
-                                                sd.tax,
                                                 sd.total_cost
                                                 FROM sales_master sm
                                                 INNER JOIN customers ON sm.customer_id=customers.customer_id
@@ -260,7 +259,7 @@
                                                 INNER JOIN sales_details sd ON sm.sales_master_id=sd.sales_master_id
                                                 INNER JOIN products prod ON prod.product_id=sd.product_id
                                                 WHERE sm.sales_master_id=?",array($_GET['id']))->fetchAll(PDO::FETCH_ASSOC);
-                                                foreach ($opportunities as $row):
+                                                foreach ($order_details as $row):
                                             ?>
                                             <tr>
                                                         <?php
@@ -277,6 +276,12 @@
                                                         ?>  
                                                             <td class='text-right'>
                                                                 <?php echo htmlspecialchars(number_format($row['total'],2))?></a>
+                                                            </td>
+                                                        <?php
+                                                            elseif($key=='total_cost'):
+                                                        ?>  
+                                                            <td class='text-right'>
+                                                                <?php echo htmlspecialchars(number_format($row['total_cost'],2))?></a>
                                                             </td>
                                                         <?php
                                                             else:

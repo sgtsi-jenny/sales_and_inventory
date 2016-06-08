@@ -94,7 +94,7 @@
 					:email)",$inputs);
 
 					Alert("Save succesful","success");
-				    redirect("customer_maintenance.php");
+				    redirect("customers.php");
 			}
 			else{
 				//Update

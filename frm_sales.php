@@ -247,23 +247,23 @@
                            <div class='form-group'>
                                 <div class ="row">
                                     <div class = "col-md-4">
-                                        <label class='control-label'> Discount:* </label>
+                                        <label class='control-label'> Discount(%): </label>
                                     </div>
                                     <div class = "col-md-8">
                                         <input type="text" class="form-control" id="discount" placeholder="0" name='discount' value='<?php echo !empty($data)?htmlspecialchars($data['stock_adjmaster_id']):''; ?>' >
                                     </div>
                                 </div>
                            </div>
-                           <div class='form-group'>
+                           <!-- <div class='form-group'>
                                 <div class ="row">
                                     <div class = "col-md-4">
-                                        <label class='control-label'> Tax:* </label>
+                                        <label class='control-label'> Tax(%): </label>
                                     </div>
                                     <div class = "col-md-8">
-                                        <input type="text" class="form-control" id="tax" placeholder="12%" name='tax' value='<?php echo !empty($data)?htmlspecialchars($data['stock_adjmaster_id']):''; ?>' >
+                                        <input type="text" class="form-control" id="tax" placeholder="0" name='tax' value='<?php echo !empty($data)?htmlspecialchars($data['stock_adjmaster_id']):''; ?>' >
                                     </div>
                                 </div>
-                           </div>
+                           </div> -->
 
                         <section align = "right">
                             <button type="button" class="btn btn-brand" onclick="AddToTable()">Add</button>
@@ -289,7 +289,7 @@
                                                 <th class='text-center'>Available</th>
                                                 <th class='text-center'>Price (Php)</th>
                                                 <th class='text-center'>Discount</th>
-                                                <th class='text-center'>Tax</th>
+                                                <!-- <th class='text-center'>Tax</th> -->
                                                 <th class='text-center'>Total (Php)</th>
                                           <th class='text-center'>Action </th>
                                            
@@ -309,7 +309,7 @@
 
                                                     $input.="<input type='hidden' name='prod_name[]' value='{$row['product_name']}'>";
 
-                                                    $input.="<input type='hidden' name='tax[]' value='{$row['tax']}'>";
+                                                    // $input.="<input type='hidden' name='tax[]' value='{$row['tax']}'>";
 
                                                     $input.="<input type='hidden' name='total_price[]' value='{$row['total_cost']}'>";
                                                 ?>
@@ -322,7 +322,6 @@
                                                         <td><?php echo $row['available'] ?></td>
                                                         <td><?php echo $row['unit_cost'] ?></td>
                                                         <td><?php echo !empty($row['discount'])?$row['discount']:'' ?></td>
-                                                        <td><?php echo !empty($row['tax'])?$row['tax']:'' ?></td>
                                                         <td><?php echo $row['total_cost'] ?></td>
                                                         <td>
                                                         <button type='button' onclick='edit(this)' class='btn btn-brand fa fa-pencil'></span></button>
@@ -434,18 +433,21 @@ var current_row="";
         current_quantity = $("input[name='current_quantity']").val();
         selling_price = $("input[name='selling_price']").val();
         discount = $("input[name='discount']").val();
-        tax = $("input[name='tax']").val();
-        prod_name = $("input[name='prod_name']").val();
-        input="<input type='hidden' name='product_id[]' value='"+select_1_val+"'> <input type='hidden' name='quantity[]' value='"+quantity+"'><input type='hidden' name='current_quantity[]' value='"+current_quantity+"'><input type='hidden' name='selling_price[]' value='"+selling_price+"'><input type='hidden' name='discount[]' value='"+discount+"'><input type='hidden' name='prod_name[]' value='"+prod_name+"'><input type='hidden' name='tax[]' value='"+tax+"'><input type='hidden' name='total_price[]' value='"+(quantity*selling_price)+"'>" ;
+        t_cost=quantity*selling_price;
+        t_discount=t_cost*(discount/100);
 
-        $("#table_container").append("<tr><td>"+input+select_1_text+"</td><td>"+quantity+"</td><td>"+current_quantity+"</td><td>"+selling_price+"</td><td>"+discount+"</td><td>"+tax+"</td><td>"+(quantity*selling_price)+"</td><td> <button type='button' onclick='edit(this)' class='btn btn-brand fa fa-pencil'></span></button><button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button></td></tr>");
+        // tax = $("input[name='tax']").val();
+        prod_name = $("input[name='prod_name']").val();
+        input="<input type='hidden' name='product_id[]' value='"+select_1_val+"'> <input type='hidden' name='quantity[]' value='"+quantity+"'><input type='hidden' name='current_quantity[]' value='"+current_quantity+"'><input type='hidden' name='selling_price[]' value='"+selling_price+"'><input type='hidden' name='discount[]' value='"+discount+"'><input type='hidden' name='prod_name[]' value='"+prod_name+"'><input type='hidden' name='total_price[]' value='"+(t_cost-t_discount)+"'>" ;
+
+        $("#table_container").append("<tr><td>"+input+select_1_text+"</td><td>"+quantity+"</td><td>"+current_quantity+"</td><td>"+selling_price+"</td><td>"+discount+"</td><td>"+(t_cost-t_discount)+"</td><td> <button type='button' onclick='edit(this)' class='btn btn-brand fa fa-pencil'></span></button><button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button></td></tr>");
 
         $("#product_id").val('');
         $("#quantity").val('');
         $("#selling_price").val('');
         $("#current_quantity").val('');
         $("#discount").val('');
-        $("#tax").val('');
+        // $("#tax").val('');
         resetTable();
         
     }
@@ -456,7 +458,7 @@ var current_row="";
         $("#selling_price").val('');
         $("#current_quantity").val('');
         $("#discount").val('');
-        $("#tax").val('');
+        // $("#tax").val('');
         $("#product_id").val('Select Product');
         $("#product_id").attr("disabled",false);
         current_row="";
@@ -477,7 +479,7 @@ var current_row="";
         $("#selling_price").val('');
         $("#current_quantity").val('');
         $("#discount").val('');
-        $("#tax").val('');
+        // $("#tax").val('');
 
         row=$(edit_button).parent().parent();
         inputs=$(row).children(1).children();
@@ -490,7 +492,7 @@ var current_row="";
         $("#current_quantity").val($(inputs[2]).val());
         $("#selling_price").val($(inputs[3]).val());
         $("#discount").val($(inputs[4]).val());
-        $("#tax").val($(inputs[6]).val());
+        // $("#tax").val($(inputs[6]).val());
     }
 </script>
 <?php
