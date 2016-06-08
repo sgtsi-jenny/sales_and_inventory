@@ -13,7 +13,8 @@
     
     $po_num=$con->myQuery("SELECT po_master_id FROM po_master ORDER BY po_master_id DESC LIMIT 1")->fetch(PDO::FETCH_ASSOC);
     $supplier=$con->myQuery("SELECT supplier_id, CONCAT(description,' (',name,')') as name FROM suppliers")->fetchAll(PDO::FETCH_ASSOC);
-    
+
+   
 	$prod=$con->myQuery("SELECT
 						products.product_id,
 						products.product_name AS `name`,
@@ -22,7 +23,10 @@
 						supplier_products
 						INNER JOIN suppliers ON suppliers.supplier_id = supplier_products.supplier_id
 						INNER JOIN products ON products.product_id = supplier_products.product_id
-						WHERE suppliers.supplier_id")->fetchAll(PDO::FETCH_ASSOC);
+						")->fetchAll(PDO::FETCH_ASSOC);
+
+
+
     makeHead("Purchase Order");
 ?>
 <?php
@@ -68,7 +72,7 @@
 													<div class ="row">
 														<label class='col-md-3 control-label'> Select Supplier: * </label>
 														<div class = "col-md-8">
-															<select class='form-control select2' id='supplier' name='supplier' data-placeholder="Select supplier" onchange="get_suppID();" required>
+															<select class='form-control' id='supplier' name='supplier' data-placeholder="Select supplier" onchange="get_suppID();" required>
 																<?php
 																	
 																	echo makeOptions($supplier,'Select Supplier')
@@ -204,7 +208,7 @@ var current_row="";
 	function get_suppID()
 	{
 	    var supplierid = document.getElementById("supplier").value;
-	    $("#product").load("ajax/products.php?id="+supplierid)
+	    $("#product_id").load("ajax/products.php?id="+supplierid)
 	    
 	}
 	function get_prodIDCost()
