@@ -73,7 +73,7 @@ WHERE is_deleted=0")->fetchAll(PDO::FETCH_ASSOC);
                                                       <td class="text-center">
                                                           
                                                           <a class='btn btn-sm btn-brand' href='frm_supplier.php?id=<?php echo $row['supplier_id'];?>'><span class='fa fa-pencil'></span></a>
-                                                          <a class='btn btn-sm btn-danger' href='delete.php?id=<?php echo $row['supplier_id'];?>&t=user' onclick='return confirm("This user will be deleted.")'><span class='fa fa-trash'></span></a>
+                                                          <a class='btn btn-sm btn-danger' href='delete.php?id=<?php echo $row['supplier_id'];?>&t=sup' onclick='return confirm("This supplier will be deleted.")'><span class='fa fa-trash'></span></a>
                                                       </td>
                                                     <?php
                                                       else:

@@ -73,7 +73,7 @@
     // var_dump($sale['customer_id']);
     // die;
     $customer=$con->myQuery("SELECT customer_id,customer_name FROM customers")->fetchAll(PDO::FETCH_ASSOC);
-    $customer_add=$con->myQuery("SELECT customer_add_id,label_address FROM customers cus INNER JOIN customer_address cus_add ON cus.customer_id=cus_add.customer_id where cus.customer_id=?",array($sale['customer_id']))->fetchall(PDO::FETCH_ASSOC);
+    $customer_add=$con->myQuery("SELECT customer_add_id,CONCAT(label_address,' (',address,')') as label_address FROM customers cus INNER JOIN customer_address cus_add ON cus.customer_id=cus_add.customer_id where cus.customer_id=?",array($sale['customer_id']))->fetchall(PDO::FETCH_ASSOC);
     // var_dump( $sale);
     // die;
     $invoice=$con->myQuery("SELECT invoice_master_id FROM invoice_master im INNER JOIN sales_master sm ON sm.sales_master_id=im.sales_master_id")->fetchAll(PDO::FETCH_ASSOC);
@@ -103,7 +103,7 @@
          <h1 align="center" style="color:#24b798;">Sales Order Details</h1>
           <a href='sales.php' class='btn btn-default'><span class='glyphicon glyphicon-arrow-left'></span> Back to Sales List</a>
           <a href='frm_sales.php' class='btn btn-brand'> New Sales Order&nbsp;<span class='fa fa-plus'></span> </a>
-          <a href='print_order.php?id=<?php echo $_GET['id'];?>' class='btn btn-brand'> Preview/Print &nbsp;<span class='fa fa-print'></span> </a>
+          <a href='print_order2.php?id=<?php echo $_GET['id'];?>' class='btn btn-brand'> Preview/Print &nbsp;<span class='fa fa-print'></span> </a>
           <?php
             if($sale['sales_status_id']==2 || $sale['sales_status_id']==3){
           ?>
@@ -490,7 +490,7 @@
 
                             <div class="form-group">
                                 <label>Bill To</label>
-                                    <select class='form-control' name='bill_to' id='bill_to'  onchange='get_address()' data-placeholder="Select a Customer" <?php echo!(empty($customer_add))?"data-selected='".$customer_add['label_address']."'":NULL ?> required>
+                                    <select class='form-control' name='bill_to' id='bill_to' data-placeholder="Select a Customer" <?php echo!(empty($customer_add))?"data-selected='".$customer_add['label_address']."'":NULL ?> required>
                                                     <?php
                                                         echo makeOptions($customer_add,'Select Billing address of customer')
                                                     ?>
@@ -499,7 +499,7 @@
 
                             <div class="form-group">
                                 <label>Ship To</label>
-                                    <select class='form-control' name='ship_to' id='ship_to'  onchange='get_address()' data-placeholder="" <?php echo!(empty($customer_add))?"data-selected='".$customer_add['label_address']."'":NULL ?> required>
+                                    <select class='form-control' name='ship_to' id='ship_to'  data-placeholder="" <?php echo!(empty($customer_add))?"data-selected='".$customer_add['label_address']."'":NULL ?> required>
                                                     <?php
                                                         echo makeOptions($customer_add,'Select Shipping address of customer')
                                                     ?>

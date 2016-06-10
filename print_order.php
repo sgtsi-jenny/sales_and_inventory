@@ -1,134 +1,176 @@
 <?php
 require_once("support/config.php");
-     if(!isLoggedIn()){
-        toLogin();
-        die();
-     }
-    //  if(!AllowUser(array(1))){
-    //      redirect("index.php");
-    // }
-$report=array();
-						if(!empty($_GET)){
-						$stmt=$con->prepare("SELECT ID,m.month_name,year,payroll,rent,internet,electricity,water,grocery,others from opex as o left join months as m on o.month=m.id");
-						$stmt->execute($_GET);
-						$report=$stmt->fetchAll(PDO::FETCH_ASSOC);
+require_once('tcpdf/tcpdf.php');
+header('Content-Type: application/pdf');
+header("Content-Disposition: attachment; filename=\"audit_logs.pdf\"");
 
-						$order_details=$con->myQuery("SELECT 
-                        prod.product_name,
-                        sd.quantity,
-                        sd.unit_cost,
-                        sd.discount,
-                        sd.total_cost
-                        FROM sales_master sm
-                        INNER JOIN customers ON sm.customer_id=customers.customer_id
-                        INNER JOIN sales_status ss ON sm.sales_status_id=ss.sales_status_id
-                        INNER JOIN sales_details sd ON sm.sales_master_id=sd.sales_master_id
-                        INNER JOIN products prod ON prod.product_id=sd.product_id
-                        WHERE sm.sales_master_id=?",array($_GET['id']))->fetchAll(PDO::FETCH_ASSOC);
-						}
-?>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>SALES ORDER</title>
-<!-- <?php
-//require_once("./support/head_includes.php");
-?> -->
-</head>
-<body>
-<div class="container-fluid">
-	<!-- <div class="col-sm-12">
-		//<?php require_once("./support/menu.php"); ?>
-	</div> -->
-	<div class="col-sm-12">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h2 style='display:inline'>
-				Monthly Report
-				</h2>
-				
-				<form method="GET" action='pdf_report_download.php' class='form-inline pull-right' target="_blank">
-						<a href='frm_monthly_report.php' class='btn btn-success pull-right'>+ Create Report</a>
-						&nbsp;
-						<input type='hidden' name='report' value='<?= $_GET['report']?>'>
-						<button type='submit' class='btn btn-success '>Download PDF</button>
-						&nbsp;
-						
-				</form>
-				
-				
-				
-			</div>
-			<div class="panel-body" style="overflow:auto">
-				<table class="table table-condensed" id='dt_table'>
+
+// create new PDF document
+$pdf = new TCPDF('PORTRAIT', PDF_UNIT, "portrait", true, 'UTF-8', false);
+
+
+
+// set default monospaced font
+$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+
+
+// set auto page breaks
+$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+
+
+
+// set some language-dependent strings (optional)
+if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
+    require_once(dirname(__FILE__).'/lang/eng.php');
+    $pdf->setLanguageArray($l);
+}
+
+// ---------------------------------------------------------
+
+// set font
+$pdf->SetFont('helvetica', 'B', 20);
+
+// add a page
+$pdf->AddPage();
+
+$pdf->Write(0, 'SALES ORDER', '', 0, 'L', true, 0, false, false, 0);
+
+$pdf->SetFont('helvetica', '', 8);
+
+// -----------------------------------------------------------------------------
+
+$tbl=<<<EOD
+				<br/>
+				<table border="1" cellpadding="2" >
 				<thead>
 					<tr>
-						<th class='text-center'>ID</th>
-						<th class='text-center'>Month</th>
-						<th class='text-center'>Year</th>
-						<th class='text-center'>Monthly Income</th>
-						<th class='text-center'>Monthly Expense</th>
-						<th class='text-center'>Net</th>
-						<th class='text-center'>Action</th>
+						<th class='text-center'>Product Name</th>
+						<th class='text-center'>Order Quantity</th>
+						<th class='text-center'>Price</th>
+						<th class='text-center'>Discount</th>
+						<th class='text-center'>Total</th>
+					</tr>
+				</thead>
+
+EOD;
+						$stmt=$con->prepare("SELECT 
+                                                prod.product_name,
+                                                sd.quantity,
+                                                sd.unit_cost,
+                                                sd.discount,
+                                                sd.total_cost
+                                                FROM sales_master sm
+                                                INNER JOIN customers ON sm.customer_id=customers.customer_id
+                                                INNER JOIN sales_status ss ON sm.sales_status_id=ss.sales_status_id
+                                                INNER JOIN sales_details sd ON sm.sales_master_id=sd.sales_master_id
+                                                INNER JOIN products prod ON prod.product_id=sd.product_id
+                                                WHERE sm.sales_master_id=?",array($_GET['id']));
+						//$stmt->execute();
+						// if(!empty($_GET)){
+						// 	$stmt->execute(array("date_change"=>$_GET['date_change']."%"));
+						// }
+						// else{
+						// 	$stmt->execute(array("date_change"=>'%%'));
+						// }
 						
+						$logs=$stmt->fetchAll(PDO::FETCH_ASSOC);
+						foreach($logs as $log):
+							$tbl.= "<tr>";
+							foreach($log as $key=>$value):
+								$tbl.='<td align="center">';
+								if($key=="unit_cost" || $key=="total_cost"){
+									$tbl.= number_format($value,2);
+								}
+								
+								else{
+									$tbl.= htmlspecialchars($value);
+								}
+								$tbl.= "</td>";
+							endforeach;
+							$tbl.="</tr>";
+						endforeach;
+		
+				$tbl.="</table>";
+
+$pdf->writeHTML($tbl, true, false, false, false, '');
+$pdf->Output();
+// -----------------------------------------------------------------------------
+die;
+checkLogin();
+if($_SESSION['app']['user']['type']==1){
+//header("Content-Disposition: attachment; filename=\"revenue_report.xls\"");
+//header("Content-Type: application/vnd.ms-excel");
+?>
+
+<html>
+<head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+</head>
+<body>
+<style>
+	*{
+	
+    font-size: 1em !important;
+        word-wrap: break-word;
+    }
+</style>
+<br/>
+<table class="table table-condensed" id='dt_table' style='width:100%'>
+				<thead>
+					<tr>
+						<th class='text-center'>Product Name</th>
+						<th class='text-center'>Order Quantity</th>
+						<th class='text-center'>Price</th>
+						<th class='text-center'>Discount</th>
+						<th class='text-center'>Total</th>						
 					</tr>
 				</thead>
 				<tbody>
 					<?php 
-					$stmt=$con->prepare("SELECT o.id,m.month_name,year,income,(payroll+office_rent+office_water_bill+office_meralco_bill+office_net_bill+wh_rent+wh_water_bill+wh_meralco_bill+wh_net_bill+grocery+others) AS expense,net from opex as o left join months as m on o.month=m.id");
-					//$stmt->execute();
-					$stmt->execute(array("date_change"=>$_GET['date_change']."%"));	
+					$stmt=$con->prepare("SELECT 
+                                                prod.product_name,
+                                                sd.quantity,
+                                                sd.unit_cost,
+                                                sd.discount,
+                                                sd.total_cost
+                                                FROM sales_master sm
+                                                INNER JOIN customers ON sm.customer_id=customers.customer_id
+                                                INNER JOIN sales_status ss ON sm.sales_status_id=ss.sales_status_id
+                                                INNER JOIN sales_details sd ON sm.sales_master_id=sd.sales_master_id
+                                                INNER JOIN products prod ON prod.product_id=sd.product_id
+                                                WHERE sm.sales_master_id=?",array($_GET['id']));
+					$stmt->execute();
+					//$stmt->execute(array("date_change"=>$_GET['date_change']."%"));	
 					//$stmt->execute(array("search"=>$_GET['search']."%"));	
-					$reports =$stmt->fetchAll(PDO::FETCH_ASSOC);
-						foreach($reports as $report):
+					$logs=$stmt->fetchAll(PDO::FETCH_ASSOC);
+						foreach($logs as $item):
 							echo "<tr>";
-							foreach($report as $key=>$value):
+							foreach($item as $key=>$value):
 								echo "<td class='text-center'>";
 								if($key=="o.id"){
-									echo str_pad($value, STR_PAD_LEFT);
+									?>
+										
+									<?php
 								}
-								else if($key=="net" || $key=="income" || $key=="expense"){
-									echo number_format($value,2);
+								
+								else if($key=="unit_cost" || $key=="income"){
+									$tbl.= number_format($value,2);
 								}
+								
 								else{
 									echo htmlspecialchars($value);
 								}
 								echo "</td>";
 							endforeach;
 							?>
-							<td class='text-center'>							
-							<a href='frm_monthly_report.php?id=<?= $report['id']?>' class='btn btn-xs btn-success text-center' style='width:80%'><span class='glyphicon glyphicon-pencil'></span> Edit</a>&nbsp;
-							
-							</td>
 							<?php
 							echo "</tr>";
-						endforeach;							
-					?>					
+						endforeach;
+					?>
 				</tbody>
 				</table>
-			</div>
-			
-		</div>
-	</div>
-	
-</div>
-
+				</body>
+				</html>
 <?php
-require_once("./support/body_includes.php");
+}
 ?>
-<script>
-
-$(document).ready(function() {
-    $('#dt_table').DataTable({
-        "scrollY": true,
-        "order": [],
-        "bFilter": false
-    });
-   
-} );
-
-</script>
-</body>
-
-</html>
