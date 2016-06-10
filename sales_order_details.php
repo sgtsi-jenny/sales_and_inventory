@@ -102,7 +102,8 @@
         <section class="content-header" align="right">
          <h1 align="center" style="color:#24b798;">Sales Order Details</h1>
           <a href='sales.php' class='btn btn-default'><span class='glyphicon glyphicon-arrow-left'></span> Back to Sales List</a>
-          <a href='frm_sales.php' class='btn btn-brand'> New Sales Order &nbsp;<span class='fa fa-plus'></span> </a>
+          <a href='frm_sales.php' class='btn btn-brand'> New Sales Order&nbsp;<span class='fa fa-plus'></span> </a>
+          <a href='print_order.php?id=<?php echo $_GET['id'];?>' class='btn btn-brand'> Preview/Print &nbsp;<span class='fa fa-print'></span> </a>
           <?php
             if($sale['sales_status_id']==2 || $sale['sales_status_id']==3){
           ?>

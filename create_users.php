@@ -57,8 +57,8 @@ if(!AllowUser(array(1))){
 				unset($inputs['user_id']);
 				$inputs['password']=encryptIt($inputs['password']);
 				$uname=$inputs['username'];
-				var_dump($inputs);
-				die;
+				// var_dump($inputs);
+				// die;
 				$results=$con->myQuery("if EXISTS(select username from users where username='$uname') THEN
 				select false as result;
 				else

@@ -16,34 +16,34 @@
 	if(!empty($_POST)){
 		//Validate form inputs
 		$inputs=$_POST;
-		// var_dump($inputs);
-		// 		die;
+		
 		$errors="";
 		
 
 		
 		// echo count($inputs['product_id']);
 		// die;		
-		if (empty($inputs['customer_id'])){
-			$errors.="Select customer name. <br/>";
-		}
-		if ($inputs['product_id']=="Select Product"){
+		// if (empty($inputs['customer_id'])){
+		// 	$errors.="Select customer name. <br/>";
+		// }
+		if ($inputs['product_id']==""){
 			$errors.="Please fill out your order and try again. <br/> ";
 		}
 
 		if($errors!=""){
 
 			Alert($errors,"danger");
-				if(empty($inputs['sales_master_id'])){
+				if(empty($inputs['customer_id'])){
 					redirect("frm_sales.php");
 				}
 				else{
-					redirect("frm_sales.php?id=".urlencode($inputs['sales_master_id']));
-				}
+					redirect("frm_sales.php?customer_id=".urlencode($inputs['customer_id']));
+				}	
 				die;
 		}
+
 		else{
-			$sales_id=$inputs['sales_master_id'];
+			
 			
 			//IF id exists update ELSE insert
 			if(empty($inputs['sales_master_id'])){
@@ -111,7 +111,8 @@
 			}
 			else{
 				// UPDATE
-
+				// var_dump("update");
+				// die;
 				date_default_timezone_set('Asia/Manila');
 				$now = new DateTime();
 				$date_issue=date_format($now, 'Ymd');

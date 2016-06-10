@@ -41,6 +41,7 @@
 				$sm['date_modified']=$now->format('Ymd');
 				// $sm['sales_master_id']=$inputs['sales_master_id'];
 				$con->myQuery("UPDATE sales_master SET is_void='$is_void',date_modified=:date_modified WHERE sales_master_id=:sales_master_id",$sm);
+				$con->myQuery("UPDATE sales_payments SET is_voided='$is_void',date_voided=:date_modified WHERE sales_master_id=:sales_master_id",$sm);
 
 				Alert("SO".$sm['sales_master_id']." was successfully voided.","success");
 			

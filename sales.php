@@ -8,6 +8,8 @@
     if(!AllowUser(array(1))){
          redirect("index.php");
     }
+    $customer=$con->myQuery("SELECT customer_id,customer_name FROM customers")->fetchAll(PDO::FETCH_ASSOC);
+     $customer_add=$con->myQuery("SELECT customer_add_id,label_address FROM customers cus INNER JOIN customer_address cus_add ON cus.customer_id=cus_add.customer_id where cus.customer_id=?",array($sale['customer_id']))->fetchall(PDO::FETCH_ASSOC);
     
     makeHead("Sales Order");
 ?>
@@ -32,9 +34,11 @@
                           <div class='panel-body'>
                                     <div class='col-md-12 text-right'>
                                         <div class='col-md-12 text-right'>
-                                        <a href='frm_sales.php' class='btn btn-brand'> New Sales Order<span class='fa fa-plus'></span> </a>
+                                          <button type="button" class="btn btn-brand" data-toggle="modal" data-target="#newSalesModal">New Sales Order<span class='fa fa-plus'></span> </button>
                                         </div>                                
                                     </div> 
+
+                                        <!-- <a href='frm_sales.php' class='btn btn-brand'>  -->
                           </div>
                                 <?php
                                 Alert();
@@ -48,7 +52,7 @@
                                                 <th class='text-center'>Sales Status</th>
                                                 <th class='text-center'>Payment Status</th>
                                                 <th class='text-center'>Total</th>
-                                                <th class='text-center'>Paymed Amount</th>
+                                                <th class='text-center'>Payed Amount</th>
                                                 <!-- <th class='text-center'>Action</th> -->
                                                 
                             </tr>
@@ -117,7 +121,41 @@
           </div><!-- /.row -->
         </section><!-- /.content -->
   </div>
-
+  <!-- Sales order Modal -->
+            <div class="modal fade" id="newSalesModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Add New Sales Order</h4>
+                  </div>
+                 
+                      <div class="modal-body"> 
+                        <form action='frm_sales.php' method='GET'>
+                           <!--  -->
+                            <!-- <?php
+                                // var_dump($sale['t_qty']);
+                            ?> -->
+                            
+                            <div class="form-group">
+                                <label>Customer</label>
+                                    <select class='form-control' name='customer_id' id='customer_id'  onchange='get_address()' data-placeholder="Select a Customer" <?php echo!(empty($sales_customer))?"data-selected='".$sales_customer['customer_id']."'":NULL ?> required>
+                                                <?php
+                                                    // echo makeOptions($customer,'Select Customer')
+                                                    echo makeOptions($customer,'Select Customer',NULL,'',!(empty($sales_customer))?$sales_customer['customer_id']:NULL)
+                                                ?>
+                                        </select>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-brand" type="submit" ">Next</button>
+                                <button type="button" class="btn btn-default"  data-dismiss="modal">Cancel</button>
+                            </div>
+                        </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- End sales order Modal -->
 <script type="text/javascript">
   $(function () {
         $('#ResultTable').DataTable({

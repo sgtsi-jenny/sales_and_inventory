@@ -25,9 +25,11 @@ CREATE TABLE `adjustment_status` (
   `name` varbinary(255) DEFAULT NULL,
   `is_deleted` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`adj_status_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 /*Data for the table `adjustment_status` */
+
+insert  into `adjustment_status`(`adj_status_id`,`name`,`is_deleted`) values (1,'New Product',0),(2,'Returned',0),(3,'Production of Goods',0),(4,'Damaged',0),(5,'Shrinkage',0),(6,'Promotion',0);
 
 /*Table structure for table `audit_trails` */
 
@@ -67,11 +69,11 @@ CREATE TABLE `categories` (
   `name` varchar(255) DEFAULT NULL,
   `is_deleted` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`category_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 
 /*Data for the table `categories` */
 
-insert  into `categories`(`category_id`,`name`,`is_deleted`) values (1,'Phone',0),(2,'Dress',0),(3,'Jewelry',0),(4,'Sports Shoes',0),(5,'Watch',0),(6,'T-shirt',0);
+insert  into `categories`(`category_id`,`name`,`is_deleted`) values (1,'Phone',0),(2,'Dress',0),(3,'Jewelry',0),(4,'Sports Shoes',0),(5,'Watch 2',0),(6,'T-shirt',0),(7,'Gadgets',0);
 
 /*Table structure for table `customer_address` */
 
@@ -82,12 +84,13 @@ CREATE TABLE `customer_address` (
   `customer_id` bigint(20) DEFAULT NULL,
   `label_address` varchar(255) DEFAULT NULL,
   `address` varchar(255) DEFAULT NULL,
+  `is_deleted` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`customer_add_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 
 /*Data for the table `customer_address` */
 
-insert  into `customer_address`(`customer_add_id`,`customer_id`,`label_address`,`address`) values (1,1,'Home','Batasan Hills Quezon City'),(2,1,'Work','Tektite Pasig City'),(3,2,'Home angono','Rizal'),(4,2,'Work ANgono','Pasig City Phil.');
+insert  into `customer_address`(`customer_add_id`,`customer_id`,`label_address`,`address`,`is_deleted`) values (1,1,'Alabang','Las Pinas Pilipinas',0),(2,1,'QC','Project 4 Quezon City',0),(3,1,'wqw','ewr',0),(4,2,'Rizal','Angono Rizal',0),(5,3,'Work','Pasig City',0);
 
 /*Table structure for table `customer_contacts` */
 
@@ -127,25 +130,11 @@ CREATE TABLE `customers` (
   `email` varchar(100) DEFAULT NULL,
   `is_deleted` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`customer_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 /*Data for the table `customers` */
 
-insert  into `customers`(`customer_id`,`customer_name`,`tin`,`description`,`fax`,`telephone_number`,`mobile_number`,`birth_date`,`website`,`email`,`is_deleted`) values (1,'BHF','2345678','bhf bank of the phil.','45678','45678','54678','19930520','www.bhf.com','bhf@gmail.com',0),(2,'Angono','4567868','angono memorial','567','5467','567','19900510','www.angono.com','angono@ymail.com',0);
-
-/*Table structure for table `foo` */
-
-DROP TABLE IF EXISTS `foo`;
-
-CREATE TABLE `foo` (
-  `the_key` int(10) unsigned zerofill NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`the_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
-
-/*Data for the table `foo` */
-
-insert  into `foo`(`the_key`,`name`) values (0000000001,NULL),(0000000002,NULL),(0000000003,NULL),(0000000004,NULL),(0000000005,NULL),(0000000006,'dfds'),(0000000007,'dsg');
+insert  into `customers`(`customer_id`,`customer_name`,`tin`,`description`,`fax`,`telephone_number`,`mobile_number`,`birth_date`,`website`,`email`,`is_deleted`) values (1,'Euro Shop','100000000000002','Cars Shop','2776009','19729837','7568585','19901111','euroshop.com','euro@gmail.com',0),(2,'Angono Memorial Park','3456789','sample customer','56768798','54678','5678','19901209','angono.com','angelo@gmail.com',0),(3,'Trixia Ganda','09234567890','Dyesebel sa gabi','0965444','3550987','09772345678','19940528','trix.com','trix_ganda@gmail.com',0);
 
 /*Table structure for table `invoice_master` */
 
@@ -153,7 +142,7 @@ DROP TABLE IF EXISTS `invoice_master`;
 
 CREATE TABLE `invoice_master` (
   `invoice_master_id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `sales_id` bigint(255) DEFAULT NULL,
+  `sales_master_id` bigint(255) DEFAULT NULL,
   `bill_to` varchar(255) DEFAULT NULL,
   `ship_to` varchar(255) DEFAULT NULL,
   `customer_id` bigint(20) DEFAULT NULL,
@@ -162,10 +151,13 @@ CREATE TABLE `invoice_master` (
   `date_issued` varchar(8) DEFAULT NULL,
   `total_units` varchar(9) DEFAULT NULL,
   `is_deleted` tinyint(1) DEFAULT '0',
+  `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`invoice_master_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 /*Data for the table `invoice_master` */
+
+insert  into `invoice_master`(`invoice_master_id`,`sales_master_id`,`bill_to`,`ship_to`,`customer_id`,`terms`,`payment_due`,`date_issued`,`total_units`,`is_deleted`,`description`) values (1,1,'4','4',2,'10','20160617','20160607','1',0,'just just'),(2,3,'5','5',3,'60','20160807','20160608','15',0,'why so ');
 
 /*Table structure for table `measurements` */
 
@@ -177,9 +169,11 @@ CREATE TABLE `measurements` (
   `name` varchar(255) DEFAULT NULL,
   `is_deleted` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`measurement_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 /*Data for the table `measurements` */
+
+insert  into `measurements`(`measurement_id`,`abv`,`name`,`is_deleted`) values (1,'length','haba',0),(2,'pcs','pieces',0),(3,'kgs','Kilograms',0);
 
 /*Table structure for table `payment_status` */
 
@@ -193,7 +187,7 @@ CREATE TABLE `payment_status` (
 
 /*Data for the table `payment_status` */
 
-insert  into `payment_status`(`payment_status_id`,`name`) values (1,'unpaid'),(2,'paid');
+insert  into `payment_status`(`payment_status_id`,`name`) values (1,'Unpaid'),(2,'Paid');
 
 /*Table structure for table `po_details` */
 
@@ -208,9 +202,11 @@ CREATE TABLE `po_details` (
   `total_cost` varchar(12) DEFAULT NULL,
   `is_deleted` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`po_detail_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 
 /*Data for the table `po_details` */
+
+insert  into `po_details`(`po_detail_id`,`po_master_id`,`product_id`,`qty_ordered`,`unit_cost`,`total_cost`,`is_deleted`) values (1,0,2,'2','25000','50000',0),(2,0,1,'10','8000','80000',0),(3,0,1,'4','8000','32000',0),(4,0,2,'6','25000','150000',0),(5,1,1,'5','8000','40000',0),(6,1,2,'3','25000','75000',0),(7,2,3,'9','7500','67500',0),(8,3,1,'5','8000','40000',0),(9,3,2,'9','25000','225000',0);
 
 /*Table structure for table `po_master` */
 
@@ -224,10 +220,15 @@ CREATE TABLE `po_master` (
   `po_status_id` tinyint(1) DEFAULT NULL,
   `payment_status_id` tinyint(1) DEFAULT NULL,
   `is_deleted` tinyint(1) DEFAULT '0',
+  `date_modified` bigint(8) DEFAULT NULL,
+  `total_amount` varchar(12) DEFAULT NULL,
+  `ship_to` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`po_master_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 /*Data for the table `po_master` */
+
+insert  into `po_master`(`po_master_id`,`po_number`,`purchased_date`,`supplier_id`,`po_status_id`,`payment_status_id`,`is_deleted`,`date_modified`,`total_amount`,`ship_to`) values (1,NULL,'20160608',1,2,2,0,20160608,'115000','eshfdj'),(2,NULL,'20160608',2,1,1,0,20160608,'67500','l'),(3,NULL,'20160608',2,3,2,0,20160608,'265000','pasig');
 
 /*Table structure for table `po_payments` */
 
@@ -242,9 +243,11 @@ CREATE TABLE `po_payments` (
   `remarks` varchar(255) DEFAULT NULL,
   `is_deleted` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`po_payment_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 /*Data for the table `po_payments` */
+
+insert  into `po_payments`(`po_payment_id`,`po_master_id`,`amount`,`date_paid`,`is_void`,`remarks`,`is_deleted`) values (1,1,'115000','20160608',0,'qwaesrdfgh',0),(2,3,'165000','20160608',0,'partial',0),(3,3,'100000','20160608',0,'full',0);
 
 /*Table structure for table `po_received` */
 
@@ -260,9 +263,11 @@ CREATE TABLE `po_received` (
   `remarks` varchar(255) DEFAULT NULL,
   `is_deleted` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`po_received_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 /*Data for the table `po_received` */
+
+insert  into `po_received`(`po_received_id`,`po_master_id`,`date_received`,`qty_received`,`product_id`,`reference_number`,`remarks`,`is_deleted`) values (1,1,'20160608','5',1,'3245670','dhfdudf',0),(2,3,'20160608','5',1,'32456787','ok',0),(3,3,'20160608','4',2,'345678','ok',0),(4,3,'20160608','5',2,'23456','kulang',0);
 
 /*Table structure for table `po_status` */
 
@@ -298,11 +303,11 @@ CREATE TABLE `products` (
   `stock_status_id` bigint(20) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`product_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 /*Data for the table `products` */
 
-insert  into `products`(`product_id`,`product_code`,`category_id`,`product_name`,`selling_price`,`wholesale_price`,`barcode`,`current_quantity`,`minimum_quantity`,`maximum_quantity`,`is_deleted`,`measurement_id`,`stock_status_id`,`description`) values (1,'prod0001',1,'iphone 5s','10000','15000','00000010','50','10','30',0,NULL,NULL,NULL),(2,'prod0002',1,'iphone 6plus','30000','25000','00000020','10','10','50',0,NULL,NULL,NULL);
+insert  into `products`(`product_id`,`product_code`,`category_id`,`product_name`,`selling_price`,`wholesale_price`,`barcode`,`current_quantity`,`minimum_quantity`,`maximum_quantity`,`is_deleted`,`measurement_id`,`stock_status_id`,`description`) values (1,'prod0001',1,'iphone 5s','10000','8000','00000010','110','10','30',0,2,1,'iphone 5s 16gb'),(2,'prod0002',1,'iphone 6plus','30000','25000','00000020','209','10','50',0,2,1,'iphone 6plus 32 gb'),(3,'prod0003',1,'samsung','15000','20000','00000030','300','10','20',0,2,1,'samsung s6'),(4,'prod005',2,'Powerbank 1','1001','800','0000001005','100','20','150',1,1,NULL,'MI Powerbank 1');
 
 /*Table structure for table `sales_details` */
 
@@ -319,11 +324,11 @@ CREATE TABLE `sales_details` (
   `tax` varchar(5) DEFAULT NULL,
   `is_deleted` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`sales_detail_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
 
 /*Data for the table `sales_details` */
 
-insert  into `sales_details`(`sales_detail_id`,`product_id`,`sales_master_id`,`quantity`,`unit_cost`,`total_cost`,`discount`,`tax`,`is_deleted`) values (1,1,1,'5','10000','50000',NULL,NULL,0),(2,2,1,'5','50000','250000',NULL,NULL,0),(3,2,2,'1','10000','10000',NULL,NULL,0);
+insert  into `sales_details`(`sales_detail_id`,`product_id`,`sales_master_id`,`quantity`,`unit_cost`,`total_cost`,`discount`,`tax`,`is_deleted`) values (2,1,1,'1','10000','10000','',NULL,0),(10,1,2,'3','10000','29400','2',NULL,0),(11,3,2,'2','15000','29100','3',NULL,0),(12,4,3,'5','1001','3753.75','25',NULL,0),(13,1,3,'10','10000','85000','15',NULL,0);
 
 /*Table structure for table `sales_master` */
 
@@ -331,7 +336,7 @@ DROP TABLE IF EXISTS `sales_master`;
 
 CREATE TABLE `sales_master` (
   `sales_master_id` bigint(10) unsigned zerofill NOT NULL AUTO_INCREMENT,
-  `date_issue` varchar(255) DEFAULT NULL,
+  `date_issue` varchar(8) DEFAULT NULL,
   `shipment_id` bigint(20) DEFAULT NULL,
   `tax_id` bigint(20) DEFAULT NULL,
   `total_amount` varchar(255) DEFAULT NULL,
@@ -339,21 +344,41 @@ CREATE TABLE `sales_master` (
   `user_id` bigint(20) DEFAULT NULL,
   `sales_status_id` bigint(20) DEFAULT NULL,
   `payment_status_id` bigint(20) DEFAULT NULL,
+  `bill_to` bigint(20) DEFAULT NULL,
+  `ship_to` bigint(20) DEFAULT NULL,
   `is_deleted` tinyint(1) DEFAULT '0',
+  `description` varchar(255) DEFAULT NULL,
+  `date_modified` varchar(8) DEFAULT NULL,
+  `is_void` tinyint(1) DEFAULT '0',
+  `terms` int(11) DEFAULT NULL,
   PRIMARY KEY (`sales_master_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 /*Data for the table `sales_master` */
 
-insert  into `sales_master`(`sales_master_id`,`date_issue`,`shipment_id`,`tax_id`,`total_amount`,`customer_id`,`user_id`,`sales_status_id`,`payment_status_id`,`is_deleted`) values (0000000001,'20160518',1,NULL,'300000',1,1,2,1,0),(0000000002,'2016-519',1,NULL,'10000',1,1,2,1,0),(0000000003,'32',NULL,NULL,NULL,NULL,NULL,NULL,NULL,0);
+insert  into `sales_master`(`sales_master_id`,`date_issue`,`shipment_id`,`tax_id`,`total_amount`,`customer_id`,`user_id`,`sales_status_id`,`payment_status_id`,`bill_to`,`ship_to`,`is_deleted`,`description`,`date_modified`,`is_void`,`terms`) values (0000000001,'20160607',NULL,NULL,'37500',2,1,3,2,NULL,NULL,0,'','20160607',0,NULL),(0000000002,'20160607',NULL,NULL,'24350',2,1,2,1,NULL,NULL,0,'','20160607',0,NULL),(0000000003,'20160608',NULL,NULL,'88753.75',3,1,4,2,NULL,NULL,0,'ang gondo aaaaayyyyyyyyyyyyyy!','20160608',0,NULL);
+
+/*Table structure for table `sales_payment_type` */
+
+DROP TABLE IF EXISTS `sales_payment_type`;
+
+CREATE TABLE `sales_payment_type` (
+  `payment_type_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`payment_type_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+
+/*Data for the table `sales_payment_type` */
+
+insert  into `sales_payment_type`(`payment_type_id`,`name`) values (1,'Cash'),(2,'Credit Card');
 
 /*Table structure for table `sales_payments` */
 
 DROP TABLE IF EXISTS `sales_payments`;
 
 CREATE TABLE `sales_payments` (
-  `sales_payment_id` int(255) NOT NULL AUTO_INCREMENT,
-  `type` varchar(255) DEFAULT NULL,
+  `sales_payment_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `type` bigint(10) DEFAULT NULL,
   `amount` varchar(12) DEFAULT NULL,
   `pay_date` varchar(8) DEFAULT NULL,
   `reference` varchar(255) DEFAULT NULL,
@@ -361,12 +386,14 @@ CREATE TABLE `sales_payments` (
   `invoice_master_id` bigint(20) DEFAULT NULL,
   `user_id` bigint(20) DEFAULT NULL,
   `is_deleted` tinyint(1) DEFAULT '0',
+  `is_voided` tinyint(1) DEFAULT '0',
+  `date_voided` varchar(8) DEFAULT NULL,
   PRIMARY KEY (`sales_payment_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 /*Data for the table `sales_payments` */
 
-insert  into `sales_payments`(`sales_payment_id`,`type`,`amount`,`pay_date`,`reference`,`sales_master_id`,`invoice_master_id`,`user_id`,`is_deleted`) values (1,'sf','50000','20160518','sdf',1,1,1,0),(2,'sf','10000','20160518','fghf',1,1,1,0),(3,'sf','1000','20160519','tfgds',2,1,1,0);
+insert  into `sales_payments`(`sales_payment_id`,`type`,`amount`,`pay_date`,`reference`,`sales_master_id`,`invoice_master_id`,`user_id`,`is_deleted`,`is_voided`,`date_voided`) values (1,1,'10000','20160607','LBC',1,1,1,0,0,NULL),(2,1,'70000','20160608','partial',3,2,1,0,1,'20160608'),(3,1,'18753.75','20160608','full',3,2,1,0,1,'20160609'),(4,1,'70000','20160608','full',3,2,1,0,0,NULL);
 
 /*Table structure for table `sales_status` */
 
@@ -380,7 +407,7 @@ CREATE TABLE `sales_status` (
 
 /*Data for the table `sales_status` */
 
-insert  into `sales_status`(`sales_status_id`,`name`) values (1,'quote'),(2,'allocated'),(3,'invoiced'),(4,'shipped');
+insert  into `sales_status`(`sales_status_id`,`name`) values (1,'Quote'),(2,'Allocated'),(3,'Invoiced'),(4,'Shipped');
 
 /*Table structure for table `shipments` */
 
@@ -388,17 +415,61 @@ DROP TABLE IF EXISTS `shipments`;
 
 CREATE TABLE `shipments` (
   `shipment_id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `bill_to` varchar(255) DEFAULT NULL,
-  `ship_to` varchar(255) DEFAULT NULL,
+  `customer_id` bigint(20) DEFAULT NULL,
+  `bill_to` bigint(20) DEFAULT NULL,
+  `ship_to` bigint(20) DEFAULT NULL,
   `ship_from` varchar(255) DEFAULT NULL,
+  `ship_service` varchar(255) DEFAULT NULL,
+  `ship_method` varchar(255) DEFAULT NULL,
   `date_delivered` varchar(8) DEFAULT NULL,
-  `delivery_type` varchar(255) DEFAULT NULL,
   `date_shipped` varchar(8) DEFAULT NULL,
   `is_deleted` tinyint(1) DEFAULT '0',
+  `sales_master_id` bigint(20) DEFAULT NULL,
+  `tracking_code` varchar(255) DEFAULT NULL,
+  `comments` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`shipment_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 /*Data for the table `shipments` */
+
+insert  into `shipments`(`shipment_id`,`customer_id`,`bill_to`,`ship_to`,`ship_from`,`ship_service`,`ship_method`,`date_delivered`,`date_shipped`,`is_deleted`,`sales_master_id`,`tracking_code`,`comments`) values (1,3,5,5,'sdfghjkl;','DHL','Air','20160609','20160608',0,3,'23456789','wfghj');
+
+/*Table structure for table `stock_adj_details` */
+
+DROP TABLE IF EXISTS `stock_adj_details`;
+
+CREATE TABLE `stock_adj_details` (
+  `stock_adjdetails_id` bigint(10) unsigned zerofill NOT NULL AUTO_INCREMENT,
+  `stock_adjmaster_id` bigint(10) DEFAULT NULL,
+  `product_id` bigint(10) DEFAULT NULL,
+  `quantity_received` varchar(12) DEFAULT NULL,
+  `is_deleted` varchar(1) DEFAULT '0',
+  PRIMARY KEY (`stock_adjdetails_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+
+/*Data for the table `stock_adj_details` */
+
+insert  into `stock_adj_details`(`stock_adjdetails_id`,`stock_adjmaster_id`,`product_id`,`quantity_received`,`is_deleted`) values (0000000001,1,1,'3','0'),(0000000002,1,1,'2','0');
+
+/*Table structure for table `stock_adj_master` */
+
+DROP TABLE IF EXISTS `stock_adj_master`;
+
+CREATE TABLE `stock_adj_master` (
+  `stock_adjmaster_id` bigint(10) unsigned zerofill NOT NULL AUTO_INCREMENT,
+  `adj_status_id` bigint(10) DEFAULT NULL,
+  `date_adjusted` varchar(8) DEFAULT NULL,
+  `is_deleted` tinyint(1) DEFAULT '0',
+  `total_cost` varchar(12) DEFAULT NULL,
+  `is_reverted` varchar(1) DEFAULT NULL,
+  `reverted_from` bigint(20) DEFAULT NULL,
+  `total_quantity_received` varchar(12) DEFAULT NULL,
+  PRIMARY KEY (`stock_adjmaster_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+
+/*Data for the table `stock_adj_master` */
+
+insert  into `stock_adj_master`(`stock_adjmaster_id`,`adj_status_id`,`date_adjusted`,`is_deleted`,`total_cost`,`is_reverted`,`reverted_from`,`total_quantity_received`) values (0000000001,3,'20160523',0,'00015000000','0',0,'3');
 
 /*Table structure for table `stock_adjustments` */
 
@@ -412,6 +483,7 @@ CREATE TABLE `stock_adjustments` (
   `adj_status_id` bigint(20) DEFAULT NULL,
   `date_adjusted` varchar(8) DEFAULT NULL,
   `is_deleted` tinyint(1) DEFAULT '0',
+  `notes` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`stock_adj_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -422,29 +494,33 @@ CREATE TABLE `stock_adjustments` (
 DROP TABLE IF EXISTS `stock_status`;
 
 CREATE TABLE `stock_status` (
-  `stock_status_id` bigint(20) NOT NULL,
+  `stock_status_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `remarks` varchar(255) DEFAULT NULL,
   `is_deleted` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`stock_status_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 /*Data for the table `stock_status` */
+
+insert  into `stock_status`(`stock_status_id`,`remarks`,`is_deleted`) values (1,'Quote',0);
 
 /*Table structure for table `supplier_products` */
 
 DROP TABLE IF EXISTS `supplier_products`;
 
 CREATE TABLE `supplier_products` (
-  `supplier_product_id` bigint(20) NOT NULL,
+  `supplier_product_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `product_id` bigint(20) DEFAULT NULL,
   `supplier_id` bigint(20) DEFAULT NULL,
   `unit_cost` varchar(12) DEFAULT NULL,
   `is_main` tinyint(1) DEFAULT '0',
   `is_deleted` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`supplier_product_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 /*Data for the table `supplier_products` */
+
+insert  into `supplier_products`(`supplier_product_id`,`product_id`,`supplier_id`,`unit_cost`,`is_main`,`is_deleted`) values (1,1,1,'8000',0,0),(2,3,3,'7500',0,0),(3,2,2,'25000',0,0),(4,4,1,'499',0,1);
 
 /*Table structure for table `suppliers` */
 
@@ -459,11 +535,11 @@ CREATE TABLE `suppliers` (
   `email` varchar(255) DEFAULT NULL,
   `is_deleted` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`supplier_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 /*Data for the table `suppliers` */
 
-insert  into `suppliers`(`supplier_id`,`name`,`description`,`contact_number`,`address`,`email`,`is_deleted`) values (1,'BDO','Banco de ORo desc','028496','Ortigas Center','dbo@info.ph',0),(2,'Euro Shop','this a test update','089678','Makati City ','euro@gmail.com',0),(3,'belo','belo med group','0979869','Makati City ','belo@gmail.com',0);
+insert  into `suppliers`(`supplier_id`,`name`,`description`,`contact_number`,`address`,`email`,`is_deleted`) values (1,'BDO','Banco de ORo desc','028496','Ortigas Center','dbo@info.ph',0),(2,'Euro Shop','this a test update','089678','Makati City ','euro@gmail.com',0),(3,'belo','belo med group','0979869','Makati City ','belo@gmail.com',0),(4,'MI 22','MI supplier 2','08969868750','Makati City 2','mia@info.com',0);
 
 /*Table structure for table `tax` */
 
@@ -496,7 +572,7 @@ insert  into `user_types`(`user_type_id`,`name`,`is_deleted`) values (1,'Adminis
 DROP TABLE IF EXISTS `users`;
 
 CREATE TABLE `users` (
-  `user_id` bigint(20) NOT NULL,
+  `user_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `user_type_id` bigint(20) NOT NULL,
   `first_name` varchar(255) NOT NULL,
   `middle_name` varchar(255) NOT NULL,
@@ -509,15 +585,16 @@ CREATE TABLE `users` (
   `last_login` date NOT NULL,
   `is_deleted` tinyint(1) NOT NULL DEFAULT '0',
   `is_login` tinyint(1) DEFAULT '0',
-  `last_activity` datetime DEFAULT CURRENT_TIMESTAMP,
+  `last_activity` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `is_active` tinyint(1) DEFAULT '1',
   `security_question` varchar(255) DEFAULT NULL,
-  `security_answer` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Table for users';
+  `security_answer` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='Table for users';
 
 /*Data for the table `users` */
 
-insert  into `users`(`user_id`,`user_type_id`,`first_name`,`middle_name`,`last_name`,`username`,`password`,`email`,`contact_no`,`gender`,`last_login`,`is_deleted`,`is_login`,`last_activity`,`is_active`,`security_question`,`security_answer`) values (1,1,'Jenny','Bueno','Bercasio','admin','TNTz0EXkSq4dC+kr8w8+UF14gOTFdx6RSEJpaGwQ7v4=','a@a.com','0940124','Female','0000-00-00',0,0,'2016-05-19 17:29:05',1,'True love?','mom');
+insert  into `users`(`user_id`,`user_type_id`,`first_name`,`middle_name`,`last_name`,`username`,`password`,`email`,`contact_no`,`gender`,`last_login`,`is_deleted`,`is_login`,`last_activity`,`is_active`,`security_question`,`security_answer`) values (1,1,'Jenny','Bueno','Bercasio','admin','TNTz0EXkSq4dC+kr8w8+UF14gOTFdx6RSEJpaGwQ7v4=','a@a.com','0940124','Female','0000-00-00',0,1,'2016-06-09 11:31:12',1,'True love?','mom'),(2,2,'Eom','O','Molina','eom2','TNTz0EXkSq4dC+kr8w8+UF14gOTFdx6RSEJpaGwQ7v4=','eom@gmail.com','09876543210',NULL,'0000-00-00',0,0,'2016-06-08 14:47:50',1,'short hair','percy gf');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
