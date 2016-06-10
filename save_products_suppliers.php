@@ -16,6 +16,15 @@
 		//Validate form inputs
 		$inputs=$_POST;
 
+		if (empty($inputs['is_main'])) 
+		{
+			//echo $inputs['is_main'];
+			$inputs['is_main']=0;
+		}
+
+		//die();
+
+
 		if(empty($inputs['product_id']))
 		{
 			Modal("Invalid Record Selected");
@@ -49,11 +58,13 @@
 				$con->myQuery("INSERT INTO supplier_products(
 					product_id,
 					supplier_id,
-					unit_cost
+					unit_cost,
+					is_main
 					) VALUES(
 					:product_id,
 					:supplier,
-					:unit_cost
+					:unit_cost,
+					:is_main
 					)",$inputs);
 				//insertAuditLog($_SESSION[WEBAPP]['user']['last_name'].", ".$_SESSION[WEBAPP]['user']['first_name']." ".$_SESSION[WEBAPP]['user']['middle_name']," Added ({$skill_name}) training to ({$emp['last_name']}, {$emp['first_name']} {$emp['middle_name']}).");
 			}
@@ -64,7 +75,7 @@
 				//die();	
 
 				$con->myQuery("UPDATE supplier_products SET
-				 	unit_cost=:unit_cost
+				 	unit_cost=:unit_cost, is_main=:is_main
 				 	WHERE supplier_product_id=:id
 				 	",$inputs);
 			}

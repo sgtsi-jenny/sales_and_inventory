@@ -48,7 +48,7 @@
             </select>
           </div>
           <div class='col-ms-1'>
-            <a href='categories.php' class='btn btn-flat btn-sm btn-success'><span class='fa fa-plus'></span></a>
+            <a href='frm_categories.php' class='btn btn-flat btn-sm btn-success'><span class='fa fa-plus'></span></a>
           </div>
         </div>
       </div>
@@ -87,7 +87,7 @@
             </select>
           </div>
           <div class='col-ms-1'>
-            <a href='measurements.php' class='btn btn-flat btn-sm btn-success'><span class='fa fa-plus'></span></a>
+            <a href='frm_measurement.php' class='btn btn-flat btn-sm btn-success'><span class='fa fa-plus'></span></a>
           </div>
         </div>
       </div>
