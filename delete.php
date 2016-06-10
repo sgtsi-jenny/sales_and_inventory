@@ -22,6 +22,26 @@
 		$id="";
 		switch ($_GET['t'])
 		{
+			case 'cad':
+				$table="customer_address";
+				$page="customer_address.php";
+				$id="customer_add_id";
+				break;
+			case 'cat':
+				$table="categories";
+				$page="categories.php";
+				$id="category_id";
+				break;
+			case 'meas':
+				$table="measurements";
+				$page="measurements.php";
+				$id="measurement_id";
+				break;
+			case 'cust':
+				$table="customers";
+				$page="customers.php";
+				$id="customer_id";
+				break;
 			case 'prod':
 				$table="products";
 				$page="products.php";
