@@ -33,7 +33,7 @@
   Alert();
 ?>
 <div class='text-right'>
-<button class='btn btn-success' data-toggle="collapse" data-target="#collapseForm" aria-expanded="false" aria-controls="collapseForm">Toggle Form </button>
+  <button class='btn btn-success' data-toggle="collapse" data-target="#collapseForm" aria-expanded="false" aria-controls="collapseForm">Hide/Unhide Form </button>
 </div>
 <div id='collapseForm' class='collapse'>
   <form class='form-horizontal' action='save_products_suppliers.php' method="POST" name="frm_prod_sup" onsubmit="return validate(this)">
