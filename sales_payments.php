@@ -106,7 +106,7 @@
           <a href='sales.php' class='btn btn-default'><span class='glyphicon glyphicon-arrow-left'></span> Back to Sales List</a>
           <a href='frm_sales.php' class='btn btn-brand'> New Sales Order &nbsp;<span class='fa fa-plus'></span> </a>
           <?php
-            if($sale['sales_status_id']==2 || $sale['sales_status_id']==3){
+            if($sale['sales_status_id']==2 || $sale['sales_status_id']==3 && AllowUser(array(1))){
           ?>
           <a href='sales_void.php?id=<?=$_GET['id']?>' class='btn btn-default' onclick='return confirm("Click confirm to void this order. This will also rollback any fulfillments and revert any stock movements.")'>Void</a>
           <?php
@@ -296,7 +296,13 @@
                                                 <th class='text-center'>Payment Date</th>
                                                 <!-- <th class='text-center'>Balance</th> -->
                                                 <th class='text-center'>Reference</th>
+                                                <?php
+                                                  if(AllowUser(array(1))):
+                                                ?> 
                                                 <th class='text-center'>Action</th>
+                                                <?php
+                                                endif;
+                                                ?>
                                                 
                             </tr>
                           </thead>
@@ -339,12 +345,18 @@
                                                          <?php
                                                             elseif($key=='sales_payment_id'):
                                                         ?>
+                                                        <?php
+                                                          if(AllowUser(array(1))):
+                                                        ?>
                                                             <td class="text-center">
                                                             <!-- 
                                                                 <a class='btn btn-sm btn-brand' href='sales_payments.php?id=<?php echo $_GET['id'];?>&p_id=<?php echo $row['sales_payment_id'] ?>'><span class='fa fa-pencil'></span></a>
                                                              -->
                                                                 <a class='btn btn-sm btn-danger' href='void_payment.php?id=<?php echo $_GET['id'];?>&p_id=<?php echo $row['sales_payment_id'] ?>' onclick='return confirm("This payment will be voided.")'>&nbsp;&nbsp;&nbsp;Void&nbsp;&nbsp;&nbsp;</a>
                                                             </td> 
+                                                        <?php
+                                                        endif;
+                                                        ?>
                                                             
                                                         <?php
                                                             else:

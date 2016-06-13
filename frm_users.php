@@ -148,6 +148,13 @@ if(!empty($_GET['id'])){
                                 </div>
 
                                 <div class='form-group'>
+                                    <label class='col-sm-12 col-md-3 control-label'> Confirm password*</label>
+                                    <div class='col-sm-12 col-md-9'>
+                                        <input type='password' class='form-control' name='confirm_password' placeholder='Confirm password' value='<?php echo !empty($user)?htmlspecialchars(decryptIt($user['password'])):''; ?>' required>
+                                    </div>
+                                </div>
+
+                                <div class='form-group'>
                                     <label class='col-sm-12 col-md-3 control-label'> Email Address*</label>
                                     <div class='col-sm-12 col-md-9'>
                                         <input type='text' class='form-control' name='email' placeholder='Enter Email Address' value='<?php echo !empty($user)?$user['email']:"" ?>' required>

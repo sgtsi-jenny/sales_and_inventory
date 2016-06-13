@@ -123,12 +123,12 @@
                 <?php echo htmlspecialchars($sale['date_modified'])?>
             </td>
         </tr>
-        <tr>
+        <!-- <tr>
             <td>Order Status:</td>
             <td>
                  <?php echo htmlspecialchars($sale['status_name'])?>
             </td>
-        </tr>
+        </tr> -->
     </table>
 
     <br/>

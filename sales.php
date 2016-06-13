@@ -5,9 +5,9 @@
         die();
      }
 
-    if(!AllowUser(array(1))){
-         redirect("index.php");
-    }
+    // if(!AllowUser(array(1))){
+    //      redirect("index.php");
+    // }
     $customer=$con->myQuery("SELECT customer_id,customer_name FROM customers")->fetchAll(PDO::FETCH_ASSOC);
      $customer_add=$con->myQuery("SELECT customer_add_id,label_address FROM customers cus INNER JOIN customer_address cus_add ON cus.customer_id=cus_add.customer_id where cus.customer_id=?",array($sale['customer_id']))->fetchall(PDO::FETCH_ASSOC);
     

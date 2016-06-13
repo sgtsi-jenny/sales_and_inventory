@@ -105,7 +105,7 @@
           <a href='frm_sales.php' class='btn btn-brand'> New Sales Order&nbsp;<span class='fa fa-plus'></span> </a>
           <a href='print_order2.php?id=<?php echo $_GET['id'];?>' class='btn btn-brand'> Preview/Print &nbsp;<span class='fa fa-print'></span> </a>
           <?php
-            if($sale['sales_status_id']==2 || $sale['sales_status_id']==3){
+            if($sale['sales_status_id']==2 || $sale['sales_status_id']==3 && AllowUser(array(1))){
           ?>
           <a href='sales_void.php?id=<?=$_GET['id']?>' class='btn btn-default' onclick='return confirm("Click confirm to void this order. This will also rollback any fulfillments and revert any stock movements.")'>Void</a>
           <?php

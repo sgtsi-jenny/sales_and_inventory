@@ -27,10 +27,15 @@ if(!AllowUser(array(1))){
 				$errors.="1 Character<br>";
 				$errors.="1 Uppercase character<br>";
 				$errors.="1 Special Character<br>";
+				$errors.="at least 8 Character<br>";
 		}
 		if(!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
      		$errors.="Enter a valid email address. <br/>";
-		}		
+		}
+
+		if(!($inputs['password']==$inputs['confirm_password'])){
+			$errors.="Password do not match. <br>";
+		}
 
 		if($errors!=""){
 
@@ -55,6 +60,7 @@ if(!AllowUser(array(1))){
 				//Insert
 				$inputs=$_POST;
 				unset($inputs['user_id']);
+				unset($inputs['confirm_password']);
 				$inputs['password']=encryptIt($inputs['password']);
 				$uname=$inputs['username'];
 				// var_dump($inputs);
