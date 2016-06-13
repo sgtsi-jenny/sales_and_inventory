@@ -66,6 +66,7 @@
                               <th class='text-center'>Total Quantity</th>
                               <th class='text-center'>Allocated Stocks</th>
                               <th class='text-center'>Stock on hand</th>
+                              <th class='text-center'>Stock Condition</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -77,13 +78,13 @@
                                 <td><?php echo htmlspecialchars($row['product_name'])?></td>
                                 <td><?php echo htmlspecialchars($row['description'])?></td>
                                 <td><?php echo htmlspecialchars($row['category_name'])?></td>
-                                <td><?php echo htmlspecialchars($row['quantity'])?></td>
-                                <td><?php echo htmlspecialchars($row['allocated'])?></td>
-                                <td>
-                                  <?php
-                                    echo intval($row['quantity'])-intval($row['allocated']);
-                                  ?>
-                                </td>
+                                <?php
+                                  $alloc=$con->myQuery("SELECT SUM(sd.quantity) AS order_qty FROM sales_details sd INNER JOIN sales_master sm ON sm.sales_master_id=sd.sales_master_id WHERE sm.sales_status_id=2 AND sd.product_id=? GROUP BY sd.product_id",array($row['product_id']))->fetch(PDO::FETCH_ASSOC);
+                                ?>
+                                <td><?php echo intval($row['quantity']) + $alloc['order_qty']; ?></td>
+                                <td><?php echo !empty($alloc['order_qty'])?$alloc['order_qty']:'0'; ?></td>
+                                <td> <?php echo intval($row['quantity']); ?> </td>
+                                <td>#</td>
                               </tr>
                             <?php
                               endwhile;

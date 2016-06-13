@@ -1,8 +1,9 @@
 <?php
-
+  $cur_qty="";
   if (!empty($_GET))
   {
     $data=$con->myQuery("SELECT product_id,product_code,product_name,description,category_id,selling_price,wholesale_price,current_quantity,measurement_id,minimum_quantity,maximum_quantity,barcode FROM products WHERE is_deleted=0 AND product_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
+    $cur_qty="disabled";
   }
 
   #COMBO BOX
@@ -64,7 +65,7 @@
     <div class="form-group">
       <label for="current_quantity" class="col-md-3 control-label">Current Quantity *</label>
       <div class="col-md-7">
-        <input type="text" class="form-control" id="current_quantity"  name='current_quantity' placeholder="0" value='<?php echo !empty($data)?htmlspecialchars($data['current_quantity']):''; ?>' required>
+        <input type="text" class="form-control" id="current_quantity"  name='current_quantity' placeholder="0" value='<?php echo !empty($data)?htmlspecialchars($data['current_quantity']):''; ?>' required <?php echo $cur_qty;?>>
       </div>
     </div>
 
