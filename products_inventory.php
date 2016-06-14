@@ -19,7 +19,7 @@
                           c.name AS category_name,
                           p.selling_price,
                           p.wholesale_price,
-                          CONCAT(p.current_quantity,' ',m.abv) AS quantity,
+                          p.current_quantity AS quantity,
                           IFNULL((SELECT SUM(quantity) FROM sales_details sd INNER JOIN sales_master sm ON sm.sales_master_id=sd.sales_master_id
                             WHERE sd.product_id=p.product_id AND sm.sales_status_id=2),'0') AS allocated,
                           p.minimum_quantity,
@@ -68,7 +68,7 @@
                               <th class='text-center'>Total Quantity</th>
                               <th class='text-center'>Allocated Stocks</th>
                               <th class='text-center'>Stock on hand</th>
-                              <th class='text-center'>Stock Condition</th>
+                              <th class='text-center' style='width:11%'>Stock Condition</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -86,15 +86,20 @@
                                 <td><?php echo intval($row['quantity']) + $alloc['order_qty']; ?></td>
                                 <td><?php echo !empty($alloc['order_qty'])?$alloc['order_qty']:'0'; ?></td>
                                 <td> <?php echo intval($row['quantity']); ?> </td>
-                                <?php
-                                  if ($row['maximum_quantity'] $row['quantity']) 
-                                  {
-                                    # code...
-                                  }
-
-                                ?>
-
-                                <td>#</td>
+                                <td>
+                                  <?php
+                                    if ($row['quantity'] > $row['maximum_quantity']) 
+                                    {
+                                      echo "<button class='btn btn-flat btn-warning' style='width:100%'>Oversupply</button>";
+                                    }elseif (($row['quantity'] <= $row['maximum_quantity']) && ($row['quantity'] >= $row['minimum_quantity'])) 
+                                    {
+                                      echo "<button class='btn btn-flat btn-success' style='width:100%'>Normal</button>";
+                                    }elseif ($row['quantity'] < $row['minimum_quantity']) 
+                                    {
+                                      echo "<button class='btn btn-flat btn-danger' style='width:100%'>Critical</button>";
+                                    }
+                                  ?>
+                                </td>
                               </tr>
                             <?php
                               endwhile;
@@ -113,16 +118,19 @@
 <script type="text/javascript">
   $(function () {
         $('#ResultTable').DataTable({
-               // dom: 'Bfrtip',
-               //      buttons: [
-               //          {
-               //              extend:"excel",
-               //              text:"<span class='fa fa-download'></span> Download as Excel File "
-               //          }
-               //          ]
+          "scrollX": true,
+          searching: true,
+          lengthChange: false,
+                dom: 'Bfrtip',
+                     buttons: [
+                         {
+                             extend:"excel",
+                             text:"<span class='fa fa-download'></span> Download as Excel File "
+                         }
+                         ]
         });
       });
-</script>
+</script>  
 <script type="text/javascript">
     function validatePost(post_form){
         console.log();

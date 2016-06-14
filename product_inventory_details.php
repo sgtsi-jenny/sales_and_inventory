@@ -161,7 +161,20 @@
                                 <p>Stock Condition: </p> 
                               </td>
                               <td>
-                                <p>#</p> 
+                                <p>
+                                  <?php
+                                    if ($data['total_stock'] > $data['maximum_quantity']) 
+                                    {
+                                      echo "<button class='btn btn-flat btn-warning' style='width:100%'>Oversupply</button>";
+                                    }elseif (($data['total_stock'] <= $data['maximum_quantity']) && ($data['total_stock'] >= $data['minimum_quantity'])) 
+                                    {
+                                      echo "<button class='btn btn-flat btn-success' style='width:100%'>Normal</button>";
+                                    }elseif ($data['total_stock'] < $data['minimum_quantity']) 
+                                    {
+                                      echo "<button class='btn btn-flat btn-danger' style='width:100%'>Critical</button>";
+                                    }
+                                  ?>
+                                </p> 
                               </td>
                           </tr>
                       <table>
@@ -172,7 +185,8 @@
             </div>
           </div><!-- /.row -->
         </section><!-- /.content -->
-  </div>  
+  </div>
+
 <?php
     Modal();
     makeFoot();

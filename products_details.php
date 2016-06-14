@@ -40,11 +40,18 @@
     <div class="form-group">
       <label for="category" class="col-md-3 control-label">Cetegory *</label>
       <div class="col-md-7">
-        <select name='category' class='form-control select2' data-placeholder="Select Category " <?php echo !(empty($data))?"data-selected='".$data['category_id']."'":NULL ?> style='width:100%' required>
-          <?php
-            echo makeOptions($category);
-          ?>
-        </select>
+        <div class="row">
+          <div class="col-sm-11">
+            <select name='category' class='form-control select2' data-placeholder="Select Category " <?php echo !(empty($data))?"data-selected='".$data['category_id']."'":NULL ?> style='width:100%' required>
+              <?php
+                echo makeOptions($category);
+              ?>
+            </select>
+          </div>
+          <div class='col-ms-1'>
+            <a href='frm_categories.php' class='btn btn-flat btn-sm btn-success'><span class='fa fa-plus'></span></a>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -72,11 +79,18 @@
     <div class="form-group">
       <label for="measurement" class="col-md-3 control-label">Measurement *</label>
       <div class="col-md-7">
-        <select name='measurement' class='form-control select2' data-placeholder="Select Measurement " <?php echo !(empty($data))?"data-selected='".$data['measurement_id']."'":NULL ?> style='width:100%' required>
-          <?php
-            echo makeOptions($measurement);
-          ?>
-        </select>
+        <div class="row">
+          <div class="col-sm-11">
+            <select name='measurement' class='form-control select2' data-placeholder="Select Measurement " <?php echo !(empty($data))?"data-selected='".$data['measurement_id']."'":NULL ?> style='width:100%' required>
+              <?php
+                echo makeOptions($measurement);
+              ?>
+            </select>
+          </div>
+          <div class='col-ms-1'>
+            <a href='frm_measurement.php' class='btn btn-flat btn-sm btn-success'><span class='fa fa-plus'></span></a>
+          </div>
+        </div>
       </div>
     </div>
 
