@@ -22,6 +22,8 @@
                           CONCAT(p.current_quantity,' ',m.abv) AS quantity,
                           IFNULL((SELECT SUM(quantity) FROM sales_details sd INNER JOIN sales_master sm ON sm.sales_master_id=sd.sales_master_id
                             WHERE sd.product_id=p.product_id AND sm.sales_status_id=2),'0') AS allocated,
+                          p.minimum_quantity,
+                          p.maximum_quantity,
                           p.barcode
                         FROM products p
                         INNER JOIN categories c
@@ -84,6 +86,14 @@
                                 <td><?php echo intval($row['quantity']) + $alloc['order_qty']; ?></td>
                                 <td><?php echo !empty($alloc['order_qty'])?$alloc['order_qty']:'0'; ?></td>
                                 <td> <?php echo intval($row['quantity']); ?> </td>
+                                <?php
+                                  if ($row['maximum_quantity'] $row['quantity']) 
+                                  {
+                                    # code...
+                                  }
+
+                                ?>
+
                                 <td>#</td>
                               </tr>
                             <?php

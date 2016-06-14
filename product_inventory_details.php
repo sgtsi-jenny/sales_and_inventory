@@ -150,6 +150,14 @@
                           </tr>
                           <tr>  
                               <td width="50px">
+                                <p>Barcode: </p> 
+                              </td>
+                              <td>
+                                <p><?php echo $data['barcode']; ?></p> 
+                              </td>
+                          </tr>
+                          <tr>  
+                              <td width="50px">
                                 <p>Stock Condition: </p> 
                               </td>
                               <td>
@@ -157,53 +165,6 @@
                               </td>
                           </tr>
                       <table>
-                      <!--
-                        <div class='col-ms-12 text-right'>
-                          <a href='frm_products.php' class='btn btn-success'> Create New <span class='fa fa-plus'></span> </a>
-                        </div>
-                        </br>
-                        <?php
-                          Alert();
-                        ?>
-                        <br/>
-                        <table id='ResultTable' class='table table-bordered table-striped'>
-                          <thead>
-                            <tr>
-                              <th class='text-center'>Product Code</th>
-                              <th class='text-center'>Product Name</th>
-                              <th class='text-center'>Description</th>
-                              <th class='text-center'>Category</th>
-                              <th class='text-center'>Selling Price</th>
-                              <th class='text-center'>Wholesale Price</th>
-                              <th class='text-center'>Current Quantity</th>
-                              <th class='text-center'>Barcode</th>
-                              <th class='text-center'>Action</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <?php
-                              //while($row = $data->fetch(PDO::FETCH_ASSOC)):
-                            ?>
-                              <tr>
-                                <td><?php //echo htmlspecialchars($row['product_code'])?></td>
-                                <td><?php //echo htmlspecialchars($row['product_name'])?></td>
-                                <td><?php //echo htmlspecialchars($row['description'])?></td>
-                                <td><?php //echo htmlspecialchars($row['category_name'])?></td>
-                                <td><?php //echo htmlspecialchars($row['selling_price'])?></td>
-                                <td><?php //echo htmlspecialchars($row['wholesale_price'])?></td>
-                                <td><?php //echo htmlspecialchars($row['quantity'])?></td>
-                                <td><?php //echo htmlspecialchars($row['barcode'])?></td>
-                                <td class='text-center'>
-                                  <a href='frm_products.php?id=<?php //echo $row['product_id']; ?>' class='btn btn-success btn-sm'><span class='fa fa-pencil'></span></a>
-                                  <a href='delete.php?id=<?php //echo $row['product_id']; ?>&t=prod' onclick="return confirm('This record will be deleted.')" class='btn btn-danger btn-sm'><span class='fa fa-trash'></span></a>
-                                </td>
-                              </tr>
-                            <?php
-                              //endwhile;
-                            ?>
-                          </tbody>
-                        </table>
-                      -->
                     </div>
                   </div>
                 </div><!-- /.box-body -->
