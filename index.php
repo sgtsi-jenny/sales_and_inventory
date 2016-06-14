@@ -22,180 +22,131 @@
         <!-- Main content -->
         <section class="content">
         <div class='row'>
-                                <div class='col-md-8'>
-                                <div class='panel panel-primary'>
-                                <div class='panel-heading text-left'>
-                                <div class="row">
-                                    <h2 class="col-xs-10">Recent Activity</h2>
-                                    <span class="fa fa-tasks fa-3x col-md-2" style="padding-top: 15px;"></span>
-                                    
-                                </div>
-                                </div>
+            <div class='col-md-12'>
+                <div class='panel panel-primary'>
+                    <div class='panel-heading text-left'>
+                        <div class="row">
+                            <h2 class="col-xs-10">Recent Activity</h2>
+                            <span class="fa fa-tasks fa-3x col-md-2 text-right" style="padding-top: 15px;"></span>
+                        </div>
 
-                                    <?php
-                                    die;
-                                    $uid=$_SESSION[WEBAPP]['user']['user_id'];
-                                        if(AllowUser(array(1,3,4,5))){
-                                        $activities=$con->myQuery("SELECT opportunities.opp_name,  DATE_FORMAT(action_date, '%M %d, %Y %h:%i %p'), CONCAT(users.last_name,' ',users.first_name,' ',users.middle_name) AS users,notes FROM activities
-                                        left join opportunities on activities.opp_id=opportunities.id
-                                        inner join users on activities.user_id=users.id
-                                        order by action_date desc
-                                       ")->fetchAll(PDO::FETCH_ASSOC);
-                                            }
-                                        elseif(AllowUser(array(2))){
-                                        $activities=$con->myQuery("SELECT opportunities.opp_name,  DATE_FORMAT(action_date, '%M %d, %Y %h:%i %p'),notes FROM activities
-                                        left join opportunities on activities.opp_id=opportunities.id
-                                        inner join users on activities.user_id=users.id
-                                        where activities.user_id='$uid'
-                                        order by action_date desc
-                                       ")->fetchAll(PDO::FETCH_ASSOC);
-                                        }
+                    </div>
+                </div>
+                <div class='panel panel-primary'>
+                <div class='panel-heading text-left'>
+                    <div class="row">
+                        <h4 class="col-xs-10">Fast and Slow Moving Items</h4>
+                    </div>
+                </div>
+                <div class="panel-body">
+                <div class="row">
+                    <?php 
+                     $dataFS=$con->myQuery("SELECT
+                        CM.product_id,
+                        CM.product_name as product_name,
+                        CM.category,
+                        CM.currentmonth,
+                        if(previousmonth.previousmonth > 0 ,previousmonth.previousmonth,'0') as 'previousmonth',
+                        if(last2months.last2months > 0, last2months.last2months,'0') as 'last2months',
+                        FORMAT((sum(CM.currentmonth + if(previousmonth.previousmonth > 0 ,previousmonth.previousmonth,'0') + if(last2months.last2months > 0, last2months.last2months,'0')) / 3),2) as avesales,
+                        if((sum(CM.currentmonth + if(previousmonth.previousmonth > 0 ,previousmonth.previousmonth,'0') + if(last2months.last2months > 0, last2months.last2months,'0')) / 3) >= CM.currentmonth,'Fast Moving','Slow Moving') as 'status'
+                        FROM (SELECT
+                            products.product_id,
+                            products.product_name,
+                            categories.`name` as category,
+                            shipments.date_delivered,
+                            sum(sales_details.quantity) as currentmonth,
+                            sales_status.`name` as sales_status
+                            FROM
+                            sales_details
+                            INNER JOIN sales_master ON sales_master.sales_master_id = sales_details.sales_master_id
+                            INNER JOIN sales_status ON sales_master.sales_status_id = sales_status.sales_status_id
+                            INNER JOIN shipments ON sales_master.shipment_id = shipments.shipment_id
+                            INNER JOIN products ON sales_details.product_id = products.product_id
+                            INNER JOIN categories ON products.category_id = categories.category_id
+                            WHERE
+                            sales_master.sales_status_id = '4' AND
+                            DATE_FORMAT(shipments.date_delivered, '%m%Y') = DATE_FORMAT(CURRENT_DATE, '%m%Y')
+                            GROUP BY
+                            sales_details.product_id
+                            ORDER BY
+                            products.product_name ASC ) as CM
+                            LEFT OUTER JOIN (SELECT products.product_id,sales_details.quantity as 'previousmonth' from sales_details 
+                                INNER JOIN sales_master ON sales_master.sales_master_id = sales_details.sales_master_id
+                                INNER JOIN shipments ON sales_master.shipment_id = shipments.shipment_id 
+                                INNER JOIN products ON sales_details.product_id = products.product_id
+                                WHERE 
+                                DATE_FORMAT(shipments.date_delivered, '%m%Y' ) = DATE_FORMAT( CURRENT_DATE - INTERVAL 1 MONTH, '%m%Y') and 
+                                products.product_name = product_name) as previousmonth ON previousmonth.product_id=cm.product_id
 
-                                        if(!empty($activities)):
-                                    ?>
-                                    <div style="padding:10px;">
-                                    <table id='ResultTable' class='table table-bordered table-striped'>
-                          <thead>
+                            LEFT OUTER JOIN (SELECT products.product_id,sales_details.quantity as 'last2months' from sales_details 
+                                INNER JOIN sales_master ON sales_master.sales_master_id = sales_details.sales_master_id
+                                INNER JOIN shipments ON sales_master.shipment_id = shipments.shipment_id 
+                                INNER JOIN products ON sales_details.product_id = products.product_id
+                                WHERE 
+                                DATE_FORMAT(shipments.date_delivered, '%m%Y' ) = DATE_FORMAT( CURRENT_DATE - INTERVAL 2 MONTH, '%m%Y') and 
+                                products.product_name = product_name) as last2months ON last2months.product_id=cm.product_id
+                            GROUP BY CM.product_id, CM.product_name
+                            ORDER BY CM.currentmonth DESC");
+                    ?>
+                    <form method="get">
+
+                    <table class='table table-bordered table-striped'>
+                        <thead>
                             <tr>
-                                                <th style='min-width:70px'>Client</th>
-                                                <th class='date-td' style='min-width:80px'>Date</th>
-                                                <?php
-                                                if(AllowUser(array(1,3,4,5))){
-                                                ?>
-                                                <th style='min-width:50px'>Creator</th>
-                                                <?php 
-                                                } 
-                                                ?>
-                                                <th style='min-width:130px'>Action</th>
+                               
+                                <th>Product Name</th>
+                                <th>Last 2 Months</th>
+                                <th>Previous Month</th>
+                                <th>Current Month</th>
+                                <th>Average Sales</th>
+                                <th>Status</th>
                             </tr>
-                          </thead>
-                          <tbody>
-                                            <?php
-                                                    foreach ($activities as $activity):
-                                                    
-                                            ?>
-                                            <tr>
-                                                <?php
-                                                    foreach ($activity as $key => $value):
-                                                    if($key=='id'):
-                                                    elseif($key=='opp_name'):
-                                                ?>
-                                                    <td>
-                                                        <a href='opp_details.php?id=<?= $activity['id']?>'><?php echo htmlspecialchars($value)?></a>
-                                                    </td> 
-                                                <?php
-                                                    else:   
-                                                ?>
-                                                    <td>
-                                                                <?php
-                                                                    echo htmlspecialchars($value);
-                                                                ?>
-                                                    </td>
-                                                <?php
-                                                    endif;
-                                                    endforeach;
-                                                ?>
-                                                    </tr>
-                                                <?php
-                                                endforeach;
-                                            ?>
-                            
-                          </tbody>
-                        </table>
-                                    </div>
-                                    <?php
-                                        else:
-                                            ?>
+                        </thead>
+                        <tbody>
+                            <?php
+                                $fsdate = date("Ymd");
+                                $con->myQuery("DELETE FROM fastslow WHERE fs_date = ?",array($fsdate));
+                                while ($dataFSs=$dataFS->fetch(PDO::FETCH_ASSOC)):
+                            ?>
+                           <tr>
+                                <td><?php echo htmlspecialchars($dataFSs['product_name'])?></td>
+                                <td><?php echo htmlspecialchars($dataFSs['last2months'])?></td>
+                                <td><?php echo htmlspecialchars($dataFSs['previousmonth'])?></td>
+                                <td><?php echo htmlspecialchars($dataFSs['currentmonth'])?></td>
+                                <td><?php echo htmlspecialchars($dataFSs['avesales'])?></td>
+                                <td><?php echo htmlspecialchars($dataFSs['status'])?></td>
+                            </tr>
+                            <?php
+                                $lastdayofmonth=date('Y-m-t');
+                                $todate = date("Y-m-d");
 
-                                        <?php
-                                            createAlert("No Results.");
-                                        endif;
-                                    ?>
-                                </div>
-                                </div>
-                                
-                                
-                            
-                                <div class='col-md-4'>
-                                <div class='panel panel-primary'>
-                                <div class='panel-heading text-left'>
-                                <!-- <div class="row">
-                                    <h4 class="col-xs-10">Birthdays</h4>
-                                    <span class="fa fa-gift fa-3x col-md-2"></span>
-                                    
-                                </div> -->
-                                <div class="row">
-                                    <h2 class="col-xs-10">Birthdays</h2>
-                                    <span class="fa fa-gift fa-3x col-md-2" style="padding-top: 15px;"></span>
-                                    
-                                </div>
-                                </div>
-                                <?php
-                                    $uid=$_SESSION[WEBAPP]['user']['id'];
-                                                $activities=$con->myQuery("SELECT DATE_FORMAT(dob,'%M %d') AS dob, CONCAT(lname, ', ', fname) As uname, organizations.org_name
-                                                    FROM contacts 
-                                                    inner join organizations on contacts.org_id=organizations.id
-                                                    WHERE contacts.is_deleted=0 and 
-                                                    week(dob) BETWEEN WEEK( CURDATE() )  AND  WEEK( DATE_ADD(CURDATE(), INTERVAL +21 DAY) ) 
-                                                    Order by dob")->fetchAll(PDO::FETCH_ASSOC);
-                                        if(!empty($activities)):
+                                    if ($lastdayofmonth == $todate)
+                                    {
+                                        $prodID = $dataFSs['product_id'];
+                                        $fmonth = $dataFSs['last2months'];
+                                        $smonth = $dataFSs['previousmonth'];
+                                        $cmonth = $dataFSs['currentmonth'];
+                                        $avesales = $dataFSs['avesales'];
+                                        $fsStatus = $dataFSs['status'];
 
-                                    ?>
-                                    <table class='table table-bordered table-condensed '>
-                                        <thead>
-                                            <tr>    
-                                                <th class='date-td'>Date</th>
-                                                <th>Contact Person</th>
-                                                <th>Client</th>
-                                                
-                                               <!-- <th>Email</th>
-                                                <th>Mobile Phone</th> -->   
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <?php
-                                                    foreach ($activities as $activity):
-                                                    
-                                            ?>
-                                                    <tr>
-                                                <?php
-                                                    foreach ($activity as $key => $value):
-                                                    if($key=='id'):
-                                                    elseif($key=='opp_name'):
-                                                ?>
-                                                    <td>
-                                                        <a href='opp_details.php?id=<?= $activity['id']?>'><?php echo htmlspecialchars($value)?></a>
-                                                    </td> 
-                                                <?php
-                                                    else:   
-                                                ?>
-                                                    <td>
-                                                                <?php
-                                                                    echo htmlspecialchars($value);
-                                                                ?>
-                                                    </td>
-                                                <?php
-                                                    endif;
-                                                    endforeach;
-                                                ?>
-                                                    </tr>
-                                            <?php
-                                                   
-                                                    endforeach;
-                                            ?>
-                                            
-                                        </tbody>
-                                    </table>
-                                    <?php
-                                        else:                                            
-                                            createAlert("No Results.");
-                                        endif;
-                                    ?>
-                                        </div>
-                                        
-                                </div>
-                                </div>
+                                                                                     
+                                        $con->myQuery("INSERT INTO fastslow(product_id,first_month,second_month,current_month,average_sales,fs_date,fs_status) 
+                                                            VALUES(?,?,?,?,?,?,?)",array($prodID,$fmonth,$smonth,$cmonth,$avesales,$fsdate,$fsStatus));
+
+                                    }
+                                endwhile;
+                            ?>
+                        </tbody>
+                    </table>
+
+                    </form>
+                   
+                    </div>
+                    </div>
+                </div>
             </div>
+        </div>                                
            
         </section><!-- /.content -->
   </div>
