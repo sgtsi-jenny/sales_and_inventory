@@ -59,6 +59,7 @@
         }
 
     $stat_id=1;
+    $customer1=$con->myQuery("SELECT customer_id,customer_name FROM customers where customer_id=?",array($_GET['customer_id']))->fetch(PDO::FETCH_ASSOC);
     $customer=$con->myQuery("SELECT customer_id,customer_name FROM customers")->fetchAll(PDO::FETCH_ASSOC);
     $customer_add=$con->myQuery("SELECT customer_add_id,label_address FROM customers cus INNER JOIN customer_address cus_add ON cus.customer_id=cus_add.customer_id")->fetchAll(PDO::FETCH_ASSOC);
     $prod=$con->myQuery("SELECT product_id,product_name,selling_price,current_quantity FROM products")->fetchAll(PDO::FETCH_ASSOC);
@@ -114,30 +115,30 @@
                     <div class="box-body">
                     <div class="row">
                     <div class='col-sm-12'>
-                                <input type='hidden' name='sales_master_id' value='<?php echo !empty($sales_customer)?$sales_customer['sales_master_id']:""?>'>
+                                <input type='hidden' name='sales_master_id' value='<?php echo !empty($sales_customer)?$sales_customer['sales_master_id']:'';?>'>
                                 <?php
                                     alert();
+                                ?>
+                                <?php
+                                    $inputs=$_GET;
+                                    // var_dump($_GET);
+                                ?>
+
+                                <?php
+                                if (!empty($_GET['id'])){
                                 ?>
                                 <label class='col-md-2 text-left' > Customer</label>
                                 <div class='form-group'>
                                     <div class='col-sm-12 col-md-3'>
-                                        <select class='form-control' name='customer_id' id='customer_id'  onchange='get_address()' data-placeholder="Select a Customer" <?php echo!(empty($sales_customer))?"data-selected='".$sales_customer['customer_id']."'":NULL ?> required>
-                                                <?php
-                                                    // echo makeOptions($customer,'Select Customer')
-                                                    echo makeOptions($customer,'Select Customer',NULL,'',!(empty($sales_customer))?$sales_customer['customer_id']:NULL)
-                                                ?>
-                                        </select>
+                                        <?php
+                                            echo $sales_customer['customer_name'];
+                                        ?>                                        
                                     </div>
                                 </div>
                                           
                                 <label class='col-md-2 text-left' > Order creation date:</label>
                                 <div class='form-group'>
                                   <div class='col-sm-12 col-md-3'>
-                                        <!-- <?php
-                                          // $php_timestamp = date("m/d/Y");
-                                          $php_timestamp_date = date("m/d/Y");
-                                          echo $php_timestamp_date;
-                                           ?> -->
                                         <?php
                                         $date_issue="";
                                          if(!empty($sales_customer)){
@@ -151,12 +152,11 @@
                                                 echo $date_issue;
                                             }
                                         }
-                                        
-                                         
-                                                                               
-                                    ?>
+                                        ?>
+                                    
                                   </div>
                                 </div>
+
 
                                 <label class='col-md-2 text-left' > Order modified date:</label>
                                 <div class='form-group'>
@@ -175,9 +175,30 @@
                                             }
                                         }                                       
                                                                                
-                                    ?>
+                                        ?>
                                   </div>
                                 </div>
+                                
+                                <?php
+                                }
+                                elseif(!empty($inputs['customer_id'])){
+                                ?>
+                                <label class='col-md-2 text-left' > Customer:</label>
+                                <div class='form-group'>
+                                    <div class='col-sm-12 col-md-3'>
+                                    <input type='hidden' name='customer_id' value='<?php echo $customer1['customer_id']?>'>
+                                      <?php
+                                        // echo $inputs['customer_id'];
+                                        echo $customer1['customer_name'];
+                                      ?>
+                                    </div>
+                                </div>
+
+
+                                <?php    
+                                     }                                          
+                                ?>
+                                
 
                                 <label class='col-md-2 text-left'> Order Status:</label>
                                 <div class='form-group'>
@@ -185,6 +206,15 @@
                                         Quote
                                   </div>
                                 </div>
+
+                                <label class='col-md-2 text-left'> Notes:</label>
+                                 <div class='form-group'>
+                                    <div class='col-sm-12 col-md-3'>
+                                        <textarea class='form-control' name='description' placeholder='Message to Customer' value=''><?php echo !empty($sales_customer)?$sales_customer['description']:"" ?></textarea>
+                                    </div>
+                                </div>
+
+
                                 
                     </div>
                     </div>
@@ -291,7 +321,7 @@
                                                 <th class='text-center'>Discount</th>
                                                 <!-- <th class='text-center'>Tax</th> -->
                                                 <th class='text-center'>Total (Php)</th>
-                                          <th class='text-center'>Action </th>
+                                          <th class='text-center' style='min-width:150px'>Action </th>
                                            
                                     </thead>
                                     <tbody id='table_container'>
@@ -340,11 +370,7 @@
                 </div>                
             </div>
 
-                                <div class='form-group'>
-                                    <div class='col-sm-12 col-md-5'>
-                                        <textarea class='form-control' name='description' placeholder='Message to Customer' value=''><?php echo !empty($sales_customer)?$sales_customer['description']:"" ?></textarea>
-                                    </div>
-                                </div>
+                               
 
                                 <section align='right'>
                                     <div class='form-group'>
@@ -440,7 +466,7 @@ var current_row="";
         prod_name = $("input[name='prod_name']").val();
         input="<input type='hidden' name='product_id[]' value='"+select_1_val+"'> <input type='hidden' name='quantity[]' value='"+quantity+"'><input type='hidden' name='current_quantity[]' value='"+current_quantity+"'><input type='hidden' name='selling_price[]' value='"+selling_price+"'><input type='hidden' name='discount[]' value='"+discount+"'><input type='hidden' name='prod_name[]' value='"+prod_name+"'><input type='hidden' name='total_price[]' value='"+(t_cost-t_discount)+"'>" ;
 
-        $("#table_container").append("<tr><td>"+input+select_1_text+"</td><td>"+quantity+"</td><td>"+current_quantity+"</td><td>"+selling_price+"</td><td>"+discount+"</td><td>"+(t_cost-t_discount)+"</td><td> <button type='button' onclick='edit(this)' class='btn btn-brand fa fa-pencil'></span></button><button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button></td></tr>");
+        $("#table_container").append("<tr><td>"+input+select_1_text+"</td><td>"+quantity+"</td><td>"+current_quantity+"</td><td>"+selling_price+"</td><td>"+discount+"</td><td>"+(t_cost-t_discount)+"</td><td> <button type='button' onclick='edit(this)' class='btn btn-brand fa fa-pencil'></span></button>&nbsp;<button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button></td></tr>");
 
         $("#product_id").val('');
         $("#quantity").val('');

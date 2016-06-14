@@ -11,7 +11,7 @@
     }
 
     if(!empty($_GET['id'])){
-    	$con->myQuery("UPDATE users SET  is_active = IF(is_active=1, 0,1) WHERE id = ?",array($_GET['id']));
+    	$con->myQuery("UPDATE users SET  is_active = IF(is_active=1, 0,1) WHERE user_id = ?",array($_GET['id']));
     	Alert("Change Successful","success");
     	redirect("users.php");
     	die;

@@ -12,7 +12,7 @@
             <li class='header'>INVENTORY</li>
             <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="products_inventory.php" || (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="products_inventory.php"?"active":"";?>">
               <a href="products_inventory.php">
-                <i class="fa fa-cube"></i> <span>Products</span>
+                <i class="fa fa-cube"></i> <span>Stock Monitoring</span>
               </a>
             </li>
             <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="stock_adjustments.php" || (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="stock_adjustments.php"?"active":"";?>">
@@ -67,11 +67,6 @@
                 <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="users.php"?"active":"";?>">
                   <a href="users.php">
                     <i class="fa fa-users"></i> <span>Users</span>
-                  </a>
-                </li>
-                <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="settings_users.php"?"active":"";?>">
-                  <a href="settings_users.php">
-                    <i class="fa fa-users"></i> <span>User Levels</span>
                   </a>
                 </li>
                 <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="tax.php"?"active":"";?>">

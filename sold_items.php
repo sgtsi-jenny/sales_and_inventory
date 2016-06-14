@@ -9,7 +9,7 @@
          redirect("index.php");
     }
     
-    makeHead("Suppliers");
+    makeHead("Sold Items Report");
 ?>
 
 <?php
@@ -19,7 +19,7 @@
     <div class="content-wrapper">
          <section class="content-header">
                                       <h1 align="center" style="color:#24b798;">
-                                      List of Supplier
+                                      Sold Items Report
                                       </h1>
         </section>
         <section class="content">
@@ -30,11 +30,11 @@
               <div class="box box-primary">
                 <div class="box-body">
                           <div class='panel-body'>
-                                    <div class='col-md-12 text-right'>
+                                    <!-- <div class='col-md-12 text-right'>
                                         <div class='col-md-12 text-right'>
                                         <a href='frm_supplier.php' class='btn btn-brand'> Create New <span class='fa fa-plus'></span> </a>
                                         </div>                                
-                                    </div> 
+                                    </div>  -->
                           </div>
                                 <?php
                                 Alert();
@@ -43,21 +43,29 @@
                     <table id='ResultTable' class='table table-bordered table-striped'>
                           <thead>
                             <tr>
-                                                <th class='text-center'>Supplier name</th>
-                                                <th class='text-center'>Contact Number</th>
-                                                <th class='text-center'>Address</th>
-                                                <th class='text-center'>Email</th>              
-                                                <th class='text-center'>Description</th>
-                                                <th class='text-center'>Action</th>
+                                                <th class='text-center'>Product name</th>
+                                                <th class='text-center'>Quantity Sold</th>
+                                                <th class='text-center'>Selling Price</th>
+                                                <th class='text-center'>Discount</th>              
+                                                <th class='text-center'>Total Cost</th>
+                                               <!--  <th class='text-center'>Action</th> -->
                                                 
                             </tr>
                           </thead>
                           <tbody>
                                             <?php
-                                                $supplier=$con->myQuery("SELECT name, contact_number,address,email,description,supplier_id
-FROM suppliers 
-WHERE is_deleted=0")->fetchAll(PDO::FETCH_ASSOC);
-                                                foreach ($supplier as $row):
+                                                $sold_items=$con->myQuery("SELECT 
+                                                DISTINCT(p.product_name),
+                                                SUM(quantity) AS quantity_sold, 
+                                                p.selling_price,
+                                                SUM(sd.discount) AS discount,
+                                                SUM(sd.total_cost) AS total_cost
+                                                FROM products p 
+                                                INNER JOIN sales_details sd ON sd.product_id=p.product_id
+                                                INNER JOIN sales_master sm ON sm.sales_master_id=sd.sales_master_id
+                                                INNER JOIN customers ON sm.customer_id=customers.customer_id
+                                                GROUP BY sd.product_id")->fetchAll(PDO::FETCH_ASSOC);
+                                                foreach ($sold_items as $row):
                                                   $action_buttons="";
                                             ?>
 
@@ -65,28 +73,34 @@ WHERE is_deleted=0")->fetchAll(PDO::FETCH_ASSOC);
                                                     <?php
                                                       foreach ($row as $key => $value):
                                                     ?>
-                                                   
-
                                                     <?php
-                                                        if($key=='supplier_id'):
-                                                    ?> 
-                                                      <td class="text-center">
-                                                          
-                                                          <a class='btn btn-sm btn-brand' href='frm_supplier.php?id=<?php echo $row['supplier_id'];?>'><span class='fa fa-pencil'></span></a>
-                                                          <a class='btn btn-sm btn-danger' href='delete.php?id=<?php echo $row['supplier_id'];?>&t=sup' onclick='return confirm("This supplier will be deleted.")'><span class='fa fa-trash'></span></a>
-                                                      </td>
+                                                      if($key=='selling_price'):
+                                                    ?>
+                                                    <?php
+                                                      elseif($key=='quantity_sold'):
+                                                    ?>
+                                                       <td class='text-center'><?php echo htmlspecialchars($row['quantity_sold']) ?></td> 
+                                                       <td class='text-right'><?php echo htmlspecialchars(number_format($row['selling_price'],2)) ?></td>
+                                                    <?php
+                                                      elseif($key=='total_cost'):
+                                                    ?>
+                                                       <td class='text-right'><?php echo htmlspecialchars(number_format($row['total_cost'],2)) ?></td>
+                                                    <?php
+                                                      elseif($key=='discount'):
+                                                    ?>
+                                                       <td class='text-center'><?php echo htmlspecialchars($row['discount']) ?>%</td>
+                                                   
                                                     <?php
                                                       else:
                                                     ?>
-
                                                             <td>
                                                                 <?php
                                                                     echo htmlspecialchars($value);
                                                                 ?>
                                                             </td>
                                                     <?php
-                                                            endif;
-                                                            endforeach;
+                                                      endif;
+                                                      endforeach;
                                                     ?>
                                                 </tr>
                                             <?php

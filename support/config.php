@@ -51,10 +51,11 @@
 	}
 /* End User FUnctions */
 //HTML Helpers
-	function makeHead($pageTitle=WEBAPP,$level=0)
+	function makeHead($pageTitle=WEBAPP,$level=0,$for_print=false)
 	{
 		require_once str_repeat('../',$level).'template/head.php';
 		unset($pageTitle);
+		unset($for_print);
 	}
 	function makeFoot($pageTitle="Login",$level=0)
 	{
@@ -62,6 +63,7 @@
 		require_once 'template/foot.php';
 		unset($pageTitle);
 	}
+	
 
 	function makeOptions($array,$placeholder="",$val=NULL,$disable="",$checked_value=NULL){
 		$options="";

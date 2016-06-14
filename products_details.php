@@ -1,8 +1,9 @@
 <?php
-
+  $cur_qty="";
   if (!empty($_GET))
   {
     $data=$con->myQuery("SELECT product_id,product_code,product_name,description,category_id,selling_price,wholesale_price,current_quantity,measurement_id,minimum_quantity,maximum_quantity,barcode FROM products WHERE is_deleted=0 AND product_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
+    $cur_qty="disabled";
   }
 
   #COMBO BOX
@@ -39,18 +40,11 @@
     <div class="form-group">
       <label for="category" class="col-md-3 control-label">Cetegory *</label>
       <div class="col-md-7">
-        <div class="row">
-          <div class="col-sm-11">
-            <select name='category' class='form-control select2' data-placeholder="Select Category " <?php echo !(empty($data))?"data-selected='".$data['category_id']."'":NULL ?> style='width:100%' required>
-              <?php
-                echo makeOptions($category);
-              ?>
-            </select>
-          </div>
-          <div class='col-ms-1'>
-            <a href='categories.php' class='btn btn-flat btn-sm btn-success'><span class='fa fa-plus'></span></a>
-          </div>
-        </div>
+        <select name='category' class='form-control select2' data-placeholder="Select Category " <?php echo !(empty($data))?"data-selected='".$data['category_id']."'":NULL ?> style='width:100%' required>
+          <?php
+            echo makeOptions($category);
+          ?>
+        </select>
       </div>
     </div>
 
@@ -71,25 +65,18 @@
     <div class="form-group">
       <label for="current_quantity" class="col-md-3 control-label">Current Quantity *</label>
       <div class="col-md-7">
-        <input type="text" class="form-control" id="current_quantity"  name='current_quantity' placeholder="0" value='<?php echo !empty($data)?htmlspecialchars($data['current_quantity']):''; ?>' required>
+        <input type="text" class="form-control" id="current_quantity"  name='current_quantity' placeholder="0" value='<?php echo !empty($data)?htmlspecialchars($data['current_quantity']):''; ?>' required <?php echo $cur_qty;?>>
       </div>
     </div>
 
     <div class="form-group">
       <label for="measurement" class="col-md-3 control-label">Measurement *</label>
       <div class="col-md-7">
-        <div class="row">
-          <div class="col-sm-11">
-            <select name='measurement' class='form-control select2' data-placeholder="Select Measurement " <?php echo !(empty($data))?"data-selected='".$data['measurement_id']."'":NULL ?> style='width:100%' required>
-              <?php
-                echo makeOptions($measurement);
-              ?>
-            </select>
-          </div>
-          <div class='col-ms-1'>
-            <a href='measurements.php' class='btn btn-flat btn-sm btn-success'><span class='fa fa-plus'></span></a>
-          </div>
-        </div>
+        <select name='measurement' class='form-control select2' data-placeholder="Select Measurement " <?php echo !(empty($data))?"data-selected='".$data['measurement_id']."'":NULL ?> style='width:100%' required>
+          <?php
+            echo makeOptions($measurement);
+          ?>
+        </select>
       </div>
     </div>
 

@@ -42,6 +42,8 @@
     <div class="content-wrapper">
         <br>  
          <section class="content-header">
+            <a href='products_inventory.php' class='btn btn-default'><span class='glyphicon glyphicon-arrow-left'></span> Stock Monitoring</a>
+            <br>
             <h2 align="left" style="color:#24b798;">
               <?php
                 echo $data['product_name'];
@@ -103,12 +105,15 @@
                                 <p><?php echo $data['measurement_name']; ?></p> 
                               </td>
                           </tr>
+                          <?php
+                            $alloc=$con->myQuery("SELECT SUM(sd.quantity) AS order_qty FROM sales_details sd INNER JOIN sales_master sm ON sm.sales_master_id=sd.sales_master_id WHERE sm.sales_status_id=2 AND sd.product_id=? GROUP BY sd.product_id",array($data['product_id']))->fetch(PDO::FETCH_ASSOC);
+                          ?>
                           <tr>  
                               <td width="50px">
-                                <p>Total Stock: </p> 
+                                <p>Allocated Stocks: </p> 
                               </td>
                               <td>
-                                <p><?php echo $data['total_stock']; ?></p> 
+                                <p><?php echo $alloc['order_qty']; ?></p> 
                               </td>
                           </tr>
                           <tr>  
@@ -116,65 +121,50 @@
                                 <p>Stock on-hand: </p> 
                               </td>
                               <td>
-                                <p>#</p> 
+                                <p><?php echo $data['total_stock']; ?></p> 
                               </td>
                           </tr>
                           <tr>  
                               <td width="50px">
-                                <p>Allocated Stocks: </p> 
+                                <p>Total Stock: </p> 
+                              </td>
+                              <td>
+                                <p><?php echo $data['total_stock'] + $alloc['order_qty']; ?></p> 
+                              </td>
+                          </tr>
+                          <tr>  
+                              <td width="50px">
+                                <p>Minimum Stock: </p> 
+                              </td>
+                              <td>
+                                <p><?php echo $data['minimum_quantity']; ?></p> 
+                              </td>
+                          </tr>
+                          <tr>  
+                              <td width="50px">
+                                <p>Maximum Stocks: </p> 
+                              </td>
+                              <td>
+                                <p><?php echo $data['maximum_quantity']; ?></p> 
+                              </td>
+                          </tr>
+                          <tr>  
+                              <td width="50px">
+                                <p>Barcode: </p> 
+                              </td>
+                              <td>
+                                <p><?php echo $data['barcode']; ?></p> 
+                              </td>
+                          </tr>
+                          <tr>  
+                              <td width="50px">
+                                <p>Stock Condition: </p> 
                               </td>
                               <td>
                                 <p>#</p> 
                               </td>
                           </tr>
                       <table>
-                      <!--
-                        <div class='col-ms-12 text-right'>
-                          <a href='frm_products.php' class='btn btn-success'> Create New <span class='fa fa-plus'></span> </a>
-                        </div>
-                        </br>
-                        <?php
-                          Alert();
-                        ?>
-                        <br/>
-                        <table id='ResultTable' class='table table-bordered table-striped'>
-                          <thead>
-                            <tr>
-                              <th class='text-center'>Product Code</th>
-                              <th class='text-center'>Product Name</th>
-                              <th class='text-center'>Description</th>
-                              <th class='text-center'>Category</th>
-                              <th class='text-center'>Selling Price</th>
-                              <th class='text-center'>Wholesale Price</th>
-                              <th class='text-center'>Current Quantity</th>
-                              <th class='text-center'>Barcode</th>
-                              <th class='text-center'>Action</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <?php
-                              //while($row = $data->fetch(PDO::FETCH_ASSOC)):
-                            ?>
-                              <tr>
-                                <td><?php //echo htmlspecialchars($row['product_code'])?></td>
-                                <td><?php //echo htmlspecialchars($row['product_name'])?></td>
-                                <td><?php //echo htmlspecialchars($row['description'])?></td>
-                                <td><?php //echo htmlspecialchars($row['category_name'])?></td>
-                                <td><?php //echo htmlspecialchars($row['selling_price'])?></td>
-                                <td><?php //echo htmlspecialchars($row['wholesale_price'])?></td>
-                                <td><?php //echo htmlspecialchars($row['quantity'])?></td>
-                                <td><?php //echo htmlspecialchars($row['barcode'])?></td>
-                                <td class='text-center'>
-                                  <a href='frm_products.php?id=<?php //echo $row['product_id']; ?>' class='btn btn-success btn-sm'><span class='fa fa-pencil'></span></a>
-                                  <a href='delete.php?id=<?php //echo $row['product_id']; ?>&t=prod' onclick="return confirm('This record will be deleted.')" class='btn btn-danger btn-sm'><span class='fa fa-trash'></span></a>
-                                </td>
-                              </tr>
-                            <?php
-                              //endwhile;
-                            ?>
-                          </tbody>
-                        </table>
-                      -->
                     </div>
                   </div>
                 </div><!-- /.box-body -->

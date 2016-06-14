@@ -67,9 +67,8 @@
                                                     <td><?php echo htmlspecialchars($row['quantity_received'])?></td>
                                                     <td><?php 
                                                     $num = $row['total_Cost'];
-                                                    $pos = strlen($num) - 2;
-                                                    $dec = substr($num, 0,$pos).'.'.substr($num, strlen($num) -2);
-                                                    echo htmlspecialchars(number_format($dec , 2)); 
+                                                 
+                                                    echo htmlspecialchars($num); 
                                                     ?></td>
                                                    
                                                     

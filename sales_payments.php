@@ -106,7 +106,7 @@
           <a href='sales.php' class='btn btn-default'><span class='glyphicon glyphicon-arrow-left'></span> Back to Sales List</a>
           <a href='frm_sales.php' class='btn btn-brand'> New Sales Order &nbsp;<span class='fa fa-plus'></span> </a>
           <?php
-            if($sale['sales_status_id']==2 || $sale['sales_status_id']==3){
+            if($sale['sales_status_id']==2 || $sale['sales_status_id']==3 && AllowUser(array(1))){
           ?>
           <a href='sales_void.php?id=<?=$_GET['id']?>' class='btn btn-default' onclick='return confirm("Click confirm to void this order. This will also rollback any fulfillments and revert any stock movements.")'>Void</a>
           <?php
@@ -165,6 +165,49 @@
                                         <?php echo htmlspecialchars($sale['status_name'])?>
                                   </div>
                                 </div>
+                                <br>
+
+                                 <label class='col-md-2 text-left'> Remaining Balance:</label>
+                                <div class='form-group'>
+                                  <div class='col-sm-12 col-md-3'>
+                                        <?php
+                                        $row=$con->myQuery("SELECT 
+                                                    sum(sp.amount) as amount,
+                                                    (SELECT SUM(sd.total_cost) FROM sales_details sd WHERE sd.sales_master_id=sm.sales_master_id) AS total
+                                                    FROM sales_payments sp
+                                                    INNER JOIN sales_master sm ON sp.sales_master_id=sm.sales_master_id
+                                                    INNER JOIN invoice_master im ON sp.invoice_master_id=im.invoice_master_id
+                                                    INNER JOIN sales_payment_type spt ON spt.payment_type_id=sp.type
+                                                    WHERE sp.is_voided=0 AND sp.sales_master_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
+
+                                                    $total_cost=$con->myQuery("SELECT 
+                                                    (SELECT SUM(sd.total_cost) FROM sales_details sd WHERE sd.sales_master_id=sm.sales_master_id) AS total FROM sales_master sm
+                                                    WHERE sm.sales_master_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
+                                        ?>
+                                                        <?php
+                                                            // $amount=0;
+                                                            $total=$total_cost['total'];
+                                                            if(empty($row)){
+                                                                $amount=0;
+                                                                $balance=$total-$amount;
+                                                            }
+                                                            else{
+                                                                $amount=$row['amount'];
+                                                                $balance=$total-$amount;
+                                                            }
+                                                            // var_dump($amount);
+                                                            // var_dump($total);
+
+                                                            if ($balance<=0){
+                                                                echo "00.00";
+                                                            }
+                                                            else{
+                                                                echo (number_format($balance,2));
+                                                            }
+                                                            
+                                                        ?>  
+                                  </div>
+                                </div>
                                 
                     </div>
                     </div>
@@ -185,7 +228,7 @@
                     </li>
                     <li <?php echo $tab=="2"?'class="active"':''?>><a href="" >Payments</a>
                     </li>
-                    <li>
+                    <!-- <li>
                     <?php
                     $row=$con->myQuery("SELECT 
                                 sum(sp.amount) as amount,
@@ -224,7 +267,7 @@
                                         
                                     ?>    
                         </a>
-                    </li>
+                    </li> -->
                     
                 </ul>
                 <div class="tab-content">
@@ -251,9 +294,15 @@
                                                 <th class='text-left' style='min-width:200px'>Payment Type</th>
                                                 <th class='text-center'>Amount (Php)</th>
                                                 <th class='text-center'>Payment Date</th>
-                                                <th class='text-center'>Balance</th>
+                                                <!-- <th class='text-center'>Balance</th> -->
                                                 <th class='text-center'>Reference</th>
+                                                <?php
+                                                  if(AllowUser(array(1))):
+                                                ?> 
                                                 <th class='text-center'>Action</th>
+                                                <?php
+                                                endif;
+                                                ?>
                                                 
                             </tr>
                           </thead>
@@ -264,7 +313,6 @@
                                                 spt.name,
                                                 sp.amount,
                                                 DATE_FORMAT(sp.pay_date,'%m/%d/%Y') as pay_date,
-                                                sp.amount as balance,
                                                 sp.reference,
                                                 (SELECT SUM(sd.total_cost) FROM sales_details sd WHERE sd.sales_master_id=sm.sales_master_id) AS total,
                                                 sp.sales_payment_id
@@ -294,21 +342,11 @@
                                                         <?php
                                                             elseif($key=='total'):
                                                         ?> 
-                                                            
-                                                        <?php
-                                                            elseif($key=='balance'):
-                                                        ?>
-                                                            <td class='text-right'>
-                                                                <?php
-                                                                    $amount=$row['amount'];
-                                                                    $t_amount+=$amount;
-                                                                    $total_cost=$row['total'];
-                                                                    $balance=$total_cost-$t_amount;
-                                                                    echo (number_format($balance,2));
-                                                                ?>
-                                                            </td>
                                                          <?php
                                                             elseif($key=='sales_payment_id'):
+                                                        ?>
+                                                        <?php
+                                                          if(AllowUser(array(1))):
                                                         ?>
                                                             <td class="text-center">
                                                             <!-- 
@@ -316,6 +354,9 @@
                                                              -->
                                                                 <a class='btn btn-sm btn-danger' href='void_payment.php?id=<?php echo $_GET['id'];?>&p_id=<?php echo $row['sales_payment_id'] ?>' onclick='return confirm("This payment will be voided.")'>&nbsp;&nbsp;&nbsp;Void&nbsp;&nbsp;&nbsp;</a>
                                                             </td> 
+                                                        <?php
+                                                        endif;
+                                                        ?>
                                                             
                                                         <?php
                                                             else:
@@ -403,7 +444,7 @@
 
 
                             <section align='right'>
-                                <label>Amount to Pay: </label>
+                                <label>Remaining Balance: </label>
                                     <?php
                                         // $amount=0;
                                         $total=$total_cost['total'];

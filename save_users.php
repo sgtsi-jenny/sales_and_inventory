@@ -30,35 +30,11 @@
 		}
 
 		if(empty($inputs['get_id'])){
-			if (empty($inputs['emp_id'])){
-				$errors.="Select Employee. <br/>";
-			}
-			if ($employee_user->fetchcolumn() > 0) {
-				$errors.="Selected Employee already has an Account. <br />";
-			}
 			if ($uname->fetchcolumn() > 0) {
 				$errors.="Username is not Available. Please enter another one. <br />";
 			}
 		}
 
-//			}else{
-//				if($key=='basic_salary'){
-//					if(!is_numeric($inputs[$key])){
-//						$errors.="Invalid Basic Salary. <br/>";
-//					}
-//				}
-//				elseif ($key=='code') {
-//					if(!empty($inputs['id'])){
-//						$count=$con->myQuery("SELECT COUNT(id) FROM employees WHERE code=? AND id <> ? AND is_deleted=0",array($inputs['code'],$inputs['id']))->fetchColumn();
-//					}
-//					else{						
-//						$count=$con->myQuery("SELECT COUNT(id) FROM employees WHERE code=? AND is_deleted=0",array($inputs['code']))->fetchColumn();
-//					}
-//					if(!empty($count)){
-//						$errors.="Employee Code already exists. <br/>";
-//					}
-//				}
-//			}
 
 		if($errors!=""){
 
@@ -80,7 +56,7 @@
 				unset($inputs['id']);
 
 					
-				$con->myQuery("INSERT INTO users(employee_id,username,password,user_type_id) VALUES(:emp_id,:username,:password,:utype_id)",$inputs);
+				$con->myQuery("INSERT INTO users(user_id,username,password,user_type_id) VALUES(:emp_id,:username,:password,:utype_id)",$inputs);
 			}
 			else{
 				//Update
