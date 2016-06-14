@@ -10,12 +10,11 @@
 	//Validate form inputs
 		$inputs=$_POST;
 		$errors="";
-		// var_dump($inputs);
-		// die(); 	
-		if (empty($inputs['']))
-		{
-			$errors.="No items in the list. <br/>";
-		}
+		 	
+		// if (empty($inputs['']))
+		// {
+		// 	$errors.="No items in the list. <br/>";
+		// }
 		if($errors!="")
 		{
 			Alert($errors,"danger");
@@ -31,8 +30,7 @@
 		{
 			$resu=$inputs['stock_adjmaster_id'];
 			//IF id exists update ELSE insert
-			// var_dump($resu);
-			// die(); 	
+				
 			if(empty($inputs['stock_adjmaster_id']))
 			{
 				//Insert				
@@ -40,31 +38,56 @@
 				date_default_timezone_set('Asia/Manila');
 				$now = new DateTime();
 				$date_adjusted=date_format($now, 'Ymd');
-				var_dump($inputs);
-				die;
-
-				$total_cost = 0;
-				foreach($inputs['total_price'] as $key=>$value)
+				//var_dump($inputs);
+				//die;
+				$total_cost =0;
+				foreach($inputs['unit_cost'] as $key=>$value)
 				{
-				   $total_cost+= $value;
-				}
+				   
 				
-				unset($inputs['customer_id']);
-				unset($inputs['description']);
+					// NOTE: You don't really have to use floatval() here, it's just to prove that it's a legitimate float value.
+					$number = floatval(str_replace(',', '', $value));
+
+					// At this point, $number is a "natural" float.
+					
+					$total_cost+= $number;
+				}
+			
+				// $total_cost = 0;
+				// foreach($inputs['total_price'] as $key=>$value)
+				// {
+				//    $total_cost+= $value;
+				// }
+				$adj_status_id = $inputs['adj_status_id'];
+				$current_quantity = $inputs['current_quantity'];				
+				$prod_name = $inputs['prod_name'];
+				$notes = $inputs['notes'];
+				$quantity_received = $inputs['quantity_received'];
+				$unit_cost = $inputs['unit_cost'];
+		
+
+
+				// unset($inputs['customer_id']);
 				unset($inputs['current_quantity']);
-				unset($inputs['total_price']);
 				unset($inputs['prod_name']);
+				unset($inputs['notes']);
+				unset($inputs['quantity_received']);
+				unset($inputs['unit_cost']);
+				unset($inputs['adj_status_id']);
+
+
+				// var_dump($inputs);
+				//  die;
 
 				//echo $arr_count=count($inputs);
-				//echo count($inputs['product_id']);
+				//echo count($inputs['select_id']);
 				//die();
 				$field_count=count($inputs);
-				$arr_count=count($inputs['product_id']);
+				$arr_count=count($inputs['select_id']);
 				
-				// var_dump($inputs);
-				// die;
+				
 
-				$con->myQuery("INSERT INTO stock_adj_master (adj_status_id, date_adjusted,total_cost) VALUES ('$date_issue','$total_cost','$customer_id','$user_id','1','1','$description')", $inputs);
+				$con->myQuery("INSERT INTO stock_adj_master (adj_status_id, date_adjusted,total_cost,is_reverted,reverted_from) VALUES ('$adj_status_id','$date_adjusted','$total_cost', '0', '0')");
 
 				$file_id=$con->lastInsertId();
 				//var_dump($file_id);
@@ -77,31 +100,33 @@
 					// var_dump($inputs['product_id'][$i]);
 					// var_dump($inputs['prod_name'][$i]);
 					// echo '<br>';
-					$params=array(
-						'product_id' => $inputs['product_id'][$i],
-						'qty' => $inputs['quantity'][$i], 
-						'selling_price' => $inputs['selling_price'][$i],
-						'discount' => $inputs['discount'][$i],
-						'tax' => $inputs['tax'][$i],
-						'file_id' => $file_id,
-						'total_cost' => $total_cost
-						);
-					// var_dump($params);
-					// die;
-					$con->myQuery("INSERT INTO sales_details (product_id,sales_master_id,quantity,unit_cost,total_cost,discount,tax) VALUES (:product_id,:file_id,:qty,:selling_price,:total_cost,:discount,:tax)", $params);		
-				}			
-				//die;
-				Alert("Save succesful","success");
-				redirect("sales_order_details.php?id=".$file_id);
-				
 
+					$params=array(
+						'stock_adjmaster_id' => $file_id,
+						'product_id' => $inputs['select_id'][$i],
+						'quantity_received' => $quantity_received[$i]						
+						
+						);
+			
+					// die;
+				
+					$con->myQuery("INSERT INTO stock_adj_details (stock_adjmaster_id,product_id,quantity_received) 
+						VALUES (:stock_adjmaster_id, :product_id , :quantity_received) ", $params);
+
+						//update products
+						//if damaged bagsak sya sa bad orders.
+
+				}			
+			
+				Alert("Save successful","success");
+				redirect("stock_adjustments.php?id=".$file_id);
 			}
 			else{
 				
 				$con->myQuery("UPDATE suppliers SET name=:name,description=:description, contact_number=:contact_number,address=:address, email=:email WHERE supplier_id=:supplier_id",$inputs);
 				
 				Alert("Update successful","success");
-				redirect("sales_order_details.php?id=".$inputs['sales_master_id']);
+				redirect("stock_adjustments.php?id=".$inputs['stock_adjmaster_id']);
 				}
 			
 			// redirect("sales.php");

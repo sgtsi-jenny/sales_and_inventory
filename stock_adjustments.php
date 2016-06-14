@@ -33,7 +33,9 @@
           	<div class='col-sm-12 col-md-12'>
           	<div class="box box-primary">
                 <div class="box-body">
-                
+                <?php
+                    alert();
+                ?>
                 <form method="post" action="save_stock_adjustment.php">
 
                 
@@ -308,7 +310,7 @@
         stock_onhand = $("input[name='current_quantity']").val();
         after = $("input[name='stock_after']").val();
         prod_name = $("input[name='prod_name']").val();
-        input="<input type='hidden' name='select_id[]' value='"+select_1_val+"'> <input type='hidden' name='quantity_received[]' value='"+quantity+"'><input type='hidden' name='current_quantity[]' value='"+unit_cost+"'><input type='hidden' name='current_quantity[]' value='"+stock_onhand+"'><input type='hidden' name='stock_after[]' value='"+after+"'><input type='hidden' name='prod_name[]' value='"+prod_name+"'>";
+        input="<input type='hidden' name='select_id[]' value='"+select_1_val+"'> <input type='hidden' name='quantity_received[]' value='"+quantity+"'><input type='hidden' name='unit_cost[]' value='"+unit_cost+"'><input type='hidden' name='current_quantity[]' value='"+stock_onhand+"'><input type='hidden' name='stock_after[]' value='"+after+"'><input type='hidden' name='prod_name[]' value='"+prod_name+"'>";
    
         $("#table_container").append("<tr><td>"+input+select_1_val+"</td><td>"+prod_name+"</td><td>"+quantity+"</td> <td>"+unit_cost+"</td> <td>"+stock_onhand+"</td><td>"+after+"</td><td> <button type='button'  class='btn btn-brand fa fa-pencil' onclick='edit(this)'></button><button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button></td></tr>");
 
