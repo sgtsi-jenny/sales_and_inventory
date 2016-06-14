@@ -24,9 +24,9 @@
     //     }
     //}
     $po_payments=$con->myQuery("SELECT
-                                po_payments.amount,
-                                po_payments.date_paid,     
-                                po_payments.remarks
+                                Format(amount,2) as 'amount',
+                                DATE_FORMAT(date_paid,'%m/%d/%Y') as 'date_paid',     
+                                remarks
                                 FROM po_payments WHERE po_master_id=?",array($_GET['id']))->fetchAll(PDO::FETCH_ASSOC);
 
     

@@ -12,9 +12,10 @@
     }
     
     $po_num=$con->myQuery("SELECT po_master_id FROM po_master ORDER BY po_master_id DESC LIMIT 1")->fetch(PDO::FETCH_ASSOC);
-    $supplier=$con->myQuery("SELECT supplier_id, CONCAT(description,' (',name,')') as name FROM suppliers")->fetchAll(PDO::FETCH_ASSOC);
+    $supplier=$con->myQuery("SELECT supplier_id, CONCAT(description,' (',name,')') as name FROM suppliers WHERE supplier_id = ?",array($_GET['supplier']))->fetch(PDO::FETCH_ASSOC);
 
-   
+    //$prod_box=$con->myQuery("SELECT product_id,product_name FROM products WHERE ");
+    
 	$prod=$con->myQuery("SELECT
 						products.product_id,
 						products.product_name AS `name`,
@@ -23,10 +24,7 @@
 						supplier_products
 						INNER JOIN suppliers ON suppliers.supplier_id = supplier_products.supplier_id
 						INNER JOIN products ON products.product_id = supplier_products.product_id
-						")->fetchAll(PDO::FETCH_ASSOC);
-
-
-
+						WHERE suppliers.supplier_id=?",array($_GET['supplier']))->fetchAll(PDO::FETCH_ASSOC);
     makeHead("Purchase Order");
 ?>
 <?php
@@ -70,30 +68,28 @@
 											<form method="GET">
 												<div class='form-group'>
 													<div class ="row">
-														<label class='col-md-3 control-label'> Select Supplier: * </label>
-														<div class = "col-md-8">
-															<select class='form-control' id='supplier' name='supplier' data-placeholder="Select supplier" onchange="get_suppID();" required>
-																<?php
-																	
-																	echo makeOptions($supplier,'Select Supplier')
-																?>
-															</select>
+														<div class = "col-md-3">
+															<label class='control-label'>Supplier: </label>
+														</div>
+														<div class = "col-md-9">
+															<input type="text" class="form-control" id="supplier" name='supplier' value='<?php echo $supplier['name']?>'  readonly>
 															
 															<!--<input type="submit" value="Add" class="btn btn-default pull-right" />-->
 															
 														</div>
 													</div>
-													<div class='form-group'>
+												</div>
+												<div class='form-group'>
 													<div class ="row">
 														<div class = "col-md-3">
 															<label class='control-label'> Ship To: </label>
 														</div>
-														<div class = "col-md-8">
-															<input type="text" class="form-control " id="ship_to" placeholder="Ship To" name='ship_to' value='' required >
+														<div class = "col-md-9">
+															<input type="text" class="form-control" id="ship_to" name='ship_to' value='<?php echo $_GET['ship_to']?>' readonly >
 														</div>
 													</div>
-											</div>
 												</div>
+												
 
 											</form>
 									<!--		<div class="form-group">
@@ -122,16 +118,17 @@
 														<select class='form-control ' name='product_id' id='product_id' data-placeholder="Select product" <?php echo!(empty($data))?"data-selected='".$data['product_id']."'":NULL?>
 															onchange="get_prodIDCost()" required>
 															<?php
-																//echo makeOptions($product,'Select Product')
+																echo makeOptions($prod,'Select Product')
 															?>
-															<option value=''>Select Product</option>
+														<!--	<option value=''>Select Product</option>
 					                                        <?php
-					                                            foreach ($prod as $key => $row):
+					                                           // foreach ($prod as $key => $row):
 					                                        ?>
-					                                            <option data-cost='<?php echo $row['unit_cost'] ?>'  placeholder="Select product" value='<?php echo $row['product_id']?>' <?php echo (!empty($data) && $row['product_id']==$data['product_id']?'selected':'') ?> ><?php echo $row['name']?></option>                                                   
+					                                            <option data-cost='<?php //echo $row['unit_cost'] ?>'  placeholder="Select product" value='<?php //echo $row['product_id']?>' <?php //echo (!empty($data) && $row['product_id']==$data['product_id']?'selected':'') ?> ><?php //echo $row['name']?></option>                                                   
 					                                        <?php
-					                                            endforeach;
+					                                     //       endforeach;
 					                                        ?>
+					                                        -->
 					                                        <input type='hidden' id='prod_name2' name='prod_name' value=''>
 														</select>
 													</div>
@@ -143,7 +140,7 @@
 														<label class='control-label'> Unit Cost: </label>
 													</div>
 													<div class = "col-md-8">
-														<input type="text" class="form-control " id="unit_cost" placeholder="Unit Cost" name='unit_cost' value='<?php echo !empty($data)?htmlspecialchars($row['unit_cost']):''; ?>' required readonly>
+														<input type="text" class="form-control " id="unit_cost" placeholder="Unit Cost" name='unit_cost' value='<?php echo !empty($data)?htmlspecialchars($row['unit_cost']):''; ?>' required>
 													</div>
 												</div>
 											</div>
@@ -205,12 +202,7 @@
 <script type="text/javascript">
 var is_edit=false;
 var current_row="";
-	function get_suppID()
-	{
-	    var supplierid = document.getElementById("supplier").value;
-	    $("#product_id").load("ajax/products.php?id="+supplierid)
-	    
-	}
+	
 	function get_prodIDCost()
 	{
 	   //var prodid = document.getElementById("product").value;

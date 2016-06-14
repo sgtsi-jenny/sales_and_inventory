@@ -23,8 +23,11 @@
             die;
         }
     }
-    $dataOn=$con->myQuery("SELECT customer_add_id,label_address,address FROM customer_address WHERE is_deleted='0' AND customer_id=?",array($_GET['id']))->fetchAll(PDO::FETCH_ASSOC);
+    $dataOn=$con->myQuery("SELECT customer_add_id,label_address,address FROM customer_address WHERE is_deleted='0' AND customer_id=?",array($_GET['id']))->fetchall(PDO::FETCH_ASSOC);
 
+    $dataGet=$con->myQuery("SELECT customer_add_id,label_address,address FROM customer_address WHERE is_deleted='0' AND customer_id=? and customer_add_id=?",array($_GET['id'],$_GET['ca']))->fetch(PDO::FETCH_ASSOC);
+    // var_dump($dataOn);
+    // DIE;
     makeHead("Customer");
 
 ?>
@@ -64,23 +67,34 @@
                     
                     
                 </ul>
-                <form class='form-horizontal' action='save_customer_address.php' method="POST" >
+                <?php
+                  if (!empty($_GET['ca'])){
+                ?>
+                  <form class='form-horizontal' action='save_customer_address.php?ca=<?php echo $_GET['ca'] ?>' method="POST" >
+                <?php
+                  }
+                  else{
+                ?>
+                  <form class='form-horizontal' action='save_customer_address.php?ca=<?php echo '' ?>' method="POST" >
+                <?php
+                  }
+                ?>
                 <div class="tab-content">
                   <div class="active tab-pane" >
                      <div class='panel-body'>
                           <div class='col-md-12'>
-                            <input type='hidden' name='customer_id' value='<?php echo $data['customer_id']?>'>
+                            <input type='hidden' name='customer_id' value='<?php echo $data['customer_id']?>'>                            
                             <div class='form-group'>
                                 <label class='col-sm-12 col-md-3 control-label'> Label Address</label>
                                 <div class='col-sm-12 col-md-6'>
-                                   <input name="lblAddress" type="text" class='form-control' placeholder="Enter Label Address" >
+                                   <input name="lblAddress" type="text" class='form-control' placeholder="Enter Label Address" value='<?php echo !empty($dataGet)?htmlspecialchars($dataGet['label_address']):''; ?>' required >
                                 </div>
                             </div>
                             
                             <div class='form-group'>
                                 <label class='col-sm-12 col-md-3 control-label'> Address</label>
                                 <div class='col-sm-12 col-md-6'>
-                                   <input name="address" type="text" class='form-control' placeholder="Enter Address" >
+                                   <input name="address" type="text" class='form-control' placeholder="Enter Address" value='<?php echo !empty($dataGet)?htmlspecialchars($dataGet['address']):''; ?>' required>
                                 </div>
                             </div>
                            
@@ -99,39 +113,7 @@
                  <?php
                   Alert();
                  ?>
-                <!--<div id='collapseForm' class='collapse'>
-                  <form class='form-horizontal' action='save_opp_contact.php' method="POST" >
-                    <input type='hidden' name='opp_con' value='<?php echo !empty($opp)?$opp['id']:""?>'>
-                    <input type='hidden' name='opp_id' value='<?php echo $opp['id']?>'>
-                                    <div class='form-group'>
-                                        <label for="" class="col-md-4 control-label">Contact Name * </label>
-                                        <div class="col-sm-5">
-                                            <!--<select class='form-control' id='c_id' onchange='get_con()' name='c_id' data-placeholder="Select a contact" <?php echo!(empty($data))?"data-selected='".$data['name']."'":NULL ?>>
-                                            <?php
-                                                foreach ($contacts as $key => $row):
-                                                    ?>
-                                                    <option data-phone='' placeholder="Select contact" value='<?php echo $row['id']?>'><?php echo $row['name']?></option>
-                                                <?php
-                                                    endforeach;
-                                                ?>
-                                                <input type='hidden' id='name' name='name' value=''>
-                                            -->
-                                            <!--
-                                            <select name='c_id' class='form-control select2' data-placeholder="Select Contact Name" <?php echo !(empty($record))?"data-selected='".$record['c_id']."'":NULL ?> style='width:100%' required>
-                                                <?php
-                                                  echo makeOptions($contacts);
-                                                ?>
-                                            </select>
-                                        </div>  
-                                      </div>
-                          <div class="form-group">
-                            <div class="col-sm-10 col-md-offset-2 text-center">
-                              <button type='submit' class='btn btn-success brand-bg'>Add </button>
-                            <a href='opp_contact_persons.php?id=<?php echo $opp['id'] ?>' class='btn btn-default'>Cancel</a>
-                              </div>
-                          </div>    
-                  </form>
-                </div>   -->                         
+                                   
                   <h2>List of Customer Address</h2>
                    <br>
                     <table id='ResultTable' class='table table-bordered table-striped'>
@@ -153,7 +135,8 @@
                                                     <td align="center">
                                                         <!--<a href='' class='btn btn-sm btn-success'><span class='fa fa-pencil'></span></a>
                                                         -->
-                                                        <a class='btn btn-sm btn-flat btn-danger' href='delete.php?id=<?php echo $row['customer_add_id']?>&x=<?php echo $data['customer_id']; ?>&t=ca' onclick='return confirm("Are you sure you want to delete this address?")'><span class='fa fa-trash'></span></a>
+                                                        <a href='customer_address.php?id=<?php echo $data['customer_id']?>&ca=<?php echo $row['customer_add_id']?>' class='btn btn-success btn-sm'><span class='fa fa-pencil'></span></a>
+                                                        <a class='btn btn-sm btn-flat btn-danger' href='delete.php?id=<?php echo $row['customer_add_id']?>&x=<?php echo $data['customer_id']; ?>&t=cad' onclick='return confirm("Are you sure you want to delete this address?")'><span class='fa fa-trash'></span></a>
                                                     </td>
                                                 </tr>
                                             <?php

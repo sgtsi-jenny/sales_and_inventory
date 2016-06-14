@@ -30,7 +30,7 @@
 		// }
 		
 		//die;
-		
+		$errors="";
 
 		if($errors!=""){
 			Alert("You have the following errors: <br/>".$errors,"danger");
@@ -45,9 +45,12 @@
 		else{
 				
 			//IF id exists update ELSE insert
-			//if(empty($inputs['opp_con'])){
+			// var_dump($_GET['ca']);
+			// die;
+			if(empty($_GET['ca'])){
 				//Insert
-				//unset($inputs['opp_con']);
+				$cid = $inputs['customer_id'];
+				// unset($inputs['customer_id']);
 				// //unset($inputs['prod_id']);
 				// var_dump($errors);
 				// var_dump($inputs['opp_con']);
@@ -56,16 +59,25 @@
 				$con->myQuery("INSERT INTO customer_address(customer_id,label_address,address) VALUES(:customer_id,:lblAddress,:address)",$inputs);
 								
 				Alert("Save successful","success");
-				redirect("customer_address.php"."?id={$inputs['customer_id']}");
+				redirect("customer_address.php"."?id={$cid}");
 
 				
-			//}
-			//else{
+			}
+			else{
 				//Update
 				
-				// $con->myQuery("UPDATE opp_products SET prod_name=:prod_name,prod_price=:prod_price,commission_rate=:commission_rate WHERE id=:prod_id",$inputs);
-				// Alert("Update successful","success");
-			//}
+				$cid = $inputs['customer_id'];
+				unset($inputs['customer_id']);
+				$inputs['customer_add_id']=$_GET['ca'];
+				// var_dump($inputs);
+				// die;
+				$con->myQuery("UPDATE customer_address SET
+				 	address=:address,label_address=:lblAddress
+				 	WHERE customer_add_id=:customer_add_id
+				 	",$inputs);
+				Alert("Update successful","success");
+				redirect("customer_address.php"."?id={$cid}");
+			}
 
 			
 		}

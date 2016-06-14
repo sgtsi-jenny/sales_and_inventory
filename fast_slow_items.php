@@ -1,12 +1,12 @@
 <?php
 	require_once 'support/config.php';
-	if(!isLoggedIn()){
-		toLogin();
-		die();
-	}
-    if(!AllowUser(array(1,2))){
-        redirect("index.php");
-    }
+	// if(!isLoggedIn()){
+	// 	toLogin();
+	// 	die();
+	// }
+ //    if(!AllowUser(array(1,2))){
+ //        redirect("index.php");
+ //    }
 
     $dataFS=$con->myQuery("SELECT
                         CM.product_id,
@@ -53,89 +53,68 @@
                                 WHERE 
                                 DATE_FORMAT(shipments.date_delivered, '%m%Y' ) = DATE_FORMAT( CURRENT_DATE - INTERVAL 2 MONTH, '%m%Y') and 
                                 products.product_name = product_name) as last2months ON last2months.product_id=cm.product_id
-                            GROUP BY CM.product_id, CM.product_name");
+                                GROUP BY CM.product_id, CM.product_name");
 
 	makeHead("Fast and Slow Moving");
 ?>
 <?php
-	 require_once("template/header.php");
-	require_once("template/sidebar.php");
+	//  require_once("template/header.php");
+	// require_once("template/sidebar.php");
 ?>
-<div class='content-wrapper'>
-    <div class='content-header'>
-        <h1 class='page-header text-center text-green'>Fast and Slow Moving</h1>
-    </div>
-    <section class='content'>
-                <div class="row">
-                <div class='col-lg-12'>
-                    <?php
-                        Alert();
-                    ?>    
 
-                    <div class='panel panel-default'>
-                        
-                        <div class='panel-body ' >
-                            <form method="get">
+<form method="get">
 
-                            <table id='ResultTable' class='table table-bordered table-striped'>
-                                <thead>
-                                    <tr>
-                                       
-                                        <th>Product Name</th>
-                                        <th>Last 2 Months</th>
-                                        <th>Previous Month</th>
-                                        <th>Current Month</th>
-                                        <th>Average Sales</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php
-                                        $fsdate = date("Ymd");
-                                        $con->myQuery("DELETE FROM fastslow WHERE fs_date = ?",array($fsdate));
-                                        while ($dataFSs=$dataFS->fetch(PDO::FETCH_ASSOC)):
-                                    ?>
-                                   <tr>
-                                        <td><?php echo htmlspecialchars($dataFSs['product_name'])?></td>
-                                        <td><?php echo htmlspecialchars($dataFSs['last2months'])?></td>
-                                        <td><?php echo htmlspecialchars($dataFSs['previousmonth'])?></td>
-                                        <td><?php echo htmlspecialchars($dataFSs['currentmonth'])?></td>
-                                        <td><?php echo htmlspecialchars($dataFSs['avesales'])?></td>
-                                        <td><?php echo htmlspecialchars($dataFSs['status'])?></td>
-                                    </tr>
-                                    <?php
-                                        $lastdayofmonth=date('Y-m-t');
-                                        $todate = date("Y-m-d");
+<table  class='table table-bordered table-striped'>
+    <thead>
+        <tr>
+           
+            <th>Product Name</th>
+            <th>Last 2 Months</th>
+            <th>Previous Month</th>
+            <th>Current Month</th>
+            <th>Average Sales</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+            $fsdate = date("Ymd");
+            $con->myQuery("DELETE FROM fastslow WHERE fs_date = ?",array($fsdate));
+            while ($dataFSs=$dataFS->fetch(PDO::FETCH_ASSOC)):
+        ?>
+       <tr>
+            <td><?php echo htmlspecialchars($dataFSs['product_name'])?></td>
+            <td><?php echo htmlspecialchars($dataFSs['last2months'])?></td>
+            <td><?php echo htmlspecialchars($dataFSs['previousmonth'])?></td>
+            <td><?php echo htmlspecialchars($dataFSs['currentmonth'])?></td>
+            <td><?php echo htmlspecialchars($dataFSs['avesales'])?></td>
+            <td><?php echo htmlspecialchars($dataFSs['status'])?></td>
+        </tr>
+        <?php
+            $lastdayofmonth=date('Y-m-t');
+            $todate = date("Y-m-d");
 
-                                            if ($lastdayofmonth == $todate)
-                                            {
-                                                $prodID = $dataFSs['product_id'];
-                                                $fmonth = $dataFSs['last2months'];
-                                                $smonth = $dataFSs['previousmonth'];
-                                                $cmonth = $dataFSs['currentmonth'];
-                                                $avesales = $dataFSs['avesales'];
-                                                $fsStatus = $dataFSs['status'];
+                if ($lastdayofmonth == $todate)
+                {
+                    $prodID = $dataFSs['product_id'];
+                    $fmonth = $dataFSs['last2months'];
+                    $smonth = $dataFSs['previousmonth'];
+                    $cmonth = $dataFSs['currentmonth'];
+                    $avesales = $dataFSs['avesales'];
+                    $fsStatus = $dataFSs['status'];
 
-                                                                                             
-                                                $con->myQuery("INSERT INTO fastslow(product_id,first_month,second_month,current_month,average_sales,fs_date,fs_status) 
-                                                                    VALUES(?,?,?,?,?,?,?)",array($prodID,$fmonth,$smonth,$cmonth,$avesales,$fsdate,$fsStatus));
+                                                                 
+                    $con->myQuery("INSERT INTO fastslow(product_id,first_month,second_month,current_month,average_sales,fs_date,fs_status) 
+                                        VALUES(?,?,?,?,?,?,?)",array($prodID,$fmonth,$smonth,$cmonth,$avesales,$fsdate,$fsStatus));
 
-                                            }
-                                        endwhile;
-                                    ?>
-                                </tbody>
-                            </table>
+                }
+            endwhile;
+        ?>
+    </tbody>
+</table>
 
-                            <?php
-                            
-                            ?>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-    </section>
-</div>
+</form>
+
 <script type="text/javascript">
   $(function () {
         $('#ResultTable').DataTable({
