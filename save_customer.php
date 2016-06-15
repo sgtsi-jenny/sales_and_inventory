@@ -1,15 +1,18 @@
 <?php
 	require_once 'support/config.php';
 	
-	if(!isLoggedIn()){
+	if(!isLoggedIn())
+	{
 		toLogin();
 		die();
 	}
 
-	if(!AllowUser(array(1,2))){
+	if(!AllowUser(array(1,2)))
+	{
 		redirect("index.php");
 	}
-	if(!empty($_POST)){
+	if(!empty($_POST))
+	{
 		//Validate form inputs
 		$inputs=$_POST;
 		$inputs=array_map("trim", $inputs);
@@ -42,10 +45,6 @@
 			$errors.="Enter Email Address. <br/>";
 		}
 
-		
-// var_dump($inputs);
-// die;
-
 		if($errors!=""){
 			$_SESSION[WEBAPP]['frm_inputs']=$inputs;
 			// $_SESSION[WEBAPP]['frm_inputs']['asset_model_id']=$inputs['model_id'];
@@ -64,6 +63,12 @@
 			//var_dump($inputs['id']);
 			//die();
 			//IF id exists update ELSE insert
+
+			if (empty($inputs['is_top'])) 
+			{
+				$inputs['is_top']=0;
+			}
+
 			$date = date_create($inputs['dob']);
 			$inputs['dob']= date_format($date, 'Ymd');		
 			if(empty($inputs['id'])){
@@ -81,8 +86,9 @@
 					mobile_number,
 					birth_date,
 					website,
-					email) 
-					VALUES(
+					email,
+					is_top_company
+					) VALUES(
 					:custName,
 					:tin,
 					:description,
@@ -91,14 +97,18 @@
 					:mobileNumber,
 					:dob,
 					:website,
-					:email)",$inputs);
+					:email,
+					:is_top
+					)",$inputs);
 
 					Alert("Save succesful","success");
 				    redirect("customers.php");
-			}
-			else{
+			}else
+			{
 				//Update
 				//var_dump($inputs);
+				//die;
+				//echo $inputs['is_top'];
 				//die;
 				$con->myQuery("UPDATE customers SET 
 					customer_name=:custName,
@@ -109,14 +119,13 @@
 					mobile_number=:mobileNumber,
 					birth_date=:dob,
 					website=:website,
-					email=:email
+					email=:email,
+					is_top_company=:is_top
 					WHERE customer_id=:id",$inputs);
 
 					Alert("Update succesful","success");
 					redirect("customers.php");
 			}
-
-			
 		}
 		die;
 	}
