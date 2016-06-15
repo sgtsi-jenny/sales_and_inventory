@@ -2,7 +2,7 @@
   $cur_qty="";
   if (!empty($_GET))
   {
-    $data=$con->myQuery("SELECT product_id,product_code,product_name,description,category_id,selling_price,wholesale_price,current_quantity,measurement_id,minimum_quantity,maximum_quantity,barcode FROM products WHERE is_deleted=0 AND product_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
+    $data=$con->myQuery("SELECT product_id,product_code,product_name,description,category_id,selling_price,wholesale_price,current_quantity,measurement_id,minimum_quantity,maximum_quantity,barcode,product_type FROM products WHERE is_deleted=0 AND product_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
     $cur_qty="disabled";
   }
 
@@ -50,6 +50,28 @@
           </div>
           <div class='col-ms-1'>
             <a href='frm_categories.php' class='btn btn-flat btn-sm btn-success'><span class='fa fa-plus'></span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <?php 
+      $select="";
+      if ($data['product_type']=='Services') 
+      {
+        $select="selected";
+      }
+    ?>
+
+    <div class="form-group">
+      <label for="category" class="col-md-3 control-label">Product Type *</label>
+      <div class="col-md-7">
+        <div class="row">
+          <div class="col-sm-12">
+            <select name='type' class='form-control select2' data-placeholder="Select Category" style='width:100%' required>
+              <option value='Services'>Services</option>
+              <option value='Goods'>Goods</option>
+            </select>
           </div>
         </div>
       </div>
