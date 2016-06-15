@@ -86,22 +86,23 @@
 				//insertAuditLog($_SESSION[WEBAPP]['user']['last_name'].", ".$_SESSION[WEBAPP]['user']['first_name']." ".$_SESSION[WEBAPP]['user']['middle_name']," Created New Employee ({$inputs['first_name']} {$inputs['last_name']}).");
 			}else
 			{
+				//var_dump($inputs);
+				unset($inputs['current_quantity']);
 				var_dump($inputs);
-				die();
+				//die();
 				#Update
 				$con->myQuery("UPDATE products SET
 								product_code=:product_code,
 								product_name=:product_name,
 								description=:description,
 								category_id=:category,
-							selling_price=:selling_price,
-							wholesale_price=:wholesale_price,
-							current_quantity=:current_quantity,
-							measurement_id=:measurement,
-							minimum_quantity=:min_quantity,
-							maximum_quantity=:max_quantity,
-							barcode=:barcode,
-							product_type=:type
+								selling_price=:selling_price,
+								wholesale_price=:wholesale_price,
+								measurement_id=:measurement,
+								minimum_quantity=:min_quantity,
+								maximum_quantity=:max_quantity,
+								barcode=:barcode,
+								product_type=:type
 								WHERE product_id=:id
 								",$inputs);
 				//insertAuditLog($_SESSION[WEBAPP]['user']['last_name'].", ".$_SESSION[WEBAPP]['user']['first_name']." ".$_SESSION[WEBAPP]['user']['middle_name']," Modified Employee Personal Information ({$inputs['first_name']} {$inputs['last_name']}).");

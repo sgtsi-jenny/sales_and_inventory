@@ -55,20 +55,12 @@
       </div>
     </div>
 
-    <?php 
-      $select="";
-      if ($data['product_type']=='Services') 
-      {
-        $select="selected";
-      }
-    ?>
-
     <div class="form-group">
       <label for="category" class="col-md-3 control-label">Product Type *</label>
       <div class="col-md-7">
         <div class="row">
           <div class="col-sm-12">
-            <select name='type' class='form-control select2' data-placeholder="Select Category" style='width:100%' required>
+            <select name='type' class='form-control select2' data-placeholder="Select Category"  <?php echo !(empty($data))?"data-selected='".$data['product_type']."'":NULL ?> style='width:100%' required>
               <option value='Services'>Services</option>
               <option value='Goods'>Goods</option>
             </select>
