@@ -1,7 +1,7 @@
 <?php
 	session_start();
 	date_default_timezone_set("Asia/Manila");
-	define("WEBAPP", 'Customer Management System');
+	define("WEBAPP", 'Sales and Inventory System');
 
 
 	function redirect($url)

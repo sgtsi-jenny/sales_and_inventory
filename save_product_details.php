@@ -65,8 +65,7 @@
 								measurement_id,
 								minimum_quantity,
 								maximum_quantity,
-								barcode,
-								product_type
+								barcode
 								) VALUES(
 								:product_code,
 								:product_name,
@@ -78,8 +77,7 @@
 								:measurement,
 								:min_quantity,
 								:max_quantity,
-								:barcode,
-								:type
+								:barcode
 								)",$inputs);
 
 				$id=$con->lastInsertId();
@@ -101,8 +99,7 @@
 								measurement_id=:measurement,
 								minimum_quantity=:min_quantity,
 								maximum_quantity=:max_quantity,
-								barcode=:barcode,
-								product_type=:type
+								barcode=:barcode
 								WHERE product_id=:id
 								",$inputs);
 				//insertAuditLog($_SESSION[WEBAPP]['user']['last_name'].", ".$_SESSION[WEBAPP]['user']['first_name']." ".$_SESSION[WEBAPP]['user']['middle_name']," Modified Employee Personal Information ({$inputs['first_name']} {$inputs['last_name']}).");
