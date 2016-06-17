@@ -4,7 +4,7 @@
         toLogin();
         die();
      }
-     
+
     if(!AllowUser(array(1))){
          redirect("index.php");
     }
@@ -55,7 +55,7 @@
         <!-- Content Header (Page header) -->
         <section class="content-header">
           <h1>
-            Product Form
+            Customer Form
           </h1>
           <br/>
           <a href='customers.php' class='btn btn-default'><span class='glyphicon glyphicon-arrow-left'></span> Customer list</a>

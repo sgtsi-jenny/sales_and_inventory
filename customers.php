@@ -25,7 +25,7 @@
                     ?>
                     <div class='row'>
                         <div class='col-sm-12'>
-                                <a href='frm_customers.php' class='btn btn-flat btn-success pull-right'> <span class='fa fa-plus'></span> Create New</a>
+                                <a href='frm_customers.php' class='btn btn-brand pull-right'> <span class='fa fa-plus'></span> Create New</a>
                         </div>
                     </div>
                     <br/>    

@@ -110,7 +110,7 @@
 <br>
 <div class='form-group'>
     <div class='col-sm-12 col-md-7 col-md-offset-3'>
-         <button type='submit' class='btn btn-success btn-success'> <span class='fa fa-check'></span> Save</button>
+         <button type='submit' class='btn btn-success btn-brand'> <span class='fa fa-check'></span> Save</button>
         <a href='customers.php' class='btn btn-default'>Cancel</a>
     </div>
 </div>
