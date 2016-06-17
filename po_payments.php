@@ -24,12 +24,38 @@
     //     }
     //}
     $po_payments=$con->myQuery("SELECT
+                                po_payment_id,
                                 Format(amount,2) as 'amount',
                                 DATE_FORMAT(date_paid,'%m/%d/%Y') as 'date_paid',     
                                 remarks
-                                FROM po_payments WHERE po_master_id=?",array($_GET['id']))->fetchAll(PDO::FETCH_ASSOC);
+                                FROM po_payments WHERE is_void='0' and po_master_id=?",array($_GET['id']))->fetchAll(PDO::FETCH_ASSOC);
 
-    
+    $remaining_bal=$con->myQuery("SELECT
+                                  pod.po_master_id,
+                                  pod.total_cost,
+                                  if (remaining_bal.amount > '0',sum(remaining_bal.amount),'0') as 'amount',
+                                  (pod.total_cost - if (remaining_bal.amount > '0',sum(remaining_bal.amount),'0')) as 'remaining_balance'
+                                FROM
+                                (SELECT po_details.po_master_id,
+                                        Sum(po_details.total_cost) AS total_cost
+                                        FROM
+                                        po_details
+                                        WHERE
+                                        po_details.po_master_id AND
+                                        po_details.is_void = 0
+                                        GROUP BY po_details.po_master_id) as pod
+                                LEFT OUTER JOIN(SELECT po_payments.po_master_id,
+                                                      po_payments.amount
+                                                      FROM
+                                                      po_payments
+                                                      WHERE 
+                                                      is_void = 0
+                                                      ) as remaining_bal on remaining_bal.po_master_id = pod.po_master_id
+                                WHERE pod.po_master_id = ?
+                                GROUP BY pod.po_master_id
+                                ORDER BY pod.po_master_id",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
+
+                          
 
     makeHead("Payments");
 
@@ -81,12 +107,19 @@
                   $pstatus = $po_payments_status['payment_status_id'];
                   if ($pstatus == "1"){
                 ?>
-
+                
                 <div class="tab-content">
                   <div class="active tab-pane" >
                      <div class='panel-body'>
                           <div class='col-md-12'>
                             <input type='hidden' name='id' value='<?php echo $_GET['id']?>'>
+
+                            <div class='form-group'>
+                                <label class='col-sm-12 col-md-3 control-label'> Remaining Balance </label>
+                                <div class='col-sm-12 col-md-6'>
+                                   <input name="remain_bal" type="text" class='form-control' value='<?php echo $remaining_bal['remaining_balance']; ?>' readonly>
+                                </div>
+                            </div>
                             <div class='form-group'>
                                 <label class='col-sm-12 col-md-3 control-label'> Amount *</label>
                                 <div class='col-sm-12 col-md-6'>
@@ -201,10 +234,11 @@
                     <table id='ResultTable' class='table table-bordered table-striped'>
                           <thead>
                             <tr>
+                                                <th class='text-center'>Payment ID</th>
                                                 <th class='text-center'>Amount</th>
                                                 <th class='text-center'>Date Paid</th>
                                                 <th class='text-center'>Remarks</th>
-                                                <!--<th class='text-center' style='min-width:40px'>Action</th>-->
+                                                <th class='text-center' style='min-width:40px'>Action</th>
                             </tr>
                           </thead>
                           <tbody>
@@ -212,15 +246,16 @@
                                               foreach($po_payments as $row):
                                             ?>
                                                 <tr>
+                                                    <td><?php echo htmlspecialchars($row['po_payment_id']) ?></td>
                                                     <td><?php echo htmlspecialchars($row['amount']) ?></td>
                                                     <td><?php echo htmlspecialchars($row['date_paid']) ?></td>
                                                     <td><?php echo htmlspecialchars($row['remarks']) ?></td>
                                                     
-                                                    <!--<td align="center">
-                                                        <!--<a href='' class='btn btn-sm btn-success'><span class='fa fa-pencil'></span></a>
-                                                        -->
-                                                        <!--<a class='btn btn-sm btn-flat btn-danger' href='delete.php?id=<?php echo $row['po_payment_id']?>&x=<?php echo $data['po_master_id']; ?>&t=ca' onclick='return confirm("Are you sure you want to delete this payment?")'><span class='fa fa-trash'></span></a>
-                                                    </td>-->
+                                                    <td align="center">
+                                                        <a href='po_void_payment.php?id=<?php echo $_GET['id']; ?>&pay_id=<?php echo $row['po_payment_id'] ?>' class='btn btn-default' onclick='return confirm("Are you do you want to void this PO Payment?")'> Void </a>
+
+                                                       
+                                                    </td>
                                                 </tr>
                                             <?php
                                                 endforeach;

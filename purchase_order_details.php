@@ -64,6 +64,55 @@
             die;
         }
     }
+
+    $po_details=$con->myQuery("SELECT
+                                        po.product_id,
+                                        po.Name,
+                                        po.QuantityOrdered,
+                                        qtyReceived.qty_received as 'QuantityReceived',
+                                        po.UnitCost,
+                                        po.TotalCost
+                                        FROM
+                                        (SELECT
+                                            po_master.po_master_id,
+                                            products.product_id,
+                                            products.product_name AS `Name`,
+                                            po_details.qty_ordered AS `QuantityOrdered`,
+                                            po_details.unit_cost AS `UnitCost`,
+                                            po_details.total_cost AS `TotalCost`
+                                            FROM
+                                            po_master
+                                            INNER JOIN po_details ON po_master.po_master_id = po_details.po_master_id
+                                            INNER JOIN suppliers ON po_master.supplier_id = suppliers.supplier_id
+                                            INNER JOIN po_status ON po_master.po_status_id = po_status.po_status_id
+                                            INNER JOIN products ON po_details.product_id = products.product_id
+                                            WHERE po_master.po_master_id = ?
+                                            ORDER BY
+                                            products.product_id ASC) as po
+                                            LEFT OUTER JOIN (SELECT 
+                                                            po_master.po_master_id,
+                                                            po_details.product_id,
+                                                            sum(po_received.qty_received) as 'qty_received'
+                                                            FROM
+                                                            po_master
+                                                            INNER JOIN po_received ON po_master.po_master_id = po_received.po_master_id
+                                                            INNER JOIN po_details ON po_details.product_id = po_received.product_id AND po_master.po_master_id = po_details.po_master_id
+                                                            WHERE
+                                                            po_master.po_master_id=?
+                                                            GROUP BY po_details.product_id) as qtyReceived 
+                                            ON qtyReceived.product_id=po.product_id and qtyReceived.po_master_id=po.po_master_id
+                                            ORDER BY po.product_id",array($_GET['id'],$_GET['id']))->fetchAll(PDO::FETCH_ASSOC);
+
+    $po_get_qty=$con->myQuery("SELECT 
+                                po_master.po_master_id,
+                                sum(po_received.qty_received) as 'qty_received'
+                                FROM
+                                po_master
+                                INNER JOIN po_received ON po_master.po_master_id = po_received.po_master_id
+                                INNER JOIN po_details ON po_details.product_id = po_received.product_id AND po_master.po_master_id = po_details.po_master_id
+                                WHERE
+                                po_master.po_master_id=?
+                                GROUP BY po_master.po_master_id",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
     makeHead("Purchase");
 ?>
 
@@ -73,7 +122,20 @@
 ?>
 <div class="content-wrapper">
     <section class="content-header" align="right">
-        <a href='purchases.php' class='btn btn-default'><span class='glyphicon glyphicon-arrow-left'></span> Back</a>
+        <a href='purchases.php' class='btn btn-default'><span class='glyphicon glyphicon-arrow-left'></span> Back to Puchase Order Details</a>
+        <?php
+        // var_dump($po_details['QuantityReceived']);
+        // die;
+        if ($po_get_qty['qty_received'] > 0){
+        }
+        else
+        {
+        ?>
+        <a href='purchase_void.php?id=<?php echo $_GET['id']; ?>' class='btn btn-default' onclick='return confirm("Are you do you want to void this Purchase Order?")'> Void </a>
+        <?php
+        }
+        ?>
+        
     </section>
 
     
@@ -149,43 +211,7 @@
                                 </thead>
                                 <tbody>
                                     <?php                                              
-                                        $po_details=$con->myQuery("SELECT
-                                        po.product_id,
-                                        po.Name,
-                                        po.QuantityOrdered,
-                                        qtyReceived.qty_received as 'QuantityReceived',
-                                        po.UnitCost,
-                                        po.TotalCost
-                                        FROM
-                                        (SELECT
-                                            po_master.po_master_id,
-                                            products.product_id,
-                                            products.product_name AS `Name`,
-                                            po_details.qty_ordered AS `QuantityOrdered`,
-                                            po_details.unit_cost AS `UnitCost`,
-                                            po_details.total_cost AS `TotalCost`
-                                            FROM
-                                            po_master
-                                            INNER JOIN po_details ON po_master.po_master_id = po_details.po_master_id
-                                            INNER JOIN suppliers ON po_master.supplier_id = suppliers.supplier_id
-                                            INNER JOIN po_status ON po_master.po_status_id = po_status.po_status_id
-                                            INNER JOIN products ON po_details.product_id = products.product_id
-                                            WHERE po_master.po_master_id = ?
-                                            ORDER BY
-                                            products.product_id ASC) as po
-                                            LEFT OUTER JOIN (SELECT 
-                                                            po_master.po_master_id,
-                                                            po_details.product_id,
-                                                            sum(po_received.qty_received) as 'qty_received'
-                                                            FROM
-                                                            po_master
-                                                            INNER JOIN po_received ON po_master.po_master_id = po_received.po_master_id
-                                                            INNER JOIN po_details ON po_details.product_id = po_received.product_id AND po_master.po_master_id = po_details.po_master_id
-                                                            WHERE
-                                                            po_master.po_master_id=?
-                                                            GROUP BY po_details.product_id) as qtyReceived 
-                                            ON qtyReceived.product_id=po.product_id and qtyReceived.po_master_id=po.po_master_id
-                                            ORDER BY po.product_id",array($_GET['id'],$_GET['id']))->fetchAll(PDO::FETCH_ASSOC);
+                                        
                                             foreach ($po_details as $row):
                                     ?>
                                     <tr>
@@ -260,17 +286,76 @@
                  
                       <div class="modal-body"> 
                         <form action='save_po_received.php' method='POST'>
+                            <?php
+                            $po_details=$con->myQuery("SELECT
+                            po_master.po_master_id,
+                            products.product_id,
+                            products.product_name AS `Name`,
+                            po_details.qty_ordered AS `QuantityOrdered`,
+                            po_details.unit_cost AS `UnitCost`,
+                            po_details.total_cost AS `TotalCost`
+                            FROM
+                            po_master
+                            INNER JOIN po_details ON po_master.po_master_id = po_details.po_master_id
+                            INNER JOIN suppliers ON po_master.supplier_id = suppliers.supplier_id
+                            INNER JOIN po_status ON po_master.po_status_id = po_status.po_status_id
+                            INNER JOIN products ON po_details.product_id = products.product_id
+                            WHERE po_master.po_master_id = ? and products.product_id = ?
+                            ORDER BY
+                            products.product_id ASC",array($_GET['id'],$_GET['p_id']))->fetch(PDO::FETCH_ASSOC);
+
+                            ?>
                           
                             <input type='hidden' name='id' value='<?php echo !empty($po)?$po['po_master_id']:""?>'>    
                             
                             <input type='hidden' name='p_id' value='<?php echo $_GET['p_id']; ?>'>   
-                          
+
+                            
+                            
+                            <div class='form-group'>
+                                <label> Product Name</label>
+                                <div>
+                                   <input name="prod_name" type="text" class='form-control' value='<?php echo $po_details['Name']; ?>'  readonly="">
+                                </div>
+                            </div>
+
+                            <div class='form-group'>
+                                <label> Order Quantity</label>
+                                <div>
+                                   <input name="order_qty" type="text" class='form-control' value='<?php echo $po_details['QuantityOrdered']; ?>'  readonly="">
+                                </div>
+                            </div>
 
                             <div class='form-group'>
                                 <label> Quantity Received*</label>
                                 <div>
                                    <input name="qtyReceived" type="text" class='form-control' placeholder="Enter Quantity Received"  required>
                                 </div>
+                            </div>
+
+                            <div class='form-group'>
+                            <label> Date Received* </label>
+                            <div>
+                               <?php
+                                    $dateReceived="";
+                                     if(!empty($account)){
+                                        $dateReceived=$account['dateReceived'];
+                                        if($dateReceived=="00000000"){
+                                            $dateReceived="";
+                                        }
+                                         else
+                                        {
+                                            $dob=inputmask_format_date($dateReceived);
+                                            //echo $dob;
+                                        }
+                                    }
+                                    
+                                     
+                                                                           
+                                ?>
+
+                                    <input type='text' class='form-control date_picker' name='dateReceived' required>
+
                             </div>
                             <div class='form-group'>
                                 <label> Reference Number*</label>
@@ -289,8 +374,9 @@
                          
 
                             <div class="modal-footer">
-                                <button class="btn btn-brand" type="submit" ">Save</button>
-                                <button type="button" class="btn btn-default"  data-dismiss="modal">Cancel</button>
+                                <button class="btn btn-brand" type="submit" >Save</button>
+                                <!-- <button type="button" class="btn btn-default"  data-dismiss="modal">Cancel</button> -->
+                                <a class="btn btn-default" href="purchase_order_details.php?id=<?php echo $_GET['id'];?>"> Cancel </a>
                             </div>
                             
                         </form>
@@ -314,6 +400,7 @@ $('#ResultTable').DataTable();
 <?php
     endif;
 ?>
+
 
 </script>
 

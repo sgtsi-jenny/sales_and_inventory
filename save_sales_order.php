@@ -76,8 +76,9 @@
 				unset($inputs['total_price']);
 				unset($inputs['prod_name']);
 
-				// var_dump($total_unit_cost);
-				// die;
+			// var_dump($inputs);
+			// 	die;
+
 
 				$con->myQuery("INSERT INTO sales_master (date_issue,total_amount,customer_id,user_id,sales_status_id,payment_status_id,description,date_modified) VALUES ('$date_issue','$total_cost','$customer_id','$user_id','1','1','$description','$date_modified')", $inputs);
 

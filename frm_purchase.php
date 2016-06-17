@@ -25,6 +25,7 @@
 						INNER JOIN suppliers ON suppliers.supplier_id = supplier_products.supplier_id
 						INNER JOIN products ON products.product_id = supplier_products.product_id
 						WHERE suppliers.supplier_id=?",array($_GET['supplier']))->fetchAll(PDO::FETCH_ASSOC);
+	
     makeHead("Purchase Order");
 ?>
 <?php
@@ -51,6 +52,7 @@
 									<div class = 'row'>
 										<div class = 'col-md-10'>
 											<input type='hidden' name='po_master_id' value=''>
+											<input type='hidden' name='supplier_id' value='<?php echo $_GET['supplier'];?>'>
 			                                <?php
 			                                    alert();
 			                                ?>
@@ -66,6 +68,7 @@
 
 							<!-- SUPPLIER FORM -->
 											<form method="GET">
+
 												<div class='form-group'>
 													<div class ="row">
 														<div class = "col-md-3">
@@ -117,19 +120,20 @@
 													<div class = "col-md-8">
 														<select class='form-control ' name='product_id' id='product_id' data-placeholder="Select product" <?php echo!(empty($data))?"data-selected='".$data['product_id']."'":NULL?>
 															onchange="get_prodIDCost()" required>
-															<?php
-																echo makeOptions($prod,'Select Product')
-															?>
-														<!--	<option value=''>Select Product</option>
+															<!-- <?php
+																//echo makeOptions($prod,'Select Product')
+															?> -->
+															<option value=''>Select Product</option>
 					                                        <?php
-					                                           // foreach ($prod as $key => $row):
+					                                            foreach ($prod as $key => $row):
 					                                        ?>
-					                                            <option data-cost='<?php //echo $row['unit_cost'] ?>'  placeholder="Select product" value='<?php //echo $row['product_id']?>' <?php //echo (!empty($data) && $row['product_id']==$data['product_id']?'selected':'') ?> ><?php //echo $row['name']?></option>                                                   
+					                                            <option data-cost='<?php echo $row['unit_cost'] ?>'  placeholder="Select product" value='<?php echo $row['product_id']?>' <?php echo (!empty($data) && $row['product_id']==$data['product_id']?'selected':'') ?> ><?php echo $row['name']?></option>                                                   
 					                                        <?php
-					                                     //       endforeach;
+					                                            endforeach;
 					                                        ?>
-					                                        -->
+					                                        
 					                                        <input type='hidden' id='prod_name2' name='prod_name' value=''>
+					                                        
 														</select>
 													</div>
 												</div>
@@ -220,7 +224,7 @@ var current_row="";
         }
     });
         return return_value;
-  }
+  	}
 	function validate_form() {
     var return_value=true;
     var str_error="";
@@ -252,7 +256,7 @@ var current_row="";
         // console.log(current_row);
         // console.log(validate_add_to_table());
 
-        if(validate_add_to_table()===false && current_row===""){
+        if(validate_add_to_table()==false && current_row==""){
             alert("This product is already added.");
             return false;
         }

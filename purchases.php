@@ -69,7 +69,7 @@
                                                             DATE_FORMAT(date_modified,'%m/%d/%Y') as 'date_modified',
                                                             DATE_FORMAT(purchased_date,'%m/%d/%Y') as 'purchased_date'
                                                           FROM po_master  pm
-                                                          WHERE is_deleted=0
+                                                          WHERE is_deleted=0 and is_void =0
                                                           ORDER BY pm.po_master_id desc");
                                           
                                         while($row = $po->fetch(PDO::FETCH_ASSOC)):
