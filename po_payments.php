@@ -238,7 +238,14 @@
                                                 <th class='text-center'>Amount</th>
                                                 <th class='text-center'>Date Paid</th>
                                                 <th class='text-center'>Remarks</th>
+                                                <?php
+                                                if ($pstatus == "1")
+                                                {
+                                                ?>
                                                 <th class='text-center' style='min-width:40px'>Action</th>
+                                                <?php
+                                                }
+                                                ?>
                             </tr>
                           </thead>
                           <tbody>
@@ -251,11 +258,18 @@
                                                     <td><?php echo htmlspecialchars($row['date_paid']) ?></td>
                                                     <td><?php echo htmlspecialchars($row['remarks']) ?></td>
                                                     
+                                                    <?php
+                                                    if ($pstatus == "1")
+                                                    {
+                                                    ?>
                                                     <td align="center">
                                                         <a href='po_void_payment.php?id=<?php echo $_GET['id']; ?>&pay_id=<?php echo $row['po_payment_id'] ?>' class='btn btn-default' onclick='return confirm("Are you do you want to void this PO Payment?")'> Void </a>
 
                                                        
                                                     </td>
+                                                    <?php
+                                                    }
+                                                    ?>
                                                 </tr>
                                             <?php
                                                 endforeach;
