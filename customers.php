@@ -7,6 +7,7 @@
     if(!AllowUser(array(1,2))){
         redirect("index.php");
     }
+    
 	makeHead("Customer");
 ?>
 <?php
