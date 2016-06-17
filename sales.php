@@ -132,20 +132,25 @@
                  
                       <div class="modal-body"> 
                         <form action='frm_sales.php' method='GET'>
-                           <!--  -->
-                            <!-- <?php
-                                // var_dump($sale['t_qty']);
-                            ?> -->
-                            
-                            <div class="form-group">
-                                <label>Customer</label>
-                                    <select class='form-control' name='customer_id' id='customer_id'  onchange='get_address()' data-placeholder="Select a Customer" <?php echo!(empty($sales_customer))?"data-selected='".$sales_customer['customer_id']."'":NULL ?> required>
+                            <div class='form-group'>
+                                    <label class='col-sm-12 col-md-3 control-label'> Customer*</label>
+                                    <div class='col-sm-12 col-md-9'>                                        
+                                        <div class='row'>
+                                            <div class='col-sm-11'>
+                                                <select class='form-control' name='customer_id' id='customer_id'  onchange='get_address()' data-placeholder="Select a Customer" <?php echo!(empty($sales_customer))?"data-selected='".$sales_customer['customer_id']."'":NULL ?> required>
                                                 <?php
                                                     // echo makeOptions($customer,'Select Customer')
                                                     echo makeOptions($customer,'Select Customer',NULL,'',!(empty($sales_customer))?$sales_customer['customer_id']:NULL)
                                                 ?>
                                         </select>
+                                            </div>
+                                            <div class='col-ms-1'>
+                                                <a href='frm_customers.php' class='btn btn-sm btn-flat btn-brand'><span class='fa fa-plus'></span></a>
+                                            </div>
+                                        </div>
+                                    </div>
                             </div>
+                            <br><br>
                             <div class="modal-footer">
                                 <button class="btn btn-brand" type="submit" ">Next</button>
                                 <button type="button" class="btn btn-default"  data-dismiss="modal">Cancel</button>

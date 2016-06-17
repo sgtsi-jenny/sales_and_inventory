@@ -17,15 +17,6 @@
 		$errors="";
 		
 		if($errors!=""){
-
-			// Alert("You have the following errors: <br/>".$errors,"danger");
-			// if(!empty($inputs['id'])){
-			// 	redirect("frm_posts.php?a_id={$inputs['account_id']}&id={$inputs['id']}");
-			// }
-			// else{
-			// 	redirect("posts.php?id={$inputs['account_id']}");
-			// }
-			// die;
 		}
 		else{
 
@@ -38,12 +29,12 @@
 				$now = new DateTime();
 				$due_payment = date_create($inputs['due_payment']);
 				$inputs['due_payment']= date_format($due_payment, 'Ymd');
-				$date_issue = date_create($inputs['date_issue']);
-				$inputs['date_issue']= date_format($date_issue, 'Ymd');	
+				$issued_date = date_create($inputs['issued_date']);
+				$inputs['issued_date']= date_format($issued_date, 'Ymd');	
 				// var_dump($inputs);
 				// die;
 				//$inputs['name']=$_POST['name'];
-				$con->myQuery("INSERT INTO invoice_master(sales_master_id,bill_to,ship_to,customer_id,payment_due,date_issued,total_units,description,terms) VALUES(:sales_master_id,:bill_to,:ship_to,:customer_id,:due_payment,:date_issue,:quantity,:description,:terms)",$inputs);
+				$con->myQuery("INSERT INTO invoice_master(sales_master_id,bill_to,ship_to,customer_id,payment_due,date_issued,total_units,description,terms) VALUES(:sales_master_id,:bill_to,:ship_to,:customer_id,:due_payment,:issued_date,:quantity,:description,:terms)",$inputs);
 				date_default_timezone_set('Asia/Manila');
 				$now = new DateTime();
 				$sm['sales_master_id']=$inputs['sales_master_id'];

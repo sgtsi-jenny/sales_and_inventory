@@ -42,6 +42,7 @@
         customers.email,
         customers.fax,
         customers.mobile_number,
+        customers.is_top_company,
         customers.telephone_number,
         prod.product_name,
         ss.sales_status_id,
@@ -63,7 +64,7 @@
         INNER JOIN sales_status ss ON sm.sales_status_id=ss.sales_status_id
         INNER JOIN sales_details sd ON sm.sales_master_id=sd.sales_master_id
         INNER JOIN products prod ON prod.product_id=sd.product_id
-        WHERE sm.sales_master_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
+        WHERE sm.is_void=0 and sm.sales_master_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
         if(empty($sale)){
             //Modal("Invalid sales Selected");
             redirect("sales.php");
@@ -102,7 +103,7 @@
         <section class="content-header" align="right">
          <h1 align="center" style="color:#24b798;">Sales Order Details</h1>
           <a href='sales.php' class='btn btn-default'><span class='glyphicon glyphicon-arrow-left'></span> Back to Sales List</a>
-          <a href='frm_sales.php' class='btn btn-brand'> New Sales Order&nbsp;<span class='fa fa-plus'></span> </a>
+          <button type="button" class="btn btn-brand" data-toggle="modal" data-target="#newSalesModal">New Sales Order<span class='fa fa-plus'></span> </button>
           <a href='print_order2.php?id=<?php echo $_GET['id'];?>' class='btn btn-brand'> Preview/Print &nbsp;<span class='fa fa-print'></span> </a>
           <?php
             if($sale['sales_status_id']==2 || $sale['sales_status_id']==3 && AllowUser(array(1))){
@@ -246,7 +247,13 @@
                             </tr>
                           </thead>
                           <tbody>
-                                            <?php                                              
+                                            <?php
+                                                $total_qty=0;
+                                                $t_cost=0;
+                                                $subtotal=0;  
+                                                $tax=0; 
+                                                $wtax=0;
+                                                $total_wtax=0;                                          
                                                 $order_details=$con->myQuery("SELECT 
                                                 prod.product_name,
                                                 sd.quantity,
@@ -259,21 +266,25 @@
                                                 INNER JOIN sales_status ss ON sm.sales_status_id=ss.sales_status_id
                                                 INNER JOIN sales_details sd ON sm.sales_master_id=sd.sales_master_id
                                                 INNER JOIN products prod ON prod.product_id=sd.product_id
-                                                WHERE sm.sales_master_id=?",array($_GET['id']))->fetchAll(PDO::FETCH_ASSOC);
+                                                WHERE sm.is_void=0 and sm.sales_master_id=?",array($_GET['id']))->fetchAll(PDO::FETCH_ASSOC);
                                                 foreach ($order_details as $row):
                                             ?>
                                             <tr>
                                                         <?php
-                                                            foreach ($row as $key => $value):  
+                                                            foreach ($row as $key => $value):                                                             
                                                         ?>
                                                         <?php
                                                             if($key=='unit_cost'):
+                                                            $total_qty+= $row['quantity'];
+                                                            $t_cost+=$row['total_cost']; 
                                                         ?> 
                                                             <td class='text-right'>
                                                                 <?php echo htmlspecialchars(number_format($row['unit_cost'],2))?></a>
                                                             </td>
                                                         <?php
                                                             elseif($key=='total'):
+                                                            
+
                                                         ?>  
                                                             <td class='text-right'>
                                                                 <?php echo htmlspecialchars(number_format($row['total'],2))?></a>
@@ -298,11 +309,79 @@
                                                         ?>
                                                 </tr>
                                                 <?php
+                                                // var_dump($row['total_cost']);
                                                 endforeach;
+                                                $tax=$t_cost*.12;
+                                                $subtotal=$t_cost-$tax;
+                                                $wtax=$subtotal*.05;
+                                                $total_wtax=$t_cost-$wtax;
+                                                // echo $subtotal;
+                                                // echo $total_wtax;
+                                                
                                             ?>
                             
                           </tbody>
                         </table>
+            <table align='right'>
+            <tr>
+                <td style='min-width:100px'>Total Units</td>
+                <td align="right">
+                    <?php echo htmlspecialchars($total_qty)?>
+                </td>
+            </tr>  
+            <tr>
+                <td>Subtotal (Php)</td>
+                <td align="right">
+                    <?php echo htmlspecialchars(number_format($subtotal,2))?>
+                </td>
+
+            </tr>
+            <tr>
+                <td>Plus VAT (12%)</td>
+                <td align="right">
+                    <?php echo htmlspecialchars(number_format($tax,2))?>
+                </td>
+
+            </tr>
+            <tr>
+                <td>Total (Php)</td>
+                <td align="right">
+                    <?php echo htmlspecialchars(number_format($t_cost,2))?>
+                </td>
+
+            </tr>
+            <?php
+            if ($sale['is_top_company']==1){
+            ?>
+            <tr>
+                <td>Witholding Tax</td>
+                <td align="right">
+                    <?php echo htmlspecialchars(number_format($wtax,2))?>
+                </td>
+
+            </tr>
+            <tr>
+                <td>Total Amount to Pay (Php)</td>
+                <td align="right">
+                    <?php echo htmlspecialchars(number_format($total_wtax,2))?>
+                </td>
+
+            </tr>
+            <?php
+            }
+            else{
+            ?>
+            <tr>
+                <td>Total Amount to Pay (Php)</td>
+                <td align="right">
+                    <?php echo htmlspecialchars(number_format($t_cost,2))?>
+                </td>
+
+            </tr>
+            <?php
+            }
+            ?>   
+            </table>
 
                   </div><!-- /.tab-pane -->
                 </div><!-- /.tab-content -->
@@ -311,7 +390,46 @@
           </div><!-- /.row -->
         </section><!-- /.content -->
   </div>
-
+<!-- Sales order Modal -->
+            <div class="modal fade" id="newSalesModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Add New Sales Order</h4>
+                  </div>
+                 
+                      <div class="modal-body"> 
+                        <form action='frm_sales.php' method='GET'>
+                            <div class='form-group'>
+                                    <label class='col-sm-12 col-md-3 control-label'> Customer*</label>
+                                    <div class='col-sm-12 col-md-9'>                                        
+                                        <div class='row'>
+                                            <div class='col-sm-11'>
+                                                <select class='form-control' name='customer_id' id='customer_id'  onchange='get_address()' data-placeholder="Select a Customer" <?php echo!(empty($sales_customer))?"data-selected='".$sales_customer['customer_id']."'":NULL ?> required>
+                                                <?php
+                                                    // echo makeOptions($customer,'Select Customer')
+                                                    echo makeOptions($customer,'Select Customer',NULL,'',!(empty($sales_customer))?$sales_customer['customer_id']:NULL)
+                                                ?>
+                                        </select>
+                                            </div>
+                                            <div class='col-ms-1'>
+                                                <a href='frm_customers.php' class='btn btn-sm btn-flat btn-brand'><span class='fa fa-plus'></span></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                            </div>
+                            <br><br>
+                            <div class="modal-footer">
+                                <button class="btn btn-brand" type="submit" ">Next</button>
+                                <button type="button" class="btn btn-default"  data-dismiss="modal">Cancel</button>
+                            </div>
+                        </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- End sales order Modal -->
   <!-- Invoice Modal -->
             <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
               <div class="modal-dialog" role="document">
@@ -326,24 +444,63 @@
                             <input type='hidden' name='invoice_master_id' value=''>
                             <input type='hidden' name='sales_master_id' value='<?php echo htmlspecialchars($_GET['id']) ?>'>
                             <input type='hidden' name='customer_id' value='<?php echo !empty($sale)?$sale['customer_id']:""?>'>
-                            <input type='hidden' name='date_issue' value='<?php echo !empty($sale)?$sale['date_issue']:""?>'>
+                            <!-- <input type='hidden' name='date_issue' value='<?php echo !empty($sale)?$sale['date_issue']:""?>'> -->
                             <input type='hidden' name='quantity' value='<?php echo !empty($sale)?$sale['t_qty']:""?>'>
                             <!-- <?php
                                 // var_dump($sale['t_qty']);
                             ?> -->
                             <div class="form-group">
                                 <label>Terms</label>
-                                <input type="text" class="form-control" id="terms"  name='terms' placeholder="Enter number of days" value='<?php echo !empty($sale)?htmlspecialchars($sale['terms']):''; ?>' onkeypress='return isNumberKey(event)' required>
+                                <input type="text" class="form-control" id="terms"  name='terms' placeholder="Enter number of days"  value='<?php echo !empty($sale)?htmlspecialchars($sale['terms']):''; ?>' onkeypress='return isNumberKey(event)' onblur="get_due_payment()" required>
                             </div>
+
+
+                            <?php
+                                $today=date('m-d-Y');
+                                date_default_timezone_set('Asia/Manila');
+                                $now = new DateTime();
+                                $dateNow=$now->format('m-d-Y');
+                                $next_date= date('m-d-Y', strtotime(' + 10 days'));
+                                // echo $next_date;
+                            ?>
 
                             <div class="form-group">
                                 <label>Due Issued</label>
-                                <input type="date" class="form-control" id="issued_date"  name='due_payment' value='' required>
+                                <!-- <input type="date" class="form-control" id="issued_date"  name='issued_date' value='' required> -->
+                                <?php
+                                        $issued_date="";
+                                         if(!empty($sale)){
+                                            $issued_date=$sale['date_issue'];
+                                            if($issued_date=="00000000"){
+                                                $issued_date="";
+                                            }
+                                             else
+                                            {
+                                                $issued_date=inputmask_format_date($issued_date);
+                                                // echo $issued_date;
+                                            }
+                                        }
+                                        ?>
+                                <input type='text' class='form-control date_picker' name='issued_date' id='issued_date'  value='<?php echo $now->format("m/d/Y")?>' onchange="get_due_payment()" required>
                             </div>
 
                             <div class="form-group">
-                                <label>Due Payement</label>
-                                <input type="date" class="form-control" id="due_payment"  name='due_payment' value='<?php echo !empty($sale)?htmlspecialchars($sale['due_payment']):''; ?>' required>
+                                <label>Due Payment</label>
+                                <?php
+                                        $due_payment="";
+                                         if(!empty($sale)){
+                                            // $due_payment=$sale['due_payment'];
+                                            if($due_payment=="00000000"){
+                                                $due_payment="";
+                                            }
+                                             else
+                                            {
+                                                $due_payment=inputmask_format_date($due_payment);
+                                                // echo $issued_date;
+                                            }
+                                        }
+                                        ?>
+                                <input type="text" class="form-control date_picker" id="due_payment"  name='due_payment' value='' required>
                             </div>
 
                             <div class="form-group">
@@ -534,9 +691,9 @@
 <script type="text/javascript">
   $(function () {
         $('#ResultTable').DataTable({
-               dom: 'Bfrtip'
-               ,
-                    buttons: [
+               // dom: 'Bfrtip'
+               // ,
+               //      buttons: [
                         // {
                         //     extend:"excel",
                         //     text:"<span class='fa fa-download'></span> Download as Excel File "
@@ -544,7 +701,13 @@
                         ]
         });
       });
-
+  function get_due_payment() {
+      // body...
+      terms=parseInt($("#terms").val());
+      var issued_date=moment($("#issued_date").val(),"MM/DD/YYYY");
+      issued_date.add(terms,"days");
+      $("#due_payment").val(issued_date.format("MM/DD/YYYY"));
+  }
 
   function validatePost(post_form){
         console.log();

@@ -42,11 +42,11 @@
 				// die;
 
 				$con->myQuery("INSERT INTO shipments(customer_id,bill_to,ship_to,ship_from,ship_service,ship_method,date_delivered,date_shipped,sales_master_id,tracking_code,comments) VALUES(:customer_id,:bill_to,:ship_to,:ship_from,:ship_service,:ship_method,:date_delivered,:date_shipped,:sales_master_id,:tracking_code,:comments)",$inputs);
-
+				$file_id=$con->lastInsertId();
 				$sm['sales_master_id']=$inputs['sales_master_id'];
 				$sm['date_modified']=$now->format('Ymd');
 				$sales_status_id=4;
-				$con->myQuery("UPDATE sales_master SET sales_status_id='$sales_status_id',date_modified=:date_modified WHERE sales_master_id=:sales_master_id",$sm);
+				$con->myQuery("UPDATE sales_master SET sales_status_id='$sales_status_id',date_modified=:date_modified,shipment_id='$file_id' WHERE sales_master_id=:sales_master_id",$sm);
 							
 
 				Alert("Order was successfully shipped.","success");

@@ -8,6 +8,39 @@
     if(!AllowUser(array(1))){
          redirect("index.php");
     }
+    if(!empty($_GET['d_start'])){
+        $_start=date_create($_GET['d_start']);
+    }
+    else{
+        $d_start="";
+    }
+    if(!empty($_GET['d_end'])){
+        $d_end=date_create($_GET['d_end']);
+    }
+    else{
+        $d_end="";
+    }
+
+    $date_filter="";
+    if(!empty($d_start)){
+        $date_filter.=" AND purchase_date >= '".date_format($d_start,'Y-m-d')."'";
+    }
+
+    if(!empty($d_end)){
+        $date_filter.=" AND purchase_date <= '".date_format($d_end,'Y-m-d')."'";
+    }
+
+    $sold_items=$con->myQuery("SELECT 
+    DISTINCT(p.product_name),
+    SUM(quantity) AS quantity_sold, 
+    p.selling_price,
+    SUM(sd.discount) AS discount,
+    SUM(sd.total_cost) AS total_cost
+    FROM products p 
+    INNER JOIN sales_details sd ON sd.product_id=p.product_id
+    INNER JOIN sales_master sm ON sm.sales_master_id=sd.sales_master_id
+    INNER JOIN customers ON sm.customer_id=customers.customer_id
+    GROUP BY sd.product_id")->fetchAll(PDO::FETCH_ASSOC);
     
     makeHead("Sold Items Report");
 ?>
@@ -29,21 +62,28 @@
             <div class='col-md-12'>
               <div class="box box-primary">
                 <div class="box-body">
-                          <div class='panel-body'>
-                                    <!-- <div class='col-md-12 text-right'>
-                                        <div class='col-md-12 text-right'>
-                                        <a href='frm_supplier.php' class='btn btn-brand'> Create New <span class='fa fa-plus'></span> </a>
-                                        </div>                                
-                                    </div>  -->
-                          </div>
+                <!-- <form method='GET'>
+                  <label class='col-md-2 text-right' >Start Date</label>
+                      <div class='col-md-3'>
+                        <input type='date' name='d_start' class='form-control' id='d_start' value='<?php echo !empty($_GET['date_start'])?htmlspecialchars($_GET['d_start']):''?>'>
+                      </div>
+                      <label class='col-md-2 text-right' >End Date</label>
+                      <div class='col-md-3'>
+                        <input type='date' name='d_end' class='form-control' id='d_end' value='<?php echo !empty($_GET['d_end'])?htmlspecialchars($_GET['d_end']):''?>'>
+                      </div>
+                      <div class='col-md-2'>
+                        <button type='submit' class='btn btn-brand'> <span class='fa fa-check'></span>Filter</button>
+                      </div>
+                </form> -->
                                 <?php
                                 Alert();
-                                ?>                
-                            <br/>                 
+                                ?>   
+                                <br>             
+                            <!-- <br/>  <br/>  <br/>  <br/>  -->               
                     <table id='ResultTable' class='table table-bordered table-striped'>
                           <thead>
                             <tr>
-                                                <th class='text-center'>Product name</th>
+                                                <th class='text-center'>Product Name</th>
                                                 <th class='text-center'>Quantity Sold</th>
                                                 <th class='text-center'>Selling Price</th>
                                                 <th class='text-center'>Discount</th>              
@@ -54,17 +94,6 @@
                           </thead>
                           <tbody>
                                             <?php
-                                                $sold_items=$con->myQuery("SELECT 
-                                                DISTINCT(p.product_name),
-                                                SUM(quantity) AS quantity_sold, 
-                                                p.selling_price,
-                                                SUM(sd.discount) AS discount,
-                                                SUM(sd.total_cost) AS total_cost
-                                                FROM products p 
-                                                INNER JOIN sales_details sd ON sd.product_id=p.product_id
-                                                INNER JOIN sales_master sm ON sm.sales_master_id=sd.sales_master_id
-                                                INNER JOIN customers ON sm.customer_id=customers.customer_id
-                                                GROUP BY sd.product_id")->fetchAll(PDO::FETCH_ASSOC);
                                                 foreach ($sold_items as $row):
                                                   $action_buttons="";
                                             ?>
@@ -122,15 +151,17 @@
 
 <script type="text/javascript">
   $(function () {
-        $('#ResultTable').DataTable({
-               // dom: 'Bfrtip',
-               //      buttons: [
-               //          {
-               //              extend:"excel",
-               //              text:"<span class='fa fa-download'></span> Download as Excel File "
-               //          }
-               //          ]
-        });
+         $('#ResultTable').DataTable({
+            "scrollX": true,
+            dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend:"excel",
+                        text:"<span class='fa fa-download'></span> Download as Excel File "
+                    }
+                    ],
+
+        });  
       });
 </script>
 <script type="text/javascript">
@@ -184,7 +215,7 @@
   $(function(){
     $('#collapseForm').collapse({
       toggle: true
-    })    
+    }) 
   });
 </script>
 

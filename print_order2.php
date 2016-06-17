@@ -99,12 +99,19 @@
     </div>
 
     <div class='row'>
-        <h2>
+        <!-- <h2>
           <img src="uploads/summary_Oppurtunities.png"  width="50" height="50" title="Organization" alt="Organization" />
-          <?php echo htmlspecialchars($sale['customer']) ?>
-          </h2>
+          <?php //echo htmlspecialchars($sale['customer']) ?>
+        </h2> -->
     </div>
     <table>
+        <tr>
+            <td>
+                <h2>
+                  <?php echo htmlspecialchars($sale['customer']) ?>
+                </h2>
+            </td>
+        </tr>
         <tr>
             <td style="width:150px">Order Number</td>
             <td>
@@ -134,19 +141,26 @@
     <br/>
     <div class="row">
         <div class='col-md-12'>
+            <?php
+            // $total_qty=0;
+            ?>
             <table id='' class='table table-bordered table-striped'>
             <thead>
                 <tr>
                     <th class='text-left' style='min-width:200px'>Product Name</th>
-                    <th class='text-center'>Quantity</th>
-                    <th class='text-center'>Price (Php)</th>
+                    <th class='text-left'>Quantity</th>
+                    <th class='text-right'>Price (Php)</th>
                     <th class='text-center'>Discount</th>
                     <!-- <th class='text-center'>Tax</th> -->
-                    <th class='text-center'>Total (Php)</th>
+                    <th class='text-right'>Total (Php)</th>
                 </tr>
             </thead>
             <tbody>
-                            <?php                                              
+                            <?php  
+                                $total_qty=0;
+                                $t_cost=0;
+                                $subtotal=0;  
+                                $tax=0;                                        
                                 $order_details=$con->myQuery("SELECT 
                                 prod.product_name,
                                 sd.quantity,
@@ -160,16 +174,30 @@
                                 INNER JOIN products prod ON prod.product_id=sd.product_id
                                 WHERE sm.sales_master_id=?",array($_GET['id']))->fetchAll(PDO::FETCH_ASSOC);
                                 foreach ($order_details as $row):
+
                             ?>
-                            <tr>
+                            <tr>        
+
                                         <?php
-                                            foreach ($row as $key => $value):  
+                                            foreach ($row as $key => $value):
                                         ?>
+
+
                                         <?php
+                                            
                                             if($key=='unit_cost'):
                                         ?> 
                                             <td class='text-right'>
                                                 <?php echo htmlspecialchars(number_format($row['unit_cost'],2))?></a>
+                                            </td>
+                                        <?php
+                                           elseif($key=='quantity'):
+                                           $total_qty+= $row['quantity'];
+                                           $t_cost+=$row['total_cost'];
+
+                                        ?> 
+                                            <td class='text-left'>
+                                                <?php echo htmlspecialchars($row['quantity'])?></a>
                                             </td>
                                         <?php
                                             elseif($key=='total'):
@@ -198,10 +226,52 @@
                                 </tr>
                                 <?php
                                 endforeach;
+                                // var_dump($total_qty);
+                                $tax=$t_cost*.12;
+                                $subtotal=$t_cost-$tax;
+                                echo $t_cost;
+                                echo $subtotal;
                             ?>
+                            
 
             </tbody>
             </table>
+
+           
+           <!--  <?php
+            //var_dump($total_qty);
+            ?> -->
+            <table align='right'>
+            <tr>
+                <td style='min-width:100px'>Total Units</td>
+                <td align="right">
+                    <?php echo htmlspecialchars($total_qty)?>
+                </td>
+            </tr>  
+            <tr>
+                <td>Subtotal (Php)</td>
+                <td align="right">
+                    <?php echo htmlspecialchars(number_format($subtotal,2))?>
+                </td>
+
+            </tr>
+            <tr>
+                <td>Plus VAT (12%)</td>
+                <td align="right">
+                    <?php echo htmlspecialchars(number_format($tax,2))?>
+                </td>
+
+            </tr>
+            <tr>
+                <td>Total (Php)</td>
+                <td align="right">
+                    <?php echo htmlspecialchars(number_format($t_cost,2))?>
+                </td>
+
+            </tr>           
+            </table>
+
+
         </div>
 
     </div>

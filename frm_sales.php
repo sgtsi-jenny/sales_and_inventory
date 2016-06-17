@@ -62,7 +62,7 @@
     $customer1=$con->myQuery("SELECT customer_id,customer_name FROM customers where customer_id=?",array($_GET['customer_id']))->fetch(PDO::FETCH_ASSOC);
     $customer=$con->myQuery("SELECT customer_id,customer_name FROM customers")->fetchAll(PDO::FETCH_ASSOC);
     $customer_add=$con->myQuery("SELECT customer_add_id,label_address FROM customers cus INNER JOIN customer_address cus_add ON cus.customer_id=cus_add.customer_id")->fetchAll(PDO::FETCH_ASSOC);
-    $prod=$con->myQuery("SELECT product_id,product_name,selling_price,current_quantity FROM products")->fetchAll(PDO::FETCH_ASSOC);
+    $prod=$con->myQuery("SELECT product_id,product_name,selling_price,current_quantity FROM products where is_deleted=0")->fetchAll(PDO::FETCH_ASSOC);
     $sales_stat=$con->myQuery("SELECT name FROM sales_status where sales_status_id=1")->fetchAll(PDO::FETCH_ASSOC);
     
     makeHead("Sales Order");
@@ -445,7 +445,7 @@ var current_row="";
         // console.log(validate_add_to_table());
 
         if(validate_add_to_table()===false && current_row===""){
-            alert("This product is already added.");
+            alert("This product was already added.");
             return false;
         }
 
