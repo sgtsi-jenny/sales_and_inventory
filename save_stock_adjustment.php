@@ -105,7 +105,6 @@
 						'stock_adjmaster_id' => $file_id,
 						'product_id' => $inputs['select_id'][$i],
 						'quantity_received' => $quantity_received[$i]						
-						
 						);
 			
 					// die;
@@ -116,18 +115,63 @@
 						//update products
 						//if damaged bagsak sya sa bad orders.
 
-				}			
+				}	
+
+				if ($adj_status_id = '1' || $adj_status_id = '2' ){
+					for ($i=0; $i < $arr_count; $i++) { 
+						$params=array(
+					
+						'product_id' => $inputs['select_id'][$i],
+						'quantity_received' => $quantity_received[$i]						
+						
+
+						);
+						$con->myQuery("UPDATE products SET current_quantity = current_quantity + :quantity_received  WHERE product_id = :product_id ", $params)
+						//select //
+					}
+
+				}elseif ($adj_status_id = '4' || $adj_status_id = '5' ){
+					for ($i=0; $i < $arr_count; $i++) { 
+						$params=array(
+					
+						'product_id' => $inputs['select_id'][$i],
+						'quantity_received' => $quantity_received[$i]						
+						
+
+						);
+						$con->myQuery("UPDATE products SET current_quantity = current_quantity - :quantity_received  WHERE product_id = :product_id ", $params)
+						//select //
+					}
+				}elseif  ($adj_status_id = '3' ){
+					for ($i=0; $i < $arr_count; $i++) { 
+						$params=array(
+					
+						'product_id' => $inputs['select_id'][$i],
+						'quantity_received' => $quantity_received[$i]
+						);
+						$con->myQuery("INSERT INTO badorders (product_id,product_id,quantity) 
+						VALUES (:product_id , :quantity_received) ", $params); )
+						
+						//select //
+					}
+				}
+				// insert sa badorders and update products depende sa reason...
+				//if reason
+				//for loop
+
 			
 				Alert("Save successful","success");
 				redirect("stock_adjustments.php?id=".$file_id);
 			}
 			else{
 				
-				$con->myQuery("UPDATE suppliers SET name=:name,description=:description, contact_number=:contact_number,address=:address, email=:email WHERE supplier_id=:supplier_id",$inputs);
 				
-				Alert("Update successful","success");
-				redirect("stock_adjustments.php?id=".$inputs['stock_adjmaster_id']);
-				}
+				//dito update
+				// $con->myQuery("UPDATE suppliers SET name=:name,description=:description, contact_number=:contact_number,address=:address, email=:email WHERE supplier_id=:supplier_id",$inputs);
+				
+				// Alert("Update successful","success");
+				// redirect("stock_adjustments.php?id=".$inputs['stock_adjmaster_id']);
+				// }
 			
 			// redirect("sales.php");
 				

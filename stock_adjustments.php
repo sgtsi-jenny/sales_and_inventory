@@ -4,23 +4,22 @@
         toLogin();
         die();
      }
-
     if(!AllowUser(array(1))){
          redirect("index.php");
     }
-    $reason=$con->myQuery("SELECT adj_status_id, name FROM adjustment_status")->fetchAll(PDO::FETCH_ASSOC);
+    $reason = $con->myQuery
+    ("SELECT adj_status_id, name FROM adjustment_status WHERE adj_status_id =?" , array($_GET['adj_status_id']) )
+    ->fetch(PDO::FETCH_ASSOC);;
     $product=$con->myQuery("SELECT products.product_id as productID, product_name,current_quantity, unit_cost
     	FROM products 
     	INNER JOIN supplier_products ON products.product_id = supplier_products.product_id")->fetchAll(PDO::FETCH_ASSOC);
    // $data=$con->myQuery("SELECT stock_adjmaster_id FROM stock_adj_master WHERE is_deleted=0 AND stock_adjmaster_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
-
     makeHead("Stock Adjustment");
 ?>
 <?php
     require_once("template/header.php");
     require_once("template/sidebar.php");
 ?>
-
  <div class="content-wrapper">
      <section class="content-header">
           <h1 align="center" style="color:#24b798;">
@@ -37,7 +36,6 @@
                     alert();
                 ?>
                 <form method="post" action="save_stock_adjustment.php">
-
                 
 	            	<div class='form-group'>
 		            	<div class = "row">
@@ -48,58 +46,40 @@
 				            				if (!empty($_GET['id']))
 				            					{
 				            						?>
-				            				<h4 class='control-label'> Stock adjusment no. </h4>
-				            				<!-- may idadag dag ako here-->
+				            				<h4 class='control-label'> Stock adjusment no. SA
+				            				<?php
+				            					echo $_GET['id']		
+				            				 ?> 
+				            				 </h4>
+				            				
 				            			<?php
 				            				}	
 				            			?>
-				            			
-
 				            			<label class = 'control-label'>Date created: </label>
 					            			<?php 
 					            			echo date("m/d/Y");
 					            			?>
-				            			
 				            			<br>
-				            			<label class = 'control-label'>Issued by: 	</label>
+				            			<!-- <label class = 'control-label'>Issued by: 	</label>
 				            					
 				            		
 				            			<?php
-		                        			echo htmlspecialchars("{$_SESSION[WEBAPP]['user']['last_name']}, {$_SESSION[WEBAPP]['user']['first_name']} {$_SESSION[WEBAPP]['user']['middle_name']}")
+		                        			// echo htmlspecialchars("{$_SESSION[WEBAPP]['user']['last_name']}, {$_SESSION[WEBAPP]['user']['first_name']} {$_SESSION[WEBAPP]['user']['middle_name']}")
 		                      				?>
-
 		                      				<br>
-		                      				<br>
+		                      				<br> -->
 				            			<div class ='row'>
 				            				<input type='hidden' name='stock_adjmaster_id' value='<?php echo !empty($supplier)?$supplier['supplier_id']:""?>'>
 				            				<div class = 'col-md-2' >
-				            					<h4 class='control-label'> Reason* </h4>
+				            					<h4 class='control-label'> Reason </h4>
 				            					
 				            				</div>
-				            				<div class = 'col-md-8'>
-				            					<!-- <select class='form-control' id='adj_status_id' name='adj_status_id' onchange='getReason()'> data-placeholder="Select Reason" 
-						            				<?php echo!(empty($reason))?"data-selected='".$reason['adj_status_id']."'":NULL ?> required>
-					                            	<?php
-					                                	echo makeOptions($reason,'Select reason',NULL,'',!(empty($reason))?$reason['adj_status_id']:NULL)
-					                            	?>
-			                        			</select> -->
-			                        			<select class='form-control' id='adj_status_id' onchange='compute()' name='adj_status_id' data-placeholder="Select reason" 
-			                        			<?php 
-			                        			echo!(empty($data))?"data-selected='".$data['adj_status_id']."'":NULL 
-			                        			?>
-			                        			style='width:100%'  >
-
-                                                <option value=''>Select Reason</option>
-                                                <?php
-                                                    foreach ($reason as $key => $row):
-                                                ?>
-                                                    <option data-price='<?php echo $row['selling_price'] ?>' placeholder="Select reason" value='<?php echo $row['adj_status_id']?>' <?php echo (!empty($data)?'selected':'') ?> ><?php echo $row['name']?></option>                                                    
-                                                <?php
-                                                    endforeach;
-                                                ?>
-                                                <!-- <input type='hidden' id='reason_name2' name='reason_name' value=''> -->
-                                            	</select>
-				            				</div>
+				            				<div class = "col-md-8">
+					                			<input type="text" class="form-control" id="input_Reason" name='input_Reason' 
+					                			value='<?php echo $reason['name'];?>' readonly>
+					                			<input type="hidden" class="form-control" id="input_Reason_id" name='input_Reason_id' 
+					                			value='<?php echo $reason['adj_status_id'];?>'>
+					                		</div>
 				            				
 				            			</div>
 				            			<div class ='row'>
@@ -110,15 +90,11 @@
 				            				<div class = 'col-md-8'>
 				            					<textarea name='notes' rows = '4' cols="5" class='form-control'></textarea>
 				            				</div>
-				            				
 				            			</div>
-				            			<div class = "" >
-
-				            			</div>
+				            			
 		            				</div>
 			            		</div>
 			            		
-
 		            		</div>
 		            		
 		            		
@@ -157,7 +133,7 @@
                                                 <?php
                                                     endforeach;
                                                 ?>
-                                                <input type='hidden' id='prod_name2' name='prod_name' value=''>
+                                                <!-- <input type='hidden' id='prod_name2' name='prod_name' value=''> -->
                                             </select>
 			                		</div>
 			                	</div>
@@ -191,7 +167,6 @@
 			                				{echo "";}
 			                				*/	
 			                					?>'  
-
 			                			readonly>
 			                		</div>
 			                	</div>
@@ -216,12 +191,11 @@
 			                		</div>
 			                	</div>
                            </div>
-
 		                
 		                <section align = "right">
 		                <!--	<button type="button" class="btn btn-brand" id="addRow" >Add</button>	-->
 		                	<button type="button" class="btn btn-brand" onclick="AddToTable()" >Add</button>
-		                  	<button type="button" class="btn btn-default" onclick="AddToTable()">Cancel</button>
+		                  	<button type="button" class="btn btn-default" onclick="">Cancel</button>
 		                </section>
 		                  
 		                	
@@ -240,7 +214,6 @@
 	                                      <th class='text-center'>Unit cost</th>
 	                                      <th class='text-center'>Stock </th>
 	                                      <th class='text-center'>After </th>
-
 	                                      <th class='text-center'>Action </th>
                                            
                                     </thead>
@@ -260,12 +233,10 @@
 		                            <button type="reset" class="btn btn-default" >Cancel</button> 
 		                        </section>
             				</div>
-
             		</div>
             </form>
                 </div>
             </div>  
-
               
 	            
             </div>
@@ -273,81 +244,96 @@
      </section>
 </div>
 <script type="text/javascript">
-	$(document).ready(function() {
-    var t = $('#ResultTable').DataTable();
-    	
-    	//some validations like empty textboxes...
+var current_row = "";
+function edit(edit_button){
+        // $("#product_id").val('');
+        // $("#product_id").children(0).attr("selected");
+        // $("#quantity").val('');
+        // $("#selling_price").val('');
+        // $("#current_quantity").val('');
+        // $("#discount").val('');
 
+        $("#select_1").val('');
+        $("#select_1").children(0).attr("selected");
+        $("#quantity_received").val('');
+        $("#current_quantity").val('');
+        $("#stock_after").val('');
+        $("#unit_cost").val('');
+        // $("#tax").val('');
 
+        row=$(edit_button).parent().parent();
+        inputs=$(row).children(1).children();
 
-    	/*
-		select_1_val=$("select[name='select_1']").val();
-		select_1_text=$("select[name='select_1'] :selected").text()
-		text_quantity=$("input[name='quantity_received']").val();
-		text_stockOnhand = $("input[name='stock_onhand']").val();
-		text_after = $("input[name='after']").val();
-		*/
-		$('#addRow').on( 'click', function () {
-        t.row.add( [
-            select_1_val=$("select[name='select_1']").val() ,
-			select_1_text=$("select[name='select_1'] :selected").text() , 
-			text_quantity=parseInt($("input[name='quantity_received']").val()),
-			unit_cost=parseInt($("input[name='unit_cost']").val()),
-			text_stockOnhand = parseInt($("input[name='current_quantity']").val()),
-			text_after = parseInt($("input[name='stock_after']").val()),
-			buttons = "<button type='button' onclick='' class='btn btn-primary fa fa-edit'></button><button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button>" 
-        ] ).draw( false );
- 
-        
-    } );
-		//$('#addRow').click();
-} );
+       current_row=$(edit_button).parent().parent();
+
+        $("#select_1").val($(inputs[0]).val()).change();
+        $("#select_1").attr("disabled",true);
+        $("#quantity_received").val($(  inputs[1]).val());
+        $("#current_quantity").val($(inputs[2]).val());
+        //onchange po itu...
+        // $("#tax").val($(inputs[6]).val());
+    }
+	function validate_add_to_table() {
+		var return_value=true;
+    $("input[name='select_id[]']").each(function (d,i) {
+
+        if($("#select_1").val()==$(i).val()){
+            return_value=false;
+        }
+    });
+        return return_value;
+	}
+	function validate_Form() {
+		var return_value = true;
+		var str_error= "";
+		 if($("#select_1").val()=='' || $("#select_1").val()==0){
+        str_error+="Please select a product.\n";
+        return_value=false;
+      }
+		// if ($("#quantity").val == ''){
+		// 	alert('Please input the quantity.');
+		// 	return_value = false;
+		// }
+		if (str_error !== ""){
+			alert ("You have the following error: \n" + str_error);
+		}
+		return return_value;
+	}
 	function AddToTable() {
+		$("#select_1").attr("disabled",false);
+		if (validate_Form() == false){
+			return false;
+		}
+		console.log(current_row);
+		// console.log(validate_add_to_table());
+
+		if (validate_add_to_table() === false && current_row === ""){
+			alert("This product was already added.");
+			return false;
+		}
+		if(current_row !==""){
+			$(current_row).remove();
+		}
         select_1_val=$("select[name='select_1']	").val();
-        select_1_text=$("select[name='select_1'] :selected").text()
+        select_1_text=$("select[name='select_1'] :selected").val();
         quantity=$("input[name='quantity_received']").val();
         unit_cost=$("input[name='unit_cost']").val(), 
         stock_onhand = $("input[name='current_quantity']").val();
         after = $("input[name='stock_after']").val();
-        prod_name = $("input[name='prod_name']").val();
+        prod_name = $("select[name='select_1'] :selected").text()
         input="<input type='hidden' name='select_id[]' value='"+select_1_val+"'> <input type='hidden' name='quantity_received[]' value='"+quantity+"'><input type='hidden' name='unit_cost[]' value='"+unit_cost+"'><input type='hidden' name='current_quantity[]' value='"+stock_onhand+"'><input type='hidden' name='stock_after[]' value='"+after+"'><input type='hidden' name='prod_name[]' value='"+prod_name+"'>";
-   
-        $("#table_container").append("<tr><td>"+input+select_1_val+"</td><td>"+prod_name+"</td><td>"+quantity+"</td> <td>"+unit_cost+"</td> <td>"+stock_onhand+"</td><td>"+after+"</td><td> <button type='button'  class='btn btn-brand fa fa-pencil' onclick='edit(this)'></button><button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button></td></tr>");
-
+   		
+        $("#table_container").append("<tr><td>"+input+select_1_text+"</td><td>"+prod_name+"</td><td>"+quantity+"</td> <td>"+unit_cost+"</td> <td>"+stock_onhand+"</td><td>"+after+"</td><td> <button type='button'  class='btn btn-brand fa fa-pencil' onclick='edit(this)'></button><button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button></td></tr>");
+        
         $("#select_1").val('');
         $("#quantity_received").val('');
         $("#current_quantity").val('');
         $("#stock_after").val('');
         $("#unit_cost").val('');
+        
     }
 		
-		/*
-			See those group of letters up there^?
-			They just get the M@#$%^&*# Values of the M%*!@#*!@# Form on the modal.
-			More inputs?
-			Just add them there.
-
-			Also YOU should validate that shit.
-			Make sure the data is not already int the table.
-		*/
-
-
-		/*input="<input type='hidden' name='select_1[]' value='"+select_1_val+"'> <input type='hidden' name='text_quantity[]' value='"+text_quantity+"'><input type='hidden' name='text_stockOnhand[]' value='"+text_stockOnhand+"'><input type='hidden' name='after[]' value='"+text_after+"'>" ;
-
-		/*
-			SEE THIS SHIT RIGHT HERE ^?
-			Thats what gets sent for saving. 
-			See the M*@#$%^&* square brackets? They allow the data to be passed as an array. That shit is important.
-		*/
-
-		/*$("#table_container").append("<tr><td>"+select_1_val+"</td><td>"+select_1_text+"</td><td>"+text_quantity+"</td><td>"+text_stockOnhand+"</td><td>"+text_after+"</td><td><button type='button' onclick='' class='btn btn-primary fa fa-edit'></button><button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button> </td>");
-		/*
-			UPTOP ^?
-			This is what adds the data to the table.
-
-			that in the end? That deletes the whole row.
-		*/
-
+	
 		
 	
 </script>
@@ -372,25 +358,19 @@
         $("#unit_cost").val(addCommas(nums));   
         $("#stock_after").val("");
         
-
         compute();
-
     }
-
     function getReason(){
     	return $( "#adj_status_id" ).val();
     }
    
-
     function addCommas(s) {
 		    //number before the decimal point
 	    num = s.substring(0,s.length-2);
 	    //number after the decimal point
 	    dec = s.substring(s.length-2,s.length);
-
 	    var amount = new String(num);
 	    amount = amount.split("").reverse();
-
 	    var output = "";
 	    for ( var i = 0; i <= amount.length-1; i++ ){
 	        output = amount[i] + output;
@@ -399,10 +379,8 @@
 	output = output + "." + dec;
 	    return output;
 	}
-
     function compute(){
         $("#stock_after").val("");
-
     	reason=getReason();
     	//alert(reason);
     	received=$("#quantity_received").val();
@@ -417,16 +395,15 @@
     	if(reason==''){
     		return false;
     	}
-
     	value=0;
     	switch(reason){
     		case '5':
     			value=stock_onhand-received;
     		break;
-    		case '6':
+    		case '3':
     			value=stock_onhand-received;
     			break;
-    		case '4':
+    		case '3':
     			value= stock_onhand;
     			break;
     		default:
@@ -441,7 +418,6 @@
     	}
     }
 </script>
-
 <?php
   
     makeFoot();

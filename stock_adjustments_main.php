@@ -18,7 +18,9 @@
                             ON stkMaster.adj_status_id =  adj.adj_status_id
                             WHERE stkMaster.is_deleted = '0'
                         ");
+    $reason=$con->myQuery("SELECT adj_status_id, name FROM adjustment_status")->fetchAll(PDO::FETCH_ASSOC);
     makeHead("Stock Adjustments");
+
 ?>
 <?php
     require_once("template/header.php");
@@ -42,8 +44,11 @@
 
                                 <div class="col-sm-12">
                                     <div class='col-ms-12 text-right'>
-                                      <a href='stock_adjustments.php' class='btn btn-success btn-flat'> Create New <span class='fa fa-plus'></span> </a>
+                                      <div class='col-md-12 text-right'>
+                                          <button type="button" class="btn btn-brand" data-toggle="modal" data-target="#newStockReason">Create new <span class='fa fa-plus'></span> </button>
+                                        </div>  
                                     </div>
+                                    <br/>
                                     <br/>
                                     <table id='ResultTable' class='table table-bordered table-striped'>
                                          <thead>
@@ -60,7 +65,7 @@
                                                 ?>
                                                   <tr>
                                                    <td class='text-center'> 
-                                                                <a href='stock_adjustment.php?id=<?= $row['stock_id']?>'><img width="36" height="36" class="" src="uploads/so_id.png">SO<?php echo htmlspecialchars($row['stock_id'])?></a>
+                                                                <a href='view_stock_adjustments.php?id=<?= $row['stock_id']?>'><img width="36" height="36" class="" src="uploads/so_id.png">SA<?php echo htmlspecialchars($row['stock_id'])?></a>
                                                     </td>
                                                     
                                                     <td><?php echo htmlspecialchars($row['reason'])?></td>
@@ -86,17 +91,65 @@
             </div>
     </section>
 </div>
+<div class="modal fade" id="newStockReason" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Add New Stock Adjustment</h4>
+                  </div>
+                 
+                      <div class="modal-body"> 
+                        <form action='stock_adjustments.php' method='GET' >
+                           <!--  -->
+                            <!-- <?php
+                                // var_dump($sale['t_qty']);
+                            ?> -->
+                            
+                             <div class="form-group">
+                                <label>Select Reason</label>
+                                 <select class='form-control' id='adj_status_id'  name='adj_status_id' data-placeholder="Select reason"
+                                  required>
 
+                                      <?php
+                                          // echo makeOptions($customer,'Select Customer')
+                                          echo makeOptions($reason,'Select reason',NULL,'',!(empty($reason))?$reason['adj_status_id']:NULL)
+                                      ?>
+
+                                  </select>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-brand" type="submit"  >Next</button>
+                                <button type="button" class="btn btn-default"  data-dismiss="modal"> Cancel </button>
+                            </div>
+                        </form>
+                  </div>
+                </div>
+              </div>
+            </div>
 <script type="text/javascript">
-  $(function () {
-        $('#ResultTable').DataTable({
-
-        });
-      });
-
-   
+    function validateReason() {
+      selectedReason = $("select[name='adj_status_id'] ").val();
+      if (selectedReason == '' ) {
+        alert('Please select a reason');
+        return  false;
+    }
 </script>
 
+<script type="text/javascript">
+
+  $(function () {
+        $('#ResultTable').DataTable({
+               // dom: 'Bfrtip',
+               //      buttons: [
+               //          {
+               //              extend:"excel",
+               //              text:"<span class='fa fa-download'></span> Download as Excel File "
+               //          }
+               //          ]
+        });
+      });
+</script>
 <?php
     Modal();
     makeFoot();
