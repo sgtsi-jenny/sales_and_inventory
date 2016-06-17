@@ -4,7 +4,7 @@
         toLogin();
         die();
      }
-
+     
     if(!AllowUser(array(1))){
          redirect("index.php");
     }

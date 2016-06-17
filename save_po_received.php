@@ -12,6 +12,9 @@
 	if(!empty($_POST)){
 		//Validate form inputs
 		$inputs=$_POST;
+		// var_dump($inputs['id']);
+		// var_dump($inputs['p_id']);
+		// die;
 		$inputs=array_map("trim", $inputs);
 		$errors="";
 		if (empty($inputs['qtyReceived'])){
@@ -49,9 +52,9 @@
 				//Insert
 				//unset($inputs['id']);
 				// echo "INSERT INTO asset_maintenances(asset_id,asset_maintenance_type_id,title,start_date,completion_date,cost,notes) VALUES('{$inputs['asset_id']}',{$inputs['asset_maintenance_type_id']},{$inputs['title']},{$inputs['start_date']},{$inputs['completion_date']},{$inputs['cost']},{$inputs['notes']})";
-				date_default_timezone_set('Asia/Manila');
-				$now = new DateTime();
-				$date_paid = date_format($now, 'Ymd');
+				$date = date_create($inputs['dob']);
+				$inputs['dateReceived']= date_format($date, 'Ymd');	
+				$date_paid = $inputs['dateReceived'];
 				$po_master_id = $inputs['id'];	
 				$product_id = $inputs['p_id'];
 				$qtyReceived = $inputs['qtyReceived'];
@@ -120,7 +123,7 @@
 			}
 
 			Alert("Save successful","success");
-			redirect("purchases.php");
+			redirect("purchase_order_details.php?id={$inputs['id']}");
 		}
 		die;
 	}

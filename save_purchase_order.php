@@ -54,7 +54,7 @@
 				date_default_timezone_set('Asia/Manila');
 				$now = new DateTime();
 				$date_created=date_format($now, 'Ymd');	
-				$suppier_id=$inputs['supplier'];
+				$suppier_id=$inputs['supplier_id'];
 				$ship_to=$inputs['ship_to'];
 				//$user_id=$_SESSION[WEBAPP]['user']['user_id'];
 
