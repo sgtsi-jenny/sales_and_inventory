@@ -222,12 +222,13 @@ CREATE TABLE `po_details` (
   `unit_cost` varchar(12) DEFAULT NULL,
   `total_cost` varchar(12) DEFAULT NULL,
   `is_deleted` tinyint(1) DEFAULT '0',
+  `is_void` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`po_detail_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 
 /*Data for the table `po_details` */
 
-insert  into `po_details`(`po_detail_id`,`po_master_id`,`product_id`,`qty_ordered`,`unit_cost`,`total_cost`,`is_deleted`) values (1,0,2,'2','25000','50000',0),(2,0,1,'10','8000','80000',0),(3,0,1,'4','8000','32000',0),(4,0,2,'6','25000','150000',0),(5,1,1,'5','8000','40000',0),(6,1,2,'3','25000','75000',0),(7,2,3,'9','7500','67500',0),(8,3,1,'5','8000','40000',0),(9,3,2,'9','25000','225000',0);
+insert  into `po_details`(`po_detail_id`,`po_master_id`,`product_id`,`qty_ordered`,`unit_cost`,`total_cost`,`is_deleted`,`is_void`) values (1,0,2,'2','25000','50000',0,0),(2,0,1,'10','8000','80000',0,0),(3,0,1,'4','8000','32000',0,0),(4,0,2,'6','25000','150000',0,0),(5,1,1,'5','8000','40000',0,0),(6,1,2,'3','25000','75000',0,0),(7,2,3,'9','7500','67500',0,0),(8,3,1,'5','8000','40000',0,0),(9,3,2,'9','25000','225000',0,0);
 
 /*Table structure for table `po_master` */
 
@@ -244,12 +245,13 @@ CREATE TABLE `po_master` (
   `date_modified` bigint(8) DEFAULT NULL,
   `total_amount` varchar(12) DEFAULT NULL,
   `ship_to` varchar(255) DEFAULT NULL,
+  `is_void` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`po_master_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 
 /*Data for the table `po_master` */
 
-insert  into `po_master`(`po_master_id`,`po_number`,`purchased_date`,`supplier_id`,`po_status_id`,`payment_status_id`,`is_deleted`,`date_modified`,`total_amount`,`ship_to`) values (1,NULL,'20160608',1,2,2,0,20160608,'115000','eshfdj'),(2,NULL,'20160608',2,1,1,0,20160608,'67500','l'),(3,NULL,'20160608',2,3,2,0,20160608,'265000','pasig');
+insert  into `po_master`(`po_master_id`,`po_number`,`purchased_date`,`supplier_id`,`po_status_id`,`payment_status_id`,`is_deleted`,`date_modified`,`total_amount`,`ship_to`,`is_void`) values (1,NULL,'20160608',1,2,2,0,20160608,'115000','eshfdj',0),(2,NULL,'20160608',2,1,1,0,20160608,'67500','l',0),(3,NULL,'20160608',2,3,2,0,20160608,'265000','pasig',0);
 
 /*Table structure for table `po_payments` */
 
@@ -466,12 +468,13 @@ CREATE TABLE `stock_adj_details` (
   `product_id` bigint(10) DEFAULT NULL,
   `quantity_received` varchar(12) DEFAULT NULL,
   `is_deleted` varchar(1) DEFAULT '0',
+  `notes` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`stock_adjdetails_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 /*Data for the table `stock_adj_details` */
 
-insert  into `stock_adj_details`(`stock_adjdetails_id`,`stock_adjmaster_id`,`product_id`,`quantity_received`,`is_deleted`) values (0000000001,1,1,'3','0'),(0000000002,1,1,'2','0');
+insert  into `stock_adj_details`(`stock_adjdetails_id`,`stock_adjmaster_id`,`product_id`,`quantity_received`,`is_deleted`,`notes`) values (0000000001,1,1,'3','0',NULL),(0000000002,1,1,'2','0',NULL);
 
 /*Table structure for table `stock_adj_master` */
 
@@ -619,7 +622,7 @@ CREATE TABLE `users` (
 
 /*Data for the table `users` */
 
-insert  into `users`(`user_id`,`user_type_id`,`first_name`,`middle_name`,`last_name`,`username`,`password`,`email`,`contact_no`,`gender`,`last_login`,`is_deleted`,`is_login`,`last_activity`,`is_active`,`security_question`,`security_answer`) values (1,1,'Jenny','Bueno','Bercasio','admin','TNTz0EXkSq4dC+kr8w8+UF14gOTFdx6RSEJpaGwQ7v4=','a@a.com','0940124','Female','0000-00-00',0,1,'2016-06-17 11:36:45',1,'True love?','mom'),(2,2,'Eom','O','Molina','eom2','TNTz0EXkSq4dC+kr8w8+UF14gOTFdx6RSEJpaGwQ7v4=','eom@gmail.com','09876543210',NULL,'0000-00-00',0,0,'2016-06-14 13:37:32',1,'short hair','percy gf');
+insert  into `users`(`user_id`,`user_type_id`,`first_name`,`middle_name`,`last_name`,`username`,`password`,`email`,`contact_no`,`gender`,`last_login`,`is_deleted`,`is_login`,`last_activity`,`is_active`,`security_question`,`security_answer`) values (1,1,'Jenny','Bueno','Bercasio','admin','TNTz0EXkSq4dC+kr8w8+UF14gOTFdx6RSEJpaGwQ7v4=','a@a.com','0940124','Female','0000-00-00',0,1,'2016-06-17 14:30:36',1,'True love?','mom'),(2,2,'Eom','O','Molina','eom2','TNTz0EXkSq4dC+kr8w8+UF14gOTFdx6RSEJpaGwQ7v4=','eom@gmail.com','09876543210',NULL,'0000-00-00',0,0,'2016-06-14 13:37:32',1,'short hair','percy gf');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
