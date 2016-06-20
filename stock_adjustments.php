@@ -10,10 +10,27 @@
     $reason = $con->myQuery
     ("SELECT adj_status_id, name FROM adjustment_status WHERE adj_status_id =?" , array($_GET['adj_status_id']) )
     ->fetch(PDO::FETCH_ASSOC);;
+ 	$revertreason = $con->myQuery
+    ("SELECT adj_status_id, name FROM adjustment_status WHERE adj_status_id =?" , array($_POST['adj_status_id']) )
+    ->fetch(PDO::FETCH_ASSOC);;
+
     $product=$con->myQuery("SELECT products.product_id as productID, product_name,current_quantity, unit_cost
     	FROM products 
     	INNER JOIN supplier_products ON products.product_id = supplier_products.product_id")->fetchAll(PDO::FETCH_ASSOC);
    // $data=$con->myQuery("SELECT stock_adjmaster_id FROM stock_adj_master WHERE is_deleted=0 AND stock_adjmaster_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
+
+    $sa = $con->myQuery("SELECT StM.stock_adjmaster_id as SAID, StD.quantity_received as q_Rec ,  aStat.`name` as reason,
+						aStat.adj_status_id as status_ID, StM.notes as notes,
+						p.product_id as prodID, p.product_name as prodName , 
+						p.current_quantity as c_Quan,SP.unit_cost as u_cost 
+						FROM stock_adj_master StM  
+						INNER JOIN stock_adj_details StD  on StM.stock_adjmaster_id = StD.stock_adjmaster_id
+						INNER JOIN adjustment_status aStat on aStat.adj_status_id = StM.adj_status_id
+						INNER JOIN supplier_products SP on StD.product_id = SP.product_id
+						INNER JOIN products p on p.product_id =StD.product_id
+						WHERE StM.stock_adjmaster_id = ?
+                        ",array($_GET['id']))->fetchAll(PDO::FETCH_ASSOC);
+
     makeHead("Stock Adjustment");
 ?>
 <?php
@@ -42,19 +59,7 @@
 		            		<div class = 'col-md-6' >
 			            		<div class = 'row'>
 			            			<div class = 'col-md-10'>
-				            			<?php
-				            				if (!empty($_GET['id']))
-				            					{
-				            						?>
-				            				<h4 class='control-label'> Stock adjusment no. SA
-				            				<?php
-				            					echo $_GET['id']		
-				            				 ?> 
-				            				 </h4>
-				            				
-				            			<?php
-				            				}	
-				            			?>
+				            		<!-- var_dump($_POST['adj_status_id']);	 -->	
 				            			<label class = 'control-label'>Date created: </label>
 					            			<?php 
 					            			echo date("m/d/Y");
@@ -69,16 +74,34 @@
 		                      				<br>
 		                      				<br> -->
 				            			<div class ='row'>
-				            				<input type='hidden' name='stock_adjmaster_id' value='<?php echo !empty($supplier)?$supplier['supplier_id']:""?>'>
+				            			
 				            				<div class = 'col-md-2' >
 				            					<h4 class='control-label'> Reason </h4>
 				            					
 				            				</div>
 				            				<div class = "col-md-8">
-					                			<input type="text" class="form-control" id="input_Reason" name='input_Reason' 
+				            				 <?php 
+				            				 	if (!empty($_GET['id'])){
+				            				 	$said = $_GET['id'];
+				            				 ?>
+				            				 	<input type="text" class="form-control" id="input_Reason" name='input_Reason' 
+					                			value='<?php echo $revertreason['name'];?>' readonly>
+					                			<input type="hidden" class="form-control" id="input_Reason_id" name='input_Reason_id' 
+					                			value='<?php echo $revertreason['adj_status_id'];?>'>
+				            				 <?php		
+				            				 	}else{
+
+				            				 	?>
+				            				 	<input type="text" class="form-control" id="input_Reason" name='input_Reason' 
 					                			value='<?php echo $reason['name'];?>' readonly>
 					                			<input type="hidden" class="form-control" id="input_Reason_id" name='input_Reason_id' 
 					                			value='<?php echo $reason['adj_status_id'];?>'>
+				            				 <?php
+				            					}
+				            				 ?>
+
+
+					                			
 					                		</div>
 				            				
 				            			</div>
@@ -88,7 +111,22 @@
 				            					
 				            				</div>
 				            				<div class = 'col-md-8'>
-				            					<textarea name='notes' rows = '4' cols="5" class='form-control'></textarea>
+				            				
+				            				 <?php 
+				            				 	if (!empty($_GET['id'])){
+				            				 	$said = $_GET['id'];
+				            				 ?>
+				            				 <textarea name='notes' rows = '4' cols="5" class='form-control' readonly>Reverted from SA#<?php echo !empty($said)?$said:''?></textarea>
+				            				 <?php		
+				            				 	}else{
+
+				            				 	?>
+				            				 	<textarea name='notes' rows = '4' cols="5" class='form-control'></textarea>
+				            				 <?php
+				            					}
+				            				 ?>
+
+				            					
 				            				</div>
 				            			</div>
 				            			
@@ -210,7 +248,7 @@
 	                                    <tr>
 	                                      <th class='text-center'>Product ID</th>
 	                                      <th class='text-center'>Product name</th>
-	                                      <th class='text-center'>Quantity received</th>
+	                                      <th class='text-center'>Quantity</th>
 	                                      <th class='text-center'>Unit cost</th>
 	                                      <th class='text-center'>Stock </th>
 	                                      <th class='text-center'>After </th>
@@ -218,7 +256,22 @@
                                            
                                     </thead>
                                     <tbody id='table_container'>
-					
+										<!-- tssss... -->
+										<?php
+											if(!empty($sa)){
+												foreach ($sa as $row):
+													$input="<input type='hidden' name='product_id[]' value='{$row['prodID']}'>";
+													$input.="<input type='hidden' name='prodName[]' value='{$row['quantity']}'>";
+													$input.="<input type='hidden' name='q_Rec[]' value='{$row['quantity']}'>";
+													$input.="<input type='hidden' name='u_cost[]' value='{$row['quantity']}'>";
+
+										?>
+
+										<?php
+												endforeach;
+											}
+											
+										?>
 									</tbody>
 		                	 </table>
 		                </div>
@@ -243,6 +296,7 @@
           </div>
      </section>
 </div>
+
 <script type="text/javascript">
 var current_row = "";
 function edit(edit_button){

@@ -43,6 +43,8 @@
 						stock_adj_master.stock_adjmaster_id =?
                         ",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
 
+    $reason=$con->myQuery("SELECT adj_status_id, name FROM adjustment_status")->fetchAll(PDO::FETCH_ASSOC);
+
       makeHead("stock adjusments");
 ?>
 
@@ -52,10 +54,11 @@
     require_once("template/sidebar.php");
 ?>
 <div class="content-wrapper">
-<form action='stock_adjustments.php' method='GET'>
+
 		<section class="content-header" align="right">
 		        <a href='stock_adjustments_main.php' class='btn btn-default'><span class='glyphicon glyphicon-arrow-left'></span> Back</a>
-		        <a href='stock_adjustments.php' class='btn btn-brand'>Revert stock adjustment &nbsp;<span class='fa  fa-undo'></span> </a>
+		        <button type="button" class="btn btn-brand" data-toggle="modal" data-target="#newStockReason">Revert stock adjustment <span class='fa fa-plus'></span> </button>
+		      
 		       <a href='#' class='btn btn-brand'> Preview/Print &nbsp;<span class='fa fa-print'></span> </a>
 		    </section>
 		    
@@ -63,7 +66,7 @@
 
 		        <h1>
 		            <img src="uploads/stock_control.png" width="50" height="50" title="" alt="" /> 
-		         	Stock adjustment id: #<?php echo $_GET['id'] ?>
+		         	Stock adjustment id: SA#<?php echo $_GET['id'];?>
 		        </h1>	
 		    </section>
 		    <section class="content-header">
@@ -72,7 +75,6 @@
 		                        <div class="box-body">
 		                            <div class='panel-body'>
 		                        		<div class = "row">
-
 											<div class = "col-md-12">
 													<strong> Reason: </strong>
 													<em><?php echo htmlspecialchars($get_sa['reason']) ?></em>
@@ -98,6 +100,7 @@
 	                          						<tbody>
 		                          						<?php 
 		                          						foreach ($sa as $row):
+		                          							
 		                          						?>
 		                          						<tr>
 		                          							<td><?php echo htmlspecialchars($row['prodID'])?></td>
@@ -122,10 +125,49 @@
     	
     		</div>
     </section>
-	
-</form>
+	<div class="modal fade" id="newStockReason" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Revert Stock Adjustment</h4>
+                  </div>
+                 
+                      <div class="modal-body"> 
+                        
+                           <!--  -->
+                            <!-- <?php
+                                // var_dump($sale['t_qty']);
+                            ?> -->
+                            <form action='stock_adjustments.php?id=<?php echo $_GET['id'];?>'  method='POST' >
+                             <div class="form-group">
+                                <label>Select Reason</label>
+                                 <select class='form-control' id='adj_status_id'  name='adj_status_id' data-placeholder="Select reason"
+                                  required>
+                                      <?php
+                                          // echo makeOptions($customer,'Select Customer')
+                                          echo makeOptions($reason,'Select reason',NULL,'',!(empty($reason))?$reason['adj_status_id']:NULL)
+                                      ?>
+                                  </select>
+                                  <!-- <input type="hidden" name="reason" > -->
+                            </div>
+                            <!-- <?php 
+                            	// var_dump($_);
+                            	// die;
+                            ?> -->
+                            <div class="modal-footer">
+                                <button class="btn btn-brand" type="submit"  >Next</button>
+                                <button type="button" class="btn btn-default"  data-dismiss="modal"> Cancel </button>
+                            </div>
+                			</form>
+                  </div>
+                </div>
+              </div>
+            </div>
+
 	
 </div>
+
 <script type="text/javascript">
  $(function () {
         $('#ResultTable').DataTable({
