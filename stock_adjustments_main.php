@@ -11,7 +11,7 @@
     $data=$con->myQuery("SELECT 
                             stkMaster.stock_adjMaster_id as stock_id,
                             adj.name as reason,
-                            stkMaster.total_quantity_received as quantity_received,
+                          
                             stkMaster.total_cost as total_Cost
                             FROM stock_adj_master stkMaster
                             INNER JOIN adjustment_status adj
@@ -55,7 +55,7 @@
                                             <tr>
                                               <th class='text-center'>Stock ID</th>
                                               <th class='text-center'>Reason</th>
-                                              <th class='text-center'>Quantity received</th>
+                                         
                                               <th class='text-center'>Total cost</th>
                                            
                                           </thead>
@@ -69,9 +69,9 @@
                                                     </td>
                                                     
                                                     <td><?php echo htmlspecialchars($row['reason'])?></td>
-                                                    <td><?php echo htmlspecialchars($row['quantity_received'])?></td>
+                                                 
                                                     <td><?php 
-                                                    $num = $row['total_Cost'];
+                                                    $num = number_format($row['total_Cost']);
                                                  
                                                     echo htmlspecialchars($num); 
                                                     ?></td>
