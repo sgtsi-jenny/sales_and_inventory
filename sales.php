@@ -9,7 +9,7 @@
     //      redirect("index.php");
     // }
     $customer=$con->myQuery("SELECT customer_id,customer_name FROM customers")->fetchAll(PDO::FETCH_ASSOC);
-     $customer_add=$con->myQuery("SELECT customer_add_id,label_address FROM customers cus INNER JOIN customer_address cus_add ON cus.customer_id=cus_add.customer_id where cus.customer_id=?",array($sale['customer_id']))->fetchall(PDO::FETCH_ASSOC);
+    // $customer_add=$con->myQuery("SELECT customer_add_id,label_address FROM customers cus INNER JOIN customer_address cus_add ON cus.customer_id=cus_add.customer_id where cus.customer_id=?",array($sale['customer_id']))->fetchall(PDO::FETCH_ASSOC);
     
     makeHead("Sales Order");
 ?>
@@ -51,8 +51,8 @@
                                                 <th class='text-center'>Customer Name</th>
                                                 <th class='text-center'>Sales Status</th>
                                                 <th class='text-center'>Payment Status</th>
-                                                <th class='text-center'>Total</th>
-                                                <th class='text-center'>Payed Amount</th>
+                                                <th class='text-center'>Total (Php)</th>
+                                                <th class='text-center'>Payed Amount (Php)</th>
                                                 <!-- <th class='text-center'>Action</th> -->
                                                 
                             </tr>
@@ -145,7 +145,7 @@
                                         </select>
                                             </div>
                                             <div class='col-ms-1'>
-                                                <a href='frm_customers.php' class='btn btn-sm btn-flat btn-brand'><span class='fa fa-plus'></span></a>
+                                                <a href='frm_customers.php' class='btn btn-sm btn-brand'><span class='fa fa-plus'></span></a>
                                             </div>
                                         </div>
                                     </div>

@@ -106,12 +106,12 @@ WHERE users.is_deleted=0")->fetchAll(PDO::FETCH_ASSOC);
                                                 <td class="text-center">
                                                     <?php if ($row['is_active']==1){
                                                     ?>
-                                                    <a class='btn btn-flat btn-sm btn-brand' href='activate.php?id=<?php echo $row['user_id'];?>' onclick='return confirm("Are you sure you want to deactivate this user?")'><span class='fa fa-lock' ></span> Deactivate</a>
+                                                    <a class='btn btn-sm btn-brand' href='activate.php?id=<?php echo $row['user_id'];?>' onclick='return confirm("Are you sure you want to deactivate this user?")'><span class='fa fa-lock' ></span> Deactivate</a>
                                                     <?php
                                                     }
                                                     else{
                                                     ?>
-                                                    <a class='btn btn-flat btn-sm btn-brand' href='activate.php?id=<?php echo $row['user_id'];?>' onclick='return confirm("Are you sure you want to activate this user?")'><span class='fa fa-unlock' ></span> Activate</a>
+                                                    <a class='btn btn-sm btn-brand' href='activate.php?id=<?php echo $row['user_id'];?>' onclick='return confirm("Are you sure you want to activate this user?")'><span class='fa fa-unlock' ></span> Activate</a>
                                                     <?php
                                                     }
                                                     ?>

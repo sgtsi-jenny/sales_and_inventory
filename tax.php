@@ -53,7 +53,7 @@
                                         <td><?php echo htmlspecialchars($row['tax_name'])?></td>
                                         <td class='text-center'><?php echo htmlspecialchars($row['percentage']).' %'?></td>
                                         <td class='text-center'>
-                                          <a href='frm_tax.php?id=<?php echo $row['tax_id']; ?>' class='btn btn-success btn-sm'><span class='fa fa-pencil'></span></a>
+                                          <a href='frm_tax.php?id=<?php echo $row['tax_id']; ?>' class='btn btn-brand btn-sm'><span class='fa fa-pencil'></span></a>
                                         </td>
                                     </tr>
                                 <?php

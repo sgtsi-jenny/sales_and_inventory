@@ -49,7 +49,7 @@
                   <div class="row">
                     <div class="col-sm-12">
                         <div class='col-ms-12 text-right'>
-                          <a href='frm_products.php' class='btn btn-success'> Create New <span class='fa fa-plus'></span> </a>
+                          <a href='frm_products.php' class='btn btn-brand'> Create New <span class='fa fa-plus'></span> </a>
                         </div>
                         </br>
                         <?php
@@ -84,7 +84,7 @@
                                 <td><?php echo htmlspecialchars($row['quantity'])?></td>
                                 <td><?php echo htmlspecialchars($row['barcode'])?></td>
                                 <td class='text-center'>
-                                  <a href='frm_products.php?id=<?php echo $row['product_id']; ?>' class='btn btn-success btn-sm'><span class='fa fa-pencil'></span></a>
+                                  <a href='frm_products.php?id=<?php echo $row['product_id']; ?>' class='btn btn-brand btn-sm'><span class='fa fa-pencil'></span></a>
                                   <a href='delete.php?id=<?php echo $row['product_id']; ?>&t=prod' onclick="return confirm('This record will be deleted.')" class='btn btn-danger btn-sm'><span class='fa fa-trash'></span></a>
                                 </td>
                               </tr>

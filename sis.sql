@@ -131,11 +131,11 @@ CREATE TABLE `customers` (
   `is_deleted` tinyint(1) DEFAULT '0',
   `is_top_company` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`customer_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 /*Data for the table `customers` */
 
-insert  into `customers`(`customer_id`,`customer_name`,`tin`,`description`,`fax`,`telephone_number`,`mobile_number`,`birth_date`,`website`,`email`,`is_deleted`,`is_top_company`) values (1,'Euro Shop','100000000000002','Cars Shop','2776009','19729837','7568585','19901111','euroshop.com','euro@gmail.com',0,1),(2,'Angono Memorial Park','3456789','sample customer','56768798','54678','5678','19901209','angono.com','angelo@gmail.com',0,0),(3,'Trixia Ganda','09234567890','Dyesebel sa gabi','0965444','3550987','09772345678','19940528','trix.com','trix_ganda@gmail.com',0,0);
+insert  into `customers`(`customer_id`,`customer_name`,`tin`,`description`,`fax`,`telephone_number`,`mobile_number`,`birth_date`,`website`,`email`,`is_deleted`,`is_top_company`) values (1,'Euro Shop','100000000000002','Cars Shop','2776009','19729837','7568585','19901111','euroshop.com','euro@gmail.com',0,1),(2,'Angono Memorial Park','3456789','sample customer','56768798','54678','5678','19901209','angono.com','angelo@gmail.com',0,0),(3,'Trixia Ganda','09234567890','Dyesebel sa gabi','0965444','3550987','09772345678','19940528','trix.com','trix_ganda@gmail.com',0,0),(4,'BDO','3456789','sdfghjk','456789','456789','6789','20161220','www.bdo.com.ph','jen@gmail.com',0,0);
 
 /*Table structure for table `fastslow` */
 
@@ -331,7 +331,7 @@ CREATE TABLE `products` (
 
 /*Data for the table `products` */
 
-insert  into `products`(`product_id`,`product_code`,`category_id`,`product_name`,`selling_price`,`wholesale_price`,`barcode`,`current_quantity`,`minimum_quantity`,`maximum_quantity`,`is_deleted`,`measurement_id`,`stock_status_id`,`description`,`product_type`) values (1,'prod0001',1,'iphone 5s','10000','8000','00000010','120','10','30',0,2,1,'iphone 5s 16gb',NULL),(2,'prod0002',1,'iphone 6plus','30000','25000','00000020','209','10','50',0,2,1,'iphone 6plus 32 gb',NULL),(3,'prod0003',1,'samsung','15000','20000','00000030','300','10','20',0,2,1,'samsung s6',NULL),(4,'prod005',2,'Powerbank 1','1001','800','0000001005','117','20','150',1,1,NULL,'MI Powerbank 1',NULL),(5,'prod006',8,'Repair','1000','800','00012099','100','10','100',0,NULL,NULL,NULL,NULL);
+insert  into `products`(`product_id`,`product_code`,`category_id`,`product_name`,`selling_price`,`wholesale_price`,`barcode`,`current_quantity`,`minimum_quantity`,`maximum_quantity`,`is_deleted`,`measurement_id`,`stock_status_id`,`description`,`product_type`) values (1,'prod0001',1,'iphone 5s','10000','8000','00000010','9','10','50',0,2,1,'iphone 5s 16gb',NULL),(2,'prod0002',1,'iphone 6plus','30000','25000','00000020','209','10','50',0,2,1,'iphone 6plus 32 gb',NULL),(3,'prod0003',1,'samsung','15000','20000','00000030','300','10','20',0,2,1,'samsung s6',NULL),(4,'prod005',2,'Powerbank 1','1001','800','0000001005','117','20','150',1,1,1,'MI Powerbank 1',NULL),(5,'prod006',8,'Repair','1000','800','00012099','100','10','100',0,1,1,NULL,NULL);
 
 /*Table structure for table `sales_details` */
 
@@ -348,11 +348,11 @@ CREATE TABLE `sales_details` (
   `tax` varchar(5) DEFAULT NULL,
   `is_deleted` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`sales_detail_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=latin1;
 
 /*Data for the table `sales_details` */
 
-insert  into `sales_details`(`sales_detail_id`,`product_id`,`sales_master_id`,`quantity`,`unit_cost`,`total_cost`,`discount`,`tax`,`is_deleted`) values (2,1,1,'1','10000','10000','',NULL,0),(10,1,2,'3','10000','29400','2',NULL,0),(11,3,2,'2','15000','29100','3',NULL,0),(12,4,3,'5','1001','3753.75','25',NULL,0),(13,1,3,'10','10000','85000','15',NULL,0),(14,0,4,'','',NULL,'',NULL,0),(16,1,6,'4','10000','40000','',NULL,0),(17,1,7,'4','10000','40000','',NULL,0),(18,2,7,'3','30000','90000','',NULL,0),(19,1,8,'4','10000','40000','',NULL,0),(20,2,8,'4','30000','120000','',NULL,0),(24,4,9,'4','1001','4004','',NULL,0),(25,1,5,'2','10000','20000','',NULL,0),(26,2,5,'5','30000','150000','',NULL,0),(27,3,10,'5','15000','75000','',NULL,0),(28,2,10,'12','30000','360000','',NULL,0),(29,1,11,'25','10000','250000','',NULL,0),(30,4,12,'12','1001','12012','',NULL,0);
+insert  into `sales_details`(`sales_detail_id`,`product_id`,`sales_master_id`,`quantity`,`unit_cost`,`total_cost`,`discount`,`tax`,`is_deleted`) values (2,1,1,'1','10000','10000','',NULL,0),(10,1,2,'3','10000','29400','2',NULL,0),(11,3,2,'2','15000','29100','3',NULL,0),(12,4,3,'5','1001','3753.75','25',NULL,0),(13,1,3,'10','10000','85000','15',NULL,0),(14,0,4,'','',NULL,'',NULL,0),(16,1,6,'4','10000','40000','',NULL,0),(17,1,7,'4','10000','40000','',NULL,0),(18,2,7,'3','30000','90000','',NULL,0),(19,1,8,'4','10000','40000','',NULL,0),(20,2,8,'4','30000','120000','',NULL,0),(24,4,9,'4','1001','4004','',NULL,0),(25,1,5,'2','10000','20000','',NULL,0),(26,2,5,'5','30000','150000','',NULL,0),(27,3,10,'5','15000','75000','',NULL,0),(28,2,10,'12','30000','360000','',NULL,0),(29,1,11,'25','10000','250000','',NULL,0),(30,4,12,'12','1001','12012','',NULL,0),(31,1,13,'2','10000','20000','',NULL,0),(32,2,13,'1','30000','30000','',NULL,0);
 
 /*Table structure for table `sales_master` */
 
@@ -364,6 +364,7 @@ CREATE TABLE `sales_master` (
   `shipment_id` bigint(20) DEFAULT NULL,
   `tax_id` bigint(20) DEFAULT NULL,
   `total_amount` varchar(255) DEFAULT NULL,
+  `total_minus_wtax` varchar(255) DEFAULT NULL,
   `customer_id` bigint(20) DEFAULT NULL,
   `user_id` bigint(20) DEFAULT NULL,
   `sales_status_id` bigint(20) DEFAULT NULL,
@@ -376,11 +377,11 @@ CREATE TABLE `sales_master` (
   `is_void` tinyint(1) DEFAULT '0',
   `terms` int(11) DEFAULT NULL,
   PRIMARY KEY (`sales_master_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
 
 /*Data for the table `sales_master` */
 
-insert  into `sales_master`(`sales_master_id`,`date_issue`,`shipment_id`,`tax_id`,`total_amount`,`customer_id`,`user_id`,`sales_status_id`,`payment_status_id`,`bill_to`,`ship_to`,`is_deleted`,`description`,`date_modified`,`is_void`,`terms`) values (0000000001,'20160607',1,NULL,'37500',2,1,4,2,NULL,NULL,0,'test angono','20160607',0,NULL),(0000000002,'20160607',3,NULL,'24350',2,1,4,1,NULL,NULL,0,'','20160614',0,NULL),(0000000003,'20160608',1,NULL,'88753.75',3,1,3,2,NULL,NULL,0,'ang gondo aaaaayyyyyyyyyyyyyy!','20160609',1,NULL),(0000000005,'20160609',2,NULL,'40000',1,1,4,1,NULL,NULL,0,'','20160614',0,NULL),(0000000009,'20160609',4,NULL,'4004',3,1,4,1,NULL,NULL,0,'','20160614',0,NULL),(0000000010,'20160614',5,NULL,'435000',3,1,4,1,NULL,NULL,0,'qewq','20160614',0,NULL),(0000000011,'20160614',6,NULL,'250000',1,1,4,1,NULL,NULL,0,'fu','20160614',0,NULL),(0000000012,'20160614',NULL,NULL,'12012',2,1,2,1,NULL,NULL,0,'sfs','20160616',0,NULL);
+insert  into `sales_master`(`sales_master_id`,`date_issue`,`shipment_id`,`tax_id`,`total_amount`,`total_minus_wtax`,`customer_id`,`user_id`,`sales_status_id`,`payment_status_id`,`bill_to`,`ship_to`,`is_deleted`,`description`,`date_modified`,`is_void`,`terms`) values (0000000001,'20160607',1,NULL,'37500',NULL,2,1,4,2,NULL,NULL,0,'test angono','20160607',0,NULL),(0000000002,'20160607',3,NULL,'24350',NULL,2,1,4,1,NULL,NULL,0,'','20160614',0,NULL),(0000000003,'20160608',1,NULL,'88753.75',NULL,3,1,3,2,NULL,NULL,0,'ang gondo aaaaayyyyyyyyyyyyyy!','20160609',1,NULL),(0000000005,'20160609',2,NULL,'170000',NULL,1,1,4,1,NULL,NULL,0,'','20160614',0,NULL),(0000000009,'20160609',4,NULL,'4004',NULL,3,1,4,1,NULL,NULL,0,'','20160614',0,NULL),(0000000010,'20160614',5,NULL,'435000',NULL,3,1,4,1,NULL,NULL,0,'qewq','20160614',0,NULL),(0000000011,'20160614',6,NULL,'250000',NULL,1,1,4,1,NULL,NULL,0,'fu','20160614',0,NULL),(0000000012,'20160614',NULL,NULL,'12012',NULL,2,1,1,1,NULL,NULL,0,'sfs','20160616',0,NULL),(0000000013,'20160621',NULL,NULL,'50000','47800',1,1,1,1,NULL,NULL,0,'test tax','20160621',0,NULL);
 
 /*Table structure for table `sales_payment_type` */
 
@@ -394,7 +395,7 @@ CREATE TABLE `sales_payment_type` (
 
 /*Data for the table `sales_payment_type` */
 
-insert  into `sales_payment_type`(`payment_type_id`,`name`) values (1,'Cash'),(2,'Credit Card');
+insert  into `sales_payment_type`(`payment_type_id`,`name`) values (1,'Cash');
 
 /*Table structure for table `sales_payments` */
 
@@ -413,11 +414,11 @@ CREATE TABLE `sales_payments` (
   `is_voided` tinyint(1) DEFAULT '0',
   `date_voided` varchar(8) DEFAULT NULL,
   PRIMARY KEY (`sales_payment_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 /*Data for the table `sales_payments` */
 
-insert  into `sales_payments`(`sales_payment_id`,`type`,`amount`,`pay_date`,`reference`,`sales_master_id`,`invoice_master_id`,`user_id`,`is_deleted`,`is_voided`,`date_voided`) values (1,1,'10000','20160607','LBC',1,1,1,0,0,NULL),(2,1,'70000','20160608','partial',3,2,1,0,1,'20160609'),(3,1,'18753.75','20160608','full',3,2,1,0,1,'20160609'),(4,1,'70000','20160608','full',3,2,1,0,1,'20160609'),(5,1,'8500','20160605','efghj',2,3,1,0,0,NULL);
+insert  into `sales_payments`(`sales_payment_id`,`type`,`amount`,`pay_date`,`reference`,`sales_master_id`,`invoice_master_id`,`user_id`,`is_deleted`,`is_voided`,`date_voided`) values (1,1,'10000','20160607','LBC',1,1,1,0,0,NULL),(2,1,'70000','20160608','partial',3,2,1,0,1,'20160609'),(3,1,'18753.75','20160608','full',3,2,1,0,1,'20160609'),(4,1,'70000','20160608','full',3,2,1,0,1,'20160609'),(5,1,'8500','20160605','efghj',2,3,1,0,0,NULL),(6,1,'162520','20160621','',5,4,1,0,0,NULL);
 
 /*Table structure for table `sales_status` */
 
@@ -622,7 +623,7 @@ CREATE TABLE `users` (
 
 /*Data for the table `users` */
 
-insert  into `users`(`user_id`,`user_type_id`,`first_name`,`middle_name`,`last_name`,`username`,`password`,`email`,`contact_no`,`gender`,`last_login`,`is_deleted`,`is_login`,`last_activity`,`is_active`,`security_question`,`security_answer`) values (1,1,'Jenny','Bueno','Bercasio','admin','TNTz0EXkSq4dC+kr8w8+UF14gOTFdx6RSEJpaGwQ7v4=','a@a.com','0940124','Female','0000-00-00',0,1,'2016-06-17 14:30:36',1,'True love?','mom'),(2,2,'Eom','O','Molina','eom2','TNTz0EXkSq4dC+kr8w8+UF14gOTFdx6RSEJpaGwQ7v4=','eom@gmail.com','09876543210',NULL,'0000-00-00',0,0,'2016-06-14 13:37:32',1,'short hair','percy gf');
+insert  into `users`(`user_id`,`user_type_id`,`first_name`,`middle_name`,`last_name`,`username`,`password`,`email`,`contact_no`,`gender`,`last_login`,`is_deleted`,`is_login`,`last_activity`,`is_active`,`security_question`,`security_answer`) values (1,1,'Jenny','Bueno','Bercasio','admin','TNTz0EXkSq4dC+kr8w8+UF14gOTFdx6RSEJpaGwQ7v4=','a@a.com','0940124','Female','0000-00-00',0,1,'2016-06-21 14:41:22',1,'True love?','mom2'),(2,2,'Eom','O','Molina','eom2','TNTz0EXkSq4dC+kr8w8+UF14gOTFdx6RSEJpaGwQ7v4=','eom@gmail.com','09876543210',NULL,'0000-00-00',0,0,'2016-06-14 13:37:32',1,'short hair','percy gf');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

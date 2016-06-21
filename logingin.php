@@ -35,6 +35,7 @@
 					//refresh_activity($_SESSION[WEBAPP]['user']['id']);
 					$is_login=1;
 					$con->myQuery("UPDATE users SET is_login='$is_login' where username=?",array($_POST['username']));
+					refresh_activity($_SESSION[WEBAPP]['user']['id']);
 					redirect("index.php");
 					die;
 				}

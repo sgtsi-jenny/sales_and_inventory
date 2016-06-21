@@ -52,7 +52,7 @@
                                         <th class='text-center'>Supplier</th>
                                         <th class='text-center'>Date Purchased</th>
                                         <th class='text-center'>PO Status</th>
-                                        <th class='text-center'>Total Amount</th>
+                                        <th class='text-center'>Total Amount (Php)</th>
                                         <th class='text-center'>Payment Status</th>
                                         <th class='text-center'>Date Modified</th>
                                     </tr>
@@ -81,7 +81,7 @@
                                         <td class='text_center'><?php echo htmlspecialchars($row['supplier']); ?></td>
                                         <td class='text_center'><?php echo htmlspecialchars($row['purchased_date']); ?></td>
                                         <td class='text_center'><?php echo htmlspecialchars($row['po_status']); ?></td>
-                                        <td class='text_center pull-right'><?php echo "PHP ".number_format(($row['total_cost']),2,'.',','); ?></td>
+                                        <td class='text_center pull-right'><?php echo number_format(($row['total_cost']),2,'.',','); ?></td>
                                         <td class='text_center'><?php echo htmlspecialchars($row['payment_status']); ?></td>
                                         <td class='text_center'><?php echo htmlspecialchars($row['date_modified']); ?></td>
                                     </tr>

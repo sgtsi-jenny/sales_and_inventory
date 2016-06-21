@@ -71,7 +71,8 @@
     }
     // var_dump($sale['customer_id']);
     // die;
-    $customer=$con->myQuery("SELECT customer_id,customer_name FROM customers")->fetchAll(PDO::FETCH_ASSOC);
+    $customer=$con->myQuery("SELECT customer_id,customer_name,is_top_company FROM customers where customer_id=?",array($sale['customer_id']))->fetch(PDO::FETCH_ASSOC);
+    // $customer=$con->myQuery("SELECT customer_id,customer_name FROM customers")->fetchAll(PDO::FETCH_ASSOC);
     $customer_add=$con->myQuery("SELECT customer_add_id,label_address FROM customers cus INNER JOIN customer_address cus_add ON cus.customer_id=cus_add.customer_id where cus.customer_id=?",array($sale['customer_id']))->fetchall(PDO::FETCH_ASSOC);
     // var_dump( $sale);
     // die;
@@ -79,6 +80,18 @@
     $prod=$con->myQuery("SELECT product_id,product_name,selling_price,current_quantity FROM products")->fetchAll(PDO::FETCH_ASSOC);
     $sales_stat=$con->myQuery("SELECT name FROM sales_status where sales_status_id=1")->fetchAll(PDO::FETCH_ASSOC);
     $payment_type=$con->myQuery("SELECT payment_type_id,name FROM sales_payment_type")->fetchAll(PDO::FETCH_ASSOC);
+    $row=$con->myQuery("SELECT 
+            sum(sp.amount) as amount,
+            (SELECT SUM(sd.total_cost) FROM sales_details sd WHERE sd.sales_master_id=sm.sales_master_id) AS total
+            FROM sales_payments sp
+            INNER JOIN sales_master sm ON sp.sales_master_id=sm.sales_master_id
+            INNER JOIN invoice_master im ON sp.invoice_master_id=im.invoice_master_id
+            INNER JOIN sales_payment_type spt ON spt.payment_type_id=sp.type
+            WHERE sp.is_voided=0 AND sp.sales_master_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
+
+    $total_cost=$con->myQuery("SELECT 
+            (SELECT SUM(sd.total_cost) FROM sales_details sd WHERE sd.sales_master_id=sm.sales_master_id) AS total FROM sales_master sm
+            WHERE sm.sales_master_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
     
     // var_dump ($invoice_id);
     // die;
@@ -171,32 +184,31 @@
                                 <div class='form-group'>
                                   <div class='col-sm-12 col-md-3'>
                                         <?php
-                                        $row=$con->myQuery("SELECT 
-                                                    sum(sp.amount) as amount,
-                                                    (SELECT SUM(sd.total_cost) FROM sales_details sd WHERE sd.sales_master_id=sm.sales_master_id) AS total
-                                                    FROM sales_payments sp
-                                                    INNER JOIN sales_master sm ON sp.sales_master_id=sm.sales_master_id
-                                                    INNER JOIN invoice_master im ON sp.invoice_master_id=im.invoice_master_id
-                                                    INNER JOIN sales_payment_type spt ON spt.payment_type_id=sp.type
-                                                    WHERE sp.is_voided=0 AND sp.sales_master_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
-
-                                                    $total_cost=$con->myQuery("SELECT 
-                                                    (SELECT SUM(sd.total_cost) FROM sales_details sd WHERE sd.sales_master_id=sm.sales_master_id) AS total FROM sales_master sm
-                                                    WHERE sm.sales_master_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
+                                        
                                         ?>
                                                         <?php
                                                             // $amount=0;
-                                                            $total=$total_cost['total'];
+                                                            // var_dump($customer['is_top_company']);
+                                                        $total=$total_cost['total'];
+                                                        $tax=$total*.12;
+                                                        $subtotal=$total-$tax;
+                                                        $wtax=$subtotal*.05;
+                                                        
+                                                        if ($customer['is_top_company']==1){
+                                                            $total_wtax=$total-$wtax;
+                                                        }
+                                                        else{
+                                                            $total_wtax=$total;
+                                                        }
+                                                            
                                                             if(empty($row)){
                                                                 $amount=0;
-                                                                $balance=$total-$amount;
+                                                                $balance=$total_wtax-$amount;
                                                             }
                                                             else{
                                                                 $amount=$row['amount'];
-                                                                $balance=$total-$amount;
+                                                                $balance=$total_wtax-$amount;
                                                             }
-                                                            // var_dump($amount);
-                                                            // var_dump($total);
 
                                                             if ($balance<=0){
                                                                 echo "00.00";
@@ -228,46 +240,6 @@
                     </li>
                     <li <?php echo $tab=="2"?'class="active"':''?>><a href="" >Payments</a>
                     </li>
-                    <!-- <li>
-                    <?php
-                    $row=$con->myQuery("SELECT 
-                                sum(sp.amount) as amount,
-                                (SELECT SUM(sd.total_cost) FROM sales_details sd WHERE sd.sales_master_id=sm.sales_master_id) AS total
-                                FROM sales_payments sp
-                                INNER JOIN sales_master sm ON sp.sales_master_id=sm.sales_master_id
-                                INNER JOIN invoice_master im ON sp.invoice_master_id=im.invoice_master_id
-                                INNER JOIN sales_payment_type spt ON spt.payment_type_id=sp.type
-                                WHERE sp.is_voided=0 AND sp.sales_master_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
-
-                                $total_cost=$con->myQuery("SELECT 
-                                (SELECT SUM(sd.total_cost) FROM sales_details sd WHERE sd.sales_master_id=sm.sales_master_id) AS total FROM sales_master sm
-                                WHERE sm.sales_master_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
-                    ?>
-                        <a>
-                                    <?php
-                                        // $amount=0;
-                                        $total=$total_cost['total'];
-                                        if(empty($row)){
-                                            $amount=0;
-                                            $balance=$total-$amount;
-                                        }
-                                        else{
-                                            $amount=$row['amount'];
-                                            $balance=$total-$amount;
-                                        }
-                                        // var_dump($amount);
-                                        // var_dump($total);
-
-                                        if ($balance<=0){
-                                            echo "Paid";
-                                        }
-                                        else{
-                                            echo "Php " .(number_format($balance,2))." to Pay";
-                                        }
-                                        
-                                    ?>    
-                        </a>
-                    </li> -->
                     
                 </ul>
                 <div class="tab-content">
@@ -278,6 +250,7 @@
                                         <!-- <button class='btn btn-brand' data-toggle="collapse" data-target="#collapseForm" aria-expanded="false" aria-controls="collapseForm"> -->
                                         <?php
                                         if (!($balance<=0)){
+                                            // var_dump($balance);
                                         ?>
                                             <button type="button" class="btn btn-brand" data-toggle="modal" data-target="#myModal">Add Payment <span class='fa fa-plus'></span> </button>
                                         </div>
@@ -352,7 +325,7 @@
                                                             <!-- 
                                                                 <a class='btn btn-sm btn-brand' href='sales_payments.php?id=<?php echo $_GET['id'];?>&p_id=<?php echo $row['sales_payment_id'] ?>'><span class='fa fa-pencil'></span></a>
                                                              -->
-                                                                <a class='btn btn-sm btn-danger' href='void_payment.php?id=<?php echo $_GET['id'];?>&p_id=<?php echo $row['sales_payment_id'] ?>' onclick='return confirm("This payment will be voided.")'>&nbsp;&nbsp;&nbsp;Void&nbsp;&nbsp;&nbsp;</a>
+                                                                <a class='btn btn-sm btn-danger' href='void_payment.php?id=<?php echo $_GET['id'];?>&p_id=<?php echo $row['sales_payment_id'] ?>' onclick='return             vvb ;; confirm("This payment will be voided.")'>&nbsp;&nbsp;&nbsp;Void&nbsp;&nbsp;&nbsp;</a>
                                                             </td> 
                                                         <?php
                                                         endif;
@@ -448,13 +421,27 @@
                                     <?php
                                         // $amount=0;
                                         $total=$total_cost['total'];
+                                        $tax=$total*.12;
+                                        $subtotal=$total-$tax;
+                                        $wtax=$subtotal*.05;
+                                        
+
+                                        if ($customer['is_top_company']==1){
+                                            $total_wtax=$total-$wtax;
+                                            // var_dump($total_wtax);
+                                        }
+                                        else{
+                                            $total_wtax=$total;
+                                            // var_dump($total_wtax);
+                                        }
+
                                         if(empty($payments)){
                                             $amount=0;
-                                            $balance=$total-$amount;
+                                            $balance=$total_wtax-$amount;
                                         }
                                         else{
                                             $amount=$row['amount'];
-                                            $balance=$total-$amount;
+                                            $balance=$total_wtax-$amount;
                                         }
                                         echo (number_format($balance,2));
                                     ?>

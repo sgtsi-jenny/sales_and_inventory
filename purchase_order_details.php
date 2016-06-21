@@ -122,7 +122,7 @@
 ?>
 <div class="content-wrapper">
     <section class="content-header" align="right">
-        <a href='purchases.php' class='btn btn-default'><span class='glyphicon glyphicon-arrow-left'></span> Back to Puchase Order Details</a>
+        <a href='purchases.php' class='btn btn-default'><span class='glyphicon glyphicon-arrow-left'></span> Back to Puchase Order List</a>
         <?php
         // var_dump($po_details['QuantityReceived']);
         // die;

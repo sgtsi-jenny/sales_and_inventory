@@ -25,7 +25,7 @@
                     ?>
                     <div class='row'>
                         <div class='col-sm-12'>
-                                <a href='frm_measurement.php' class='btn btn-flat btn-success pull-right'> <span class='fa fa-plus'></span> Create New</a>
+                                <a href='frm_measurement.php' class='btn btn-brand pull-right'> <span class='fa fa-plus'></span> Create New</a>
                         </div>
                     </div>
                     <br/>    
@@ -53,8 +53,8 @@
                                                 <td><?php echo htmlspecialchars($measurements['abv'])?></td>
                                                 <td><?php echo htmlspecialchars($measurements['name'])?></td>
                                                 <td>
-                                                    <a class='btn btn-sm btn-flat btn-success' href='frm_measurement.php?id=<?php echo $measurements['measurement_id'];?>'><span class='fa fa-pencil'></span></a>
-                                                    <a class='btn btn-sm btn-flat btn-danger' href='delete.php?id=<?php echo $measurements['measurement_id']?>&t=meas' onclick='return confirm("Are you sure you want to delete this measurement?")'><span class='fa fa-trash'></span></a>
+                                                    <a class='btn btn-sm btn-brand' href='frm_measurement.php?id=<?php echo $measurements['measurement_id'];?>'><span class='fa fa-pencil'></span></a>
+                                                    <a class='btn btn-sm btn-danger' href='delete.php?id=<?php echo $measurements['measurement_id']?>&t=meas' onclick='return confirm("Are you sure you want to delete this measurement?")'><span class='fa fa-trash'></span></a>
                                                 </td>
                                             </tr>
                                         <?php

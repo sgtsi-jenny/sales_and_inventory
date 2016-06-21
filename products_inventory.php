@@ -90,13 +90,13 @@
                                   <?php
                                     if ($row['quantity'] > $row['maximum_quantity']) 
                                     {
-                                      echo "<button class='btn btn-flat btn-warning' style='width:100%'>Oversupply</button>";
+                                      echo "<button class='btn btn-sm btn-warning' style='width:100%'>Oversupply</button>";
                                     }elseif (($row['quantity'] <= $row['maximum_quantity']) && ($row['quantity'] >= $row['minimum_quantity'])) 
                                     {
-                                      echo "<button class='btn btn-flat btn-success' style='width:100%'>Normal</button>";
+                                      echo "<button class='btn btn-sm btn-brand' style='width:100%'>Normal</button>";
                                     }elseif ($row['quantity'] < $row['minimum_quantity']) 
                                     {
-                                      echo "<button class='btn btn-flat btn-danger' style='width:100%'>Critical</button>";
+                                      echo "<button class='btn btn-sm btn-danger' style='width:100%'>Critical</button>";
                                     }
                                   ?>
                                 </td>

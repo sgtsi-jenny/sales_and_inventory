@@ -4,8 +4,7 @@
           <!-- sidebar menu: : style can be found in sidebar.less -->
           <ul class="sidebar-menu">
             <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="index.php"?"active":"";?>">
-              <a href="index.php">
-              
+              <a href="index.php">              
                 <i class="fa fa-dashboard"></i> <span>Dashboard</span>
               </a>
             </li>
@@ -26,7 +25,7 @@
                 <i class="fa fa-cart-arrow-down"></i> <span>Sales</span>
               </a>
             </li>
-            <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="purchases.php" || (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="purchases.php"?"active":"";?>">
+            <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="purchases.php" || (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="frm_purchase.php" || (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="purchase_order_details.php"?"active":"";?>">
              <a href="purchases.php">
                 <i class="fa fa-cart-arrow-down"></i> <span>Purchases</span>
               </a>
@@ -82,21 +81,21 @@
               </ul>
               </li>
 
-              <li class='treeview <?php echo (in_array(substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1), array("stock_status.php", "sold_items.php","sales_payments.php","customer_revenue.php","returned_products.php","fast_slow_items.php")))?"active":"";?>'>
+              <li class='treeview <?php echo (in_array(substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1), array("sold_items.php","sales_payment_report.php","customer_revenue.php")))?"active":"";?>'>
               <a href=''><i class="fa fa-file"></i><span>Reports</span><i class="fa fa-angle-left pull-right"></i></a>
               <ul class='treeview-menu'>
-                          <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="stock_status.php"?"active":"";?>">
+                          <!-- <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="stock_status.php"?"active":"";?>">
                             <a href="stock_status.php">
                               <i class="fa fa-area-chart "></i> <span>Stock Status</span>
                             </a>
-                          </li>
+                          </li> -->
                           <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="sold_items.php"?"active":"";?>">
                             <a href="sold_items.php">
                               <i class="fa fa-area-chart "></i> <span>Sold Items</span>
                             </a>
                           </li>
-                          <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="sales_payments.php"?"active":"";?>">
-                            <a href="sales_payments.php">
+                          <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="sales_payment_report.php"?"active":"";?>">
+                            <a href="sales_payment_report.php">
                               <i class="fa fa-area-chart "></i> <span>Sales Payments</span>
                             </a>
                           </li>
@@ -105,16 +104,16 @@
                               <i class="fa fa-area-chart "></i> <span>Customer Revenue</span>
                             </a>
                           </li>
-                          <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="returned_products.php"?"active":"";?>">
+                         <!--  <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="returned_products.php"?"active":"";?>">
                             <a href="returned_products.php">
                               <i class="fa fa-area-chart "></i> <span>Returned Products</span>
                             </a>
-                          </li>  
-                          <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="fast_slow_items.php"?"active":"";?>">
+                          </li>   -->
+                          <!-- <li class="<?php echo (substr($_SERVER['PHP_SELF'],strrpos($_SERVER['PHP_SELF'], "/")+1))=="fast_slow_items.php"?"active":"";?>">
                             <a href="fast_slow_items.php">
                               <i class="fa fa-area-chart "></i> <span>Fast, Slow and Non-Moving Items</span>
                             </a>
-                          </li>            
+                          </li>  -->           
                   </ul>
                 </li>
                 <?php

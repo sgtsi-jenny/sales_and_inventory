@@ -13,7 +13,7 @@
     
     $data="";
     if(!empty($_GET['id'])){
-        $data=$con->myQuery("SELECT first_name,middle_name,last_name,username,email,contact_no,security_question, security_answer, id FROM users WHERE id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
+        $data=$con->myQuery("SELECT first_name,middle_name,last_name,username,email,contact_no,security_question, security_answer, user_id FROM users WHERE user_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
         if(empty($data)){
             //Alert("Invalid asset selected.");
             Modal("Invalid Account Selected");
@@ -62,8 +62,8 @@
                           </thead>
                           <tbody>
                                             <?php
-                                                $userid=$_SESSION[WEBAPP]['user']['id'];
-                                                $users=$con->myQuery("SELECT first_name,middle_name,last_name,username,email,contact_no,security_question, security_answer, id, security_question, security_answer, id FROM users WHERE id='$userid'")->fetchAll(PDO::FETCH_ASSOC);
+                                                $userid=$_SESSION[WEBAPP]['user']['user_id'];
+                                                $users=$con->myQuery("SELECT first_name,middle_name,last_name,username,email,contact_no,security_question, security_answer, security_question, security_answer, user_id FROM users WHERE user_id='$userid'")->fetchAll(PDO::FETCH_ASSOC);
                                                 foreach ($users as $row):
                                             ?>
 
@@ -95,7 +95,7 @@
                     <hr>
                     <div id='collapseForm' class='collapse'>
                               <form class='form-horizontal' action='save_profile.php' onsubmit="return validatePost(this)" method="POST" >
-                                 <input type='hidden' name='id' value='<?php echo !empty($data)?$data['id']:""?>'>
+                                 <input type='hidden' name='id' value='<?php echo !empty($data)?$data['user_id']:""?>'>
                                  <!--<input type='hidden' name='opp_id' value='<?php echo $opp['id']?>'>-->
                                       
                                       <div class="form-group">
@@ -131,15 +131,15 @@
                           </thead>
                           <tbody>
                                             <?php
-                                                $userid=$_SESSION[WEBAPP]['user']['id'];
-                                                $opp2=$con->myQuery("SELECT security_question, security_answer, id FROM users WHERE id='$userid'")->fetchAll(PDO::FETCH_ASSOC);
+                                                $userid=$_SESSION[WEBAPP]['user']['user_id'];
+                                                $opp2=$con->myQuery("SELECT security_question, security_answer, user_id FROM users WHERE user_id='$userid'")->fetchAll(PDO::FETCH_ASSOC);
                                                 foreach ($opp2 as $row):
                                             ?>
                                                 <tr>
                                                    <td><?php echo htmlspecialchars($row['security_question'])?></td>
                                                    <td><?php echo htmlspecialchars($row['security_answer'])?></td>
                                                 <td align="center">
-                                                    <a class='btn btn-sm btn-warning' href='user_profile.php?id=<?php echo $row['id'];?>'><span class='fa fa-pencil'></span></a>
+                                                    <a class='btn btn-sm btn-warning' href='user_profile.php?id=<?php echo $row['user_id'];?>'><span class='fa fa-pencil'></span></a>
                                                     <!--<a class='btn btn-sm btn-danger' href='delete.php?id=<?php echo $row['id'];?>&t=ra' onclick='return confirm("This rating will be deleted.")'><span class='fa fa-trash'></span></a>-->
                                                 </td>
                                                 </tr>

@@ -86,8 +86,8 @@
                                                 <td><?php echo htmlspecialchars($customers['birth_date'])?></td>
                                                 
                                                 <td>
-                                                    <a class='btn btn-sm btn-flat btn-success' href='frm_customer.php?id=<?php echo $customers['customer_id'];?>'><span class='fa fa-pencil'></span></a>
-                                                    <a class='btn btn-sm btn-flat btn-danger' href='delete.php?id=<?php echo $customers['customer_id']?>&t=cust' onclick='return confirm("Are you sure you want to delete this customer?")'><span class='fa fa-trash'></span></a>
+                                                    <a class='btn btn-sm btn-brand' href='frm_customers.php?id=<?php echo $customers['customer_id'];?>'><span class='fa fa-pencil'></span></a>
+                                                    <a class='btn btn-sm btn-danger' href='delete.php?id=<?php echo $customers['customer_id']?>&t=cust' onclick='return confirm("Are you sure you want to delete this customer?")'><span class='fa fa-trash'></span></a>
                                                 </td>
                                                 <?php
                                                     endif;

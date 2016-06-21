@@ -4,6 +4,28 @@
         toLogin();
         die();
     }
+    $data=$con->myQuery("SELECT
+                          p.product_id,
+                          p.product_code,
+                          p.product_name,
+                          p.description,
+                          p.category_id,
+                          c.name AS category_name,
+                          p.selling_price,
+                          p.wholesale_price,
+                          p.current_quantity AS quantity,
+                          IFNULL((SELECT SUM(quantity) FROM sales_details sd INNER JOIN sales_master sm ON sm.sales_master_id=sd.sales_master_id
+                            WHERE sd.product_id=p.product_id AND sm.sales_status_id=2),'0') AS allocated,
+                          p.minimum_quantity,
+                          p.maximum_quantity,
+                          p.barcode
+                        FROM products p
+                        INNER JOIN categories c
+                          ON c.category_id=p.category_id
+                        INNER JOIN measurements m
+                          ON m.measurement_id=p.measurement_id
+                        WHERE p.is_deleted=0 AND CAST(p.current_quantity AS UNSIGNED INTEGER) < CAST(p.minimum_quantity AS UNSIGNED INTEGER)
+                        ");
     makeHead();
 ?>
 
@@ -26,17 +48,57 @@
                 <div class='panel panel-primary'>
                     <div class='panel-heading text-left'>
                         <div class="row">
-                            <h2 class="col-xs-10">Recent Activity</h2>
-                            <span class="fa fa-tasks fa-3x col-md-2 text-right" style="padding-top: 15px;"></span>
+                            <h4 class="col-xs-10">Products on Critical Level</h4>
+                            <!-- <span class="fa fa-tasks fa-3x col-md-2 text-right" style="padding-top: 15px;"></span> -->
                         </div>
-
+                    </div>
+                <div class="panel-body">
+                <div class="row">
+                    <table id='ResultTable' class='table table-bordered table-striped'>
+                          <thead>
+                            <tr>
+                              <th class='text-center'>Product Code</th>
+                              <th class='text-center'>Product Name</th>
+                              <th class='text-center'>Description</th>
+                              <th class='text-center'>Category</th>
+                              <th class='text-center'>Total Quantity</th>
+                              <th class='text-center'>Allocated Stocks</th>
+                              <th class='text-center'>Stock on hand</th>
+                              <!-- <th class='text-center' style='width:11%'>Stock Condition</th> -->
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <?php
+                              while($row = $data->fetch(PDO::FETCH_ASSOC)):
+                            ?>
+                              <tr>
+                                <td><a href="product_inventory_details.php?id=<?php echo $row['product_id']; ?>"><i class="fa fa-cube"></i> <?php echo htmlspecialchars($row['product_code'])?></a></td>
+                                <td><?php echo htmlspecialchars($row['product_name'])?></td>
+                                <td><?php echo htmlspecialchars($row['description'])?></td>
+                                <td><?php echo htmlspecialchars($row['category_name'])?></td>
+                                <?php
+                                  $alloc=$con->myQuery("SELECT SUM(sd.quantity) AS order_qty FROM sales_details sd INNER JOIN sales_master sm ON sm.sales_master_id=sd.sales_master_id WHERE sm.sales_status_id=2 AND sd.product_id=? GROUP BY sd.product_id",array($row['product_id']))->fetch(PDO::FETCH_ASSOC);
+                                ?>
+                                <td><?php echo intval($row['quantity']) + $alloc['order_qty']; ?></td>
+                                <td><?php echo !empty($alloc['order_qty'])?$alloc['order_qty']:'0'; ?></td>
+                                <td> <?php echo intval($row['quantity']); ?> </td>
+                               
+                              </tr>
+                            <?php
+                              endwhile;
+                            ?>
+                          </tbody>
+                        </table>
+                    </div>
                     </div>
                 </div>
+
                 <div class='panel panel-primary'>
                 <div class='panel-heading text-left'>
                     <div class="row">
                         <h4 class="col-xs-10">Fast and Slow Moving Items</h4>
                     </div>
+
                 </div>
                 <div class="panel-body">
                 <div class="row">
@@ -89,9 +151,8 @@
                             GROUP BY CM.product_id, CM.product_name
                             ORDER BY CM.currentmonth DESC");
                     ?>
-                    <form method="get">
 
-                    <table class='table table-bordered table-striped'>
+                    <table id='ResultTable2' class='table table-bordered table-striped'>
                         <thead>
                             <tr>
                                
@@ -139,8 +200,6 @@
                             ?>
                         </tbody>
                     </table>
-
-                    </form>
                    
                     </div>
                     </div>
@@ -153,6 +212,20 @@
  <script type="text/javascript">
   $(function () {
         $('#ResultTable').DataTable({
+            "scrollX": true
+            // ,
+            // dom: 'Bfrtip',
+            //     buttons: [
+            //         {
+            //             extend:"excel",
+            //             text:"<span class='fa fa-download'></span> Download as Excel File "
+            //         }
+            //         ],
+
+        });
+      });
+  $(function () {
+        $('#ResultTable2').DataTable({
             "scrollX": true
             // ,
             // dom: 'Bfrtip',

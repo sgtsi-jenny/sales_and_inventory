@@ -69,10 +69,11 @@
     <div class='col-sm-12 col-md-7'>
        <?php
             $dob="";
-            if(!empty($account))
+            if(!empty($data))
             {
-                $dob=$account['dob'];
-                if($dob=="00000000")
+                // var_dump($data['birth_date']);
+                $dob=$data['birth_date'];
+                if($dob=="00/00/0000")
                 {
                     $dob="";
                 }else
@@ -84,6 +85,26 @@
         <input type='text' class='form-control date_picker' name='dob'  value='<?php echo !empty($data)?htmlspecialchars($data['birth_date']):''; ?>' required>
     </div>
 </div>
+<!-- <div class='form-group'>
+    <label class='col-sm-12 col-md-3 control-label'> Date*</label>
+    <div class='col-sm-12 col-md-7'>
+       <?php
+            $dob="";
+            if(!empty($data))
+            {
+                $dob=$data['birth_date'];
+                if($dob=="00/00/0000")
+                {
+                    $dob="";
+                }else
+                {
+                    $dob=inputmask_format_date($dob);
+                }
+            }                                         
+        ?>
+        <input type='date' class='form-control ' name='dob'  value='<?php echo !empty($data)?$data['birth_date']:''; ?>' required>
+    </div>
+</div> -->
 <div class='form-group'>
     <label class='col-sm-12 col-md-3 control-label'> Website*</label>
     <div class='col-sm-12 col-md-7'>

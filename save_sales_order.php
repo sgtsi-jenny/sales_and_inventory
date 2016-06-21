@@ -60,7 +60,10 @@
 				$description=$inputs['description'];
 				$user_id=$_SESSION[WEBAPP]['user']['user_id'];
 
-				// var_dump($inputs);
+				$customer=$con->myQuery("SELECT customer_id,is_top_company FROM customers where customer_id=?",array($inputs['customer_id']))->fetch(PDO::FETCH_ASSOC);
+
+				
+				// var_dump($customer);
 				// die;
 
 				$total_cost = 0;
@@ -69,6 +72,13 @@
 				   $total_cost+= $value;
 				}
 
+					$tax=$total_cost*.12;
+					$subtotal=$total_cost-$tax;
+					$wtax=$subtotal*.05;
+					$total_wtax=$total_cost-$wtax;
+
+				
+
 				$total_unit_cost=$inputs['total_price'];
 				unset($inputs['customer_id']);
 				unset($inputs['description']);
@@ -76,11 +86,23 @@
 				unset($inputs['total_price']);
 				unset($inputs['prod_name']);
 
-			// var_dump($inputs);
-			// 	die;
 
+				// var_dump($inputs);
+				// die;
 
-				$con->myQuery("INSERT INTO sales_master (date_issue,total_amount,customer_id,user_id,sales_status_id,payment_status_id,description,date_modified) VALUES ('$date_issue','$total_cost','$customer_id','$user_id','1','1','$description','$date_modified')", $inputs);
+				if ($customer['is_top_company']==1){
+					
+					// var_dump("with tax ".$total_wtax);
+					// die;
+					$con->myQuery("INSERT INTO sales_master (date_issue,total_amount,total_minus_wtax,customer_id,user_id,sales_status_id,payment_status_id,description,date_modified) VALUES ('$date_issue','$total_cost','$total_wtax','$customer_id','$user_id','1','1','$description','$date_modified')", $inputs);
+					
+				}
+				else{
+					// var_dump("without 5% tax");
+					// die;
+					$con->myQuery("INSERT INTO sales_master (date_issue,total_amount,customer_id,user_id,sales_status_id,payment_status_id,description,date_modified) VALUES ('$date_issue','$total_cost','$customer_id','$user_id','1','1','$description','$date_modified')", $inputs);
+				}
+				
 
 				$file_id=$con->lastInsertId();
 
