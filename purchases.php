@@ -6,10 +6,10 @@
         die();
     }
 
-    if(!AllowUser(array(1)))
-    {
-        redirect("index.php");
-    }
+    // if(!AllowUser(array(1)))
+    // {
+    //     redirect("index.php");
+    // }
 
     $supplier=$con->myQuery("SELECT supplier_id, CONCAT(description,' (',name,')') as name FROM suppliers")->fetchAll(PDO::FETCH_ASSOC);
     

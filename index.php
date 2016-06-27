@@ -4,6 +4,9 @@
         toLogin();
         die();
     }
+     if(!AllowUser(array(1,2,3))){
+        redirect("products_inventory.php");
+    }
     $data=$con->myQuery("SELECT
                           p.product_id,
                           p.product_code,

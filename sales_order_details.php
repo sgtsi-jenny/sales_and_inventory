@@ -106,12 +106,14 @@
           <button type="button" class="btn btn-brand" data-toggle="modal" data-target="#newSalesModal">New Sales Order<span class='fa fa-plus'></span> </button>
           <a href='print_order2.php?id=<?php echo $_GET['id'];?>' class='btn btn-brand'> Preview/Print &nbsp;<span class='fa fa-print'></span> </a>
           <?php
-            if($sale['sales_status_id']==2 || $sale['sales_status_id']==3 && AllowUser(array(1))){
+            if(($sale['sales_status_id']==2 || $sale['sales_status_id']==3) && AllowUser(array(1,2))){
+                // var_dump($sale['sales_status_id']==2 || $sale['sales_status_id']==3 && AllowUser(array(1,2)));
+                // var_dump($sale['sales_status_id']==1  && AllowUser(array(1,2)));
           ?>
           <a href='sales_void.php?id=<?=$_GET['id']?>' class='btn btn-default' onclick='return confirm("Click confirm to void this order. This will also rollback any fulfillments and revert any stock movements.")'>Void</a>
           <?php
             }
-            elseif($sale['sales_status_id']==1){
+            elseif($sale['sales_status_id']==1  && AllowUser(array(1,2))){
           ?>
           <a href='frm_sales.php?id=<?php echo $_GET['id'];?>' class='btn btn-default'>Edit Order</a>
           <?php

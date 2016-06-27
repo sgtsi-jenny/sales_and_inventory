@@ -11,7 +11,6 @@
     $data=$con->myQuery("SELECT 
                             stkMaster.stock_adjMaster_id as stock_id,
                             adj.name as reason,
-                          
                             stkMaster.total_cost as total_Cost
                             FROM stock_adj_master stkMaster
                             INNER JOIN adjustment_status adj
@@ -56,7 +55,7 @@
                                               <th class='text-center'>Stock ID</th>
                                               <th class='text-center'>Reason</th>
                                          
-                                              <th class='text-center'>Total cost</th>
+                                              <th class='text-right'>Total cost</th>
                                            
                                           </thead>
                                               <tbody>
@@ -68,15 +67,13 @@
                                                                 <a href='view_stock_adjustments.php?id=<?= $row['stock_id']?>'><img width="36" height="36" class="" src="uploads/so_id.png">SA<?php echo htmlspecialchars($row['stock_id'])?></a>
                                                     </td>
                                                     
-                                                    <td><?php echo htmlspecialchars($row['reason'])?></td>
+                                                    <td class='text-center'><?php echo htmlspecialchars($row['reason'])?></td>
                                                  
-                                                    <td><?php 
-                                                    $num = number_format($row['total_Cost']);
+                                                    <td class='text-right'><?php 
+                                                    $num = number_format($row['total_Cost'],2);
                                                  
                                                     echo htmlspecialchars($num); 
                                                     ?></td>
-                                                   
-                                                    
                                                   </tr>
                                                 <?php
                                                   endwhile;
@@ -134,6 +131,7 @@
         alert('Please select a reason');
         return  false;
     }
+  }
 </script>
 
 <script type="text/javascript">

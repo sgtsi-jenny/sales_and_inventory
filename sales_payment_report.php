@@ -5,9 +5,9 @@
         die();
      }
 
-    if(!AllowUser(array(1))){
-         redirect("index.php");
-    }
+    // if(!AllowUser(array(1))){
+    //      redirect("index.php");
+    // }
     if(!empty($_GET['d_start'])){
         $_start=date_create($_GET['d_start']);
     }

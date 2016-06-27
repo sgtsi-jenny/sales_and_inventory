@@ -6,10 +6,10 @@
     die();
   }
 
-  if(!AllowUser(array(1)))
-  {
-    redirect("index.php");
-  }
+  // if(!AllowUser(array(1)))
+  // {
+  //   redirect("index.php");
+  // }
 
   $customer=$con->myQuery("SELECT customer_id,customer_name FROM customers WHERE is_deleted=0")->fetchAll(PDO::FETCH_ASSOC);
 
@@ -88,7 +88,7 @@
                         <div class="col-sm-7">
                           <select class='form-control select2' name='customer_id' data-placeholder="All Employees" <?php echo !(empty($_GET))?"data-selected='".$_GET['customer_id']."'":NULL ?> style='width:100%'>
                             <?php
-                              echo makeOptions($customer,"All Employees");
+                              echo makeOptions($customer,"All Customer");
                             ?>
                           </select>
                         </div>

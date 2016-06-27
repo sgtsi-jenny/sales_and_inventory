@@ -12,17 +12,17 @@
         redirect("stock_adjustments_main.php");
        
     }else{
-    	$sa = $con->myQuery("SELECT StM.stock_adjmaster_id as SAID, StD.quantity_received as q_Rec ,  aStat.`name` as reason,
-						aStat.adj_status_id as status_ID, StM.notes as notes,
-						p.product_id as prodID, p.product_name as prodName , 
-						p.current_quantity as c_Quan,SP.unit_cost as u_cost 
-						FROM stock_adj_master StM  
-						INNER JOIN stock_adj_details StD  on StM.stock_adjmaster_id = StD.stock_adjmaster_id
-						INNER JOIN adjustment_status aStat on aStat.adj_status_id = StM.adj_status_id
-						INNER JOIN supplier_products SP on StD.product_id = SP.product_id
-						INNER JOIN products p on p.product_id =StD.product_id
-						WHERE StM.stock_adjmaster_id = ?
-                        ",array($_GET['id']))->fetchAll(PDO::FETCH_ASSOC);
+    	$sa = $con->myQuery("SELECT StM.stock_adjmaster_id as SAID, StD.quantity_received as q_Rec ,  aStat.`name` as reason, aStat.adj_status_id as status_ID, StM.notes as notes,
+			p.product_id as prodID, p.product_name as prodName , 
+			p.current_quantity as c_Quan,SP.unit_cost as u_cost,
+			StM.is_reverted
+			FROM stock_adj_master StM  
+			INNER JOIN stock_adj_details StD  on StM.stock_adjmaster_id = StD.stock_adjmaster_id
+			INNER JOIN adjustment_status aStat on aStat.adj_status_id = StM.adj_status_id
+			INNER JOIN supplier_products SP on StD.product_id = SP.product_id
+			INNER JOIN products p on p.product_id =StD.product_id
+			WHERE StM.stock_adjmaster_id = ?
+            ",array($_GET['id']))->fetchAll(PDO::FETCH_ASSOC);
 
     	if(empty($sa))
         {
@@ -30,6 +30,7 @@
             redirect("stock_adjustments_main.php");
             die;
         }
+        // foreach ($sa as $row):
     }
 
     $get_sa = $con->myQuery("SELECT
@@ -57,9 +58,27 @@
 
 		<section class="content-header" align="right">
 		        <a href='stock_adjustments_main.php' class='btn btn-default'><span class='glyphicon glyphicon-arrow-left'></span> Back</a>
-		        <button type="button" class="btn btn-brand" data-toggle="modal" data-target="#newStockReason">Revert stock adjustment <span class='fa fa-plus'></span> </button>
+		        <?php
+		        $sRevert = $con->myQuery("SELECT StM.is_reverted
+				FROM stock_adj_master StM  
+				INNER JOIN stock_adj_details StD  on StM.stock_adjmaster_id = StD.stock_adjmaster_id
+				INNER JOIN adjustment_status aStat on aStat.adj_status_id = StM.adj_status_id
+				INNER JOIN supplier_products SP on StD.product_id = SP.product_id
+				INNER JOIN products p on p.product_id =StD.product_id
+				WHERE StM.stock_adjmaster_id = ?
+	            ",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
+                // var_dump(!($sRevert['is_reverted']==1));
+
+                if (!($sRevert['is_reverted']==1)){
+                ?>
+                <button type="button" class="btn btn-brand" data-toggle="modal" data-target="#newStockReason">Revert stock adjustment <span class='fa fa-plus'></span> </button>
+                <?php
+                }
+                ?>
+
+		        
 		      
-		       <a href='#' class='btn btn-brand'> Preview/Print &nbsp;<span class='fa fa-print'></span> </a>
+		       <a href='print_stock_adjustments.php?id=<?php echo !empty($_GET['id'])?$_GET['id']:'';?>' class='btn btn-brand'> Preview/Print &nbsp;<span class='fa fa-print'></span> </a>
 		    </section>
 		    
 		   <section class="content-header">
@@ -100,7 +119,6 @@
 	                          						<tbody>
 		                          						<?php 
 		                          						foreach ($sa as $row):
-		                          							
 		                          						?>
 		                          						<tr>
 		                          							<td><?php echo htmlspecialchars($row['prodID'])?></td>
@@ -122,6 +140,8 @@
 		                         	</div>
 		                    	</div>
 		    				</div>
+		    		
+		    		
     	
     		</div>
     </section>
@@ -135,12 +155,13 @@
                  
                       <div class="modal-body"> 
                         
-                           <!--  -->
+                           
                             <!-- <?php
                                 // var_dump($sale['t_qty']);
                             ?> -->
-                            <form action='stock_adjustments.php?id=<?php echo $_GET['id'];?>'  method='POST' >
+                            <form action='stock_adjustments.php?>'  method='GET' >
                              <div class="form-group">
+                             <input type="hidden" name="id" id ="adj_ID" value= '<?php  echo $_GET['id'];?>'>
                                 <label>Select Reason</label>
                                  <select class='form-control' id='adj_status_id'  name='adj_status_id' data-placeholder="Select reason"
                                   required>

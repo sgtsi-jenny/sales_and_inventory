@@ -7,19 +7,14 @@
     if(!AllowUser(array(1))){
          redirect("index.php");
     }
-    $reason = $con->myQuery
-    ("SELECT adj_status_id, name FROM adjustment_status WHERE adj_status_id =?" , array($_GET['adj_status_id']) )
-    ->fetch(PDO::FETCH_ASSOC);;
- 	$revertreason = $con->myQuery
-    ("SELECT adj_status_id, name FROM adjustment_status WHERE adj_status_id =?" , array($_POST['adj_status_id']) )
-    ->fetch(PDO::FETCH_ASSOC);;
+    
+	// alert($_POST['adj_status_id']);
+    if(!empty($_GET['id'])){
+    	$revertreason = $con->myQuery
+						    ("SELECT adj_status_id, name FROM adjustment_status WHERE adj_status_id =?" , array($_GET['adj_status_id']) )
+						    ->fetch(PDO::FETCH_ASSOC);;
 
-    $product=$con->myQuery("SELECT products.product_id as productID, product_name,current_quantity, unit_cost
-    	FROM products 
-    	INNER JOIN supplier_products ON products.product_id = supplier_products.product_id")->fetchAll(PDO::FETCH_ASSOC);
-   // $data=$con->myQuery("SELECT stock_adjmaster_id FROM stock_adj_master WHERE is_deleted=0 AND stock_adjmaster_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
-
-    $sa = $con->myQuery("SELECT StM.stock_adjmaster_id as SAID, StD.quantity_received as q_Rec ,  aStat.`name` as reason,
+    	 $sa = $con->myQuery("SELECT StM.stock_adjmaster_id as SAID, StD.quantity_received as q_Rec ,  aStat.`name` as reason,
 						aStat.adj_status_id as status_ID, StM.notes as notes,
 						p.product_id as prodID, p.product_name as prodName , 
 						p.current_quantity as c_Quan,SP.unit_cost as u_cost 
@@ -30,6 +25,20 @@
 						INNER JOIN products p on p.product_id =StD.product_id
 						WHERE StM.stock_adjmaster_id = ?
                         ",array($_GET['id']))->fetchAll(PDO::FETCH_ASSOC);
+    	 //stock update narin
+    }else{
+    	$reason = $con->myQuery
+    ("SELECT adj_status_id, name FROM adjustment_status WHERE adj_status_id =?" , array($_GET['adj_status_id']) )
+    ->fetch(PDO::FETCH_ASSOC);;
+    }
+ 	
+
+    $product=$con->myQuery("SELECT products.product_id as productID, product_name,current_quantity, unit_cost
+    	FROM products 
+    	INNER JOIN supplier_products ON products.product_id = supplier_products.product_id")->fetchAll(PDO::FETCH_ASSOC);
+   // $data=$con->myQuery("SELECT stock_adjmaster_id FROM stock_adj_master WHERE is_deleted=0 AND stock_adjmaster_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
+   
+   
 
     makeHead("Stock Adjustment");
 ?>
@@ -53,7 +62,7 @@
                     alert();
                 ?>
                 <form method="post" action="save_stock_adjustment.php">
-                
+                	<input type='hidden' name='stock_adj_master_id' value='<?php echo !empty($_GET['id'])?$_GET['id']:''; ?>'>
 	            	<div class='form-group'>
 		            	<div class = "row">
 		            		<div class = 'col-md-6' >
@@ -86,7 +95,7 @@
 				            				 ?>
 				            				 	<input type="text" class="form-control" id="input_Reason" name='input_Reason' 
 					                			value='<?php echo $revertreason['name'];?>' readonly>
-					                			<input type="hidden" class="form-control" id="input_Reason_id" name='input_Reason_id' 
+					                			<input type="hidden" class="form-control" id="adj_status_id" name='adj_status_id' 
 					                			value='<?php echo $revertreason['adj_status_id'];?>'>
 				            				 <?php		
 				            				 	}else{
@@ -94,7 +103,7 @@
 				            				 	?>
 				            				 	<input type="text" class="form-control" id="input_Reason" name='input_Reason' 
 					                			value='<?php echo $reason['name'];?>' readonly>
-					                			<input type="hidden" class="form-control" id="input_Reason_id" name='input_Reason_id' 
+					                			<input type="hidden" class="form-control" id="adj_status_id" name='adj_status_id' 
 					                			value='<?php echo $reason['adj_status_id'];?>'>
 				            				 <?php
 				            					}
@@ -233,7 +242,7 @@
 		                <section align = "right">
 		                <!--	<button type="button" class="btn btn-brand" id="addRow" >Add</button>	-->
 		                	<button type="button" class="btn btn-brand" onclick="AddToTable()" >Add</button>
-		                  	<button type="button" class="btn btn-default" onclick="">Cancel</button>
+		                  	<button type="button" class="btn btn-default" onclick="form_clear()">Cancel</button>
 		                </section>
 		                  
 		                	
@@ -260,13 +269,71 @@
 										<?php
 											if(!empty($sa)){
 												foreach ($sa as $row):
-													$input="<input type='hidden' name='product_id[]' value='{$row['prodID']}'>";
-													$input.="<input type='hidden' name='prodName[]' value='{$row['quantity']}'>";
-													$input.="<input type='hidden' name='q_Rec[]' value='{$row['quantity']}'>";
-													$input.="<input type='hidden' name='u_cost[]' value='{$row['quantity']}'>";
 
+													$current_quantity=$row['c_Quan'];
+
+													switch ($row['status_ID']) {
+														case '5': case '4':
+															$current_quantity=$row['c_Quan']+$row['q_Rec'];
+											    		break;
+											    		case '1': case '2':
+											    			$current_quantity=$row['c_Quan']-$row['q_Rec'];
+											    			break;
+											    		case '3':
+											    			$current_quantity=$row['c_Quan'];
+											    			break;
+											    		default:
+											    			$current_quantity=$row['q_Rec']+$row['c_Quan'];
+											    		break;
+													}
+
+													switch ($revertreason['adj_status_id']) {
+														case '5': case '4':
+															$after=$current_quantity-$row['q_Rec'];
+											    		break;
+											    		case '1': case '2':
+											    			$after=$row['q_Rec']+$current_quantity;
+											    			break;
+											    		case '3':
+											    			$after=$current_quantity;
+											    			break;
+											    		default:
+											    			$after=$row['q_Rec']+$current_quantity;
+											    		break;
+													}
+
+													$input="<input type='hidden' name='select_id[]' value ='{$row['prodID']}'>";
+													$input.="<input type='hidden' name='quantity_received[]' value='{$row['q_Rec']}'>";
+													$input.="<input type='hidden' name='unit_cost[]' value='{$row['u_cost']}'>";
+													$input.="<input type='hidden' name='current_quantity[]' value='{$current_quantity}'>";
+													$input.="<input type='hidden' name='stock_after[]' value ='$after'>";
+													$input.="<input type='hidden' name='prod_name[]' value ='{$row['prodName']}'>";
 										?>
+											<tr>
+													
+													<td>
+                                                            <?php echo $input;?>
+                                                            <?php echo $row['prodID'] ?>
+    												</td>
+    												<td><?php echo $row['prodName'] ?></td>
+    												<td><?php echo $row['q_Rec'] ?></td>
+    												<td><?php echo $row['u_cost'] ?></td>
+    												<td>
+    													<?php
+    														echo $current_quantity;
+    													?>	
+													</td>
+    												<td>
+    													<?php
+    														echo $after;
+    													?>
+    												</td>
+    												<td>
+                                                        <button type='button' onclick='edit(this)' class='btn btn-brand fa fa-pencil'></span></button>
+                                                        <button type='button' onclick='removeRow(this)' class='btn btn-danger fa fa-trash'></button>
+                                                    </td>
 
+											</tr>
 										<?php
 												endforeach;
 											}
@@ -283,7 +350,13 @@
             				<div class = "col-md-12">
             					<section align = "right">
 		                            <button type='submit' class='btn btn-brand'>Save </button>
-		                            <button type="reset" class="btn btn-default" >Cancel</button> 
+		                            <?php
+		                            	$cancel_link="stock_adjustments_main.php";
+		                            	if(!empty($_GET['id'])){
+		                            		$cancel_link="view_stock_adjustments.php?id=".htmlspecialchars($_GET['id']);
+		                            	}
+		                            ?>
+		                            <a href='<?php echo $cancel_link?>' class="btn btn-default" >Cancel</a> 
 		                        </section>
             				</div>
             		</div>
@@ -319,11 +392,11 @@ function edit(edit_button){
         inputs=$(row).children(1).children();
 
        current_row=$(edit_button).parent().parent();
-
         $("#select_1").val($(inputs[0]).val()).change();
         $("#select_1").attr("disabled",true);
-        $("#quantity_received").val($(  inputs[1]).val());
-        $("#current_quantity").val($(inputs[2]).val());
+        $("#quantity_received").val($(inputs[1]).val());
+        $("#current_quantity").val($(inputs[3]).val());
+        $("#stock_after").val($(inputs[4]).val());
         //onchange po itu...
         // $("#tax").val($(inputs[6]).val());
     }
@@ -340,7 +413,8 @@ function edit(edit_button){
 	function validate_Form() {
 		var return_value = true;
 		var str_error= "";
-		 if($("#select_1").val()=='' || $("#select_1").val()==0){
+
+		 if((!$('#select_1').val())  || $("#select_1").val()==0 || $("#select_1").val()=='Select Product'){
         str_error+="Please select a product.\n";
         return_value=false;
       }
@@ -358,7 +432,7 @@ function edit(edit_button){
 		if (validate_Form() == false){
 			return false;
 		}
-		console.log(current_row);
+		//console.log(current_row);
 		// console.log(validate_add_to_table());
 
 		if (validate_add_to_table() === false && current_row === ""){
@@ -386,12 +460,29 @@ function edit(edit_button){
         $("#unit_cost").val('');
         
     }
+	
+
+	function form_clear(){
+
+		$("#select_1").val('');
+        $("#quantity_received").val('');
+        $("#current_quantity").val('');
+        $("#stock_after").val('');
+        $("#unit_cost").val('');
+
+        // $("#product_id").val('');
+        // $("#quantity").val('');
+        // $("#selling_price").val('');
+        // $("#current_quantity").val('');
+        // $("#discount").val('');
+        // $("#tax").val('');
+        $("#select_1").val('Select Product');
+        $("#select_1").attr("disabled",false);
+        current_row="";
+
+	}
 		
 	
-		
-	
-</script>
-<script type="text/javascript">
 	function removeRow(del_button) {
 			// body...
 			 if(confirm('Remove this product?')){
@@ -409,7 +500,7 @@ function edit(edit_button){
         nums = parseInt($("#select_1 option:selected").data("cost")).toString();
         $("#current_quantity").val($("#select_1 option:selected").data("qty"));        
         $("#prod_name2").val($("#select_1 option:selected").html());
-        $("#unit_cost").val(addCommas(nums));   
+        $("#unit_cost").val(nums);   
         $("#stock_after").val("");
         
         compute();
@@ -449,16 +540,22 @@ function edit(edit_button){
     	if(reason==''){
     		return false;
     	}
+
+    	if(validate_Form()===false){
+    		return false;
+    	}
     	value=0;
+    	console.log(reason);
     	switch(reason){
-    		case '5':
-    			value=stock_onhand-received;
+    		case '5': case '4':
+    			value=parseInt(stock_onhand)-parseInt(received);
+    			
     		break;
-    		case '3':
-    			value=stock_onhand-received;
+    		case '1': case '2':
+    			value=parseInt(stock_onhand)+parseInt(received);
     			break;
     		case '3':
-    			value= stock_onhand;
+    			value=stock_onhand;
     			break;
     		default:
     			value=parseInt(stock_onhand)+parseInt(received);

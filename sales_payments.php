@@ -119,7 +119,7 @@
           <a href='sales.php' class='btn btn-default'><span class='glyphicon glyphicon-arrow-left'></span> Back to Sales List</a>
           <a href='frm_sales.php' class='btn btn-brand'> New Sales Order &nbsp;<span class='fa fa-plus'></span> </a>
           <?php
-            if($sale['sales_status_id']==2 || $sale['sales_status_id']==3 && AllowUser(array(1))){
+            if(($sale['sales_status_id']==2 || $sale['sales_status_id']==3) && AllowUser(array(1,2))){
           ?>
           <a href='sales_void.php?id=<?=$_GET['id']?>' class='btn btn-default' onclick='return confirm("Click confirm to void this order. This will also rollback any fulfillments and revert any stock movements.")'>Void</a>
           <?php
@@ -270,7 +270,7 @@
                                                 <!-- <th class='text-center'>Balance</th> -->
                                                 <th class='text-center'>Reference</th>
                                                 <?php
-                                                  if(AllowUser(array(1))):
+                                                  if(AllowUser(array(1,2))):
                                                 ?> 
                                                 <th class='text-center'>Action</th>
                                                 <?php
@@ -319,7 +319,7 @@
                                                             elseif($key=='sales_payment_id'):
                                                         ?>
                                                         <?php
-                                                          if(AllowUser(array(1))):
+                                                          if(AllowUser(array(1,2))):
                                                         ?>
                                                             <td class="text-center">
                                                             <!-- 

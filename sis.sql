@@ -224,11 +224,11 @@ CREATE TABLE `po_details` (
   `is_deleted` tinyint(1) DEFAULT '0',
   `is_void` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`po_detail_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
 
 /*Data for the table `po_details` */
 
-insert  into `po_details`(`po_detail_id`,`po_master_id`,`product_id`,`qty_ordered`,`unit_cost`,`total_cost`,`is_deleted`,`is_void`) values (1,0,2,'2','25000','50000',0,0),(2,0,1,'10','8000','80000',0,0),(3,0,1,'4','8000','32000',0,0),(4,0,2,'6','25000','150000',0,0),(5,1,1,'5','8000','40000',0,0),(6,1,2,'3','25000','75000',0,0),(7,2,3,'9','7500','67500',0,0),(8,3,1,'5','8000','40000',0,0),(9,3,2,'9','25000','225000',0,0);
+insert  into `po_details`(`po_detail_id`,`po_master_id`,`product_id`,`qty_ordered`,`unit_cost`,`total_cost`,`is_deleted`,`is_void`) values (1,0,2,'2','25000','50000',0,0),(2,0,1,'10','8000','80000',0,0),(3,0,1,'4','8000','32000',0,0),(4,0,2,'6','25000','150000',0,0),(5,1,1,'5','8000','40000',0,0),(6,1,2,'3','25000','75000',0,0),(7,2,3,'9','7500','67500',0,0),(8,3,1,'5','8000','40000',0,0),(9,3,2,'9','25000','225000',0,0),(10,4,4,'5','499','2495',0,0);
 
 /*Table structure for table `po_master` */
 
@@ -247,11 +247,11 @@ CREATE TABLE `po_master` (
   `ship_to` varchar(255) DEFAULT NULL,
   `is_void` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`po_master_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 /*Data for the table `po_master` */
 
-insert  into `po_master`(`po_master_id`,`po_number`,`purchased_date`,`supplier_id`,`po_status_id`,`payment_status_id`,`is_deleted`,`date_modified`,`total_amount`,`ship_to`,`is_void`) values (1,NULL,'20160608',1,2,2,0,20160608,'115000','eshfdj',0),(2,NULL,'20160608',2,1,1,0,20160608,'67500','l',0),(3,NULL,'20160608',2,3,2,0,20160608,'265000','pasig',0);
+insert  into `po_master`(`po_master_id`,`po_number`,`purchased_date`,`supplier_id`,`po_status_id`,`payment_status_id`,`is_deleted`,`date_modified`,`total_amount`,`ship_to`,`is_void`) values (1,NULL,'20160608',1,2,1,0,20160608,'115000','eshfdj',0),(2,NULL,'20160608',2,1,1,0,20160608,'67500','l',0),(3,NULL,'20160608',2,3,2,0,20160608,'265000','pasig',0),(4,NULL,'20160621',1,3,2,0,20160621,'2495','wsqatgsd',0);
 
 /*Table structure for table `po_payments` */
 
@@ -266,11 +266,11 @@ CREATE TABLE `po_payments` (
   `remarks` varchar(255) DEFAULT NULL,
   `is_deleted` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`po_payment_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 /*Data for the table `po_payments` */
 
-insert  into `po_payments`(`po_payment_id`,`po_master_id`,`amount`,`date_paid`,`is_void`,`remarks`,`is_deleted`) values (1,1,'115000','20160608',0,'qwaesrdfgh',0),(2,3,'165000','20160608',0,'partial',0),(3,3,'100000','20160608',0,'full',0);
+insert  into `po_payments`(`po_payment_id`,`po_master_id`,`amount`,`date_paid`,`is_void`,`remarks`,`is_deleted`) values (1,1,'115000','20160608',1,'qwaesrdfgh',0),(2,3,'165000','20160608',0,'partial',0),(3,3,'100000','20160608',0,'full',0),(4,4,'2495','20160621',0,'fghjkl',0);
 
 /*Table structure for table `po_received` */
 
@@ -286,11 +286,11 @@ CREATE TABLE `po_received` (
   `remarks` varchar(255) DEFAULT NULL,
   `is_deleted` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`po_received_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 /*Data for the table `po_received` */
 
-insert  into `po_received`(`po_received_id`,`po_master_id`,`date_received`,`qty_received`,`product_id`,`reference_number`,`remarks`,`is_deleted`) values (1,1,'20160608','5',1,'3245670','dhfdudf',0),(2,3,'20160608','5',1,'32456787','ok',0),(3,3,'20160608','4',2,'345678','ok',0),(4,3,'20160608','5',2,'23456','kulang',0);
+insert  into `po_received`(`po_received_id`,`po_master_id`,`date_received`,`qty_received`,`product_id`,`reference_number`,`remarks`,`is_deleted`) values (1,1,'20160608','5',1,'3245670','dhfdudf',0),(2,3,'20160608','5',1,'32456787','ok',0),(3,3,'20160608','4',2,'345678','ok',0),(4,3,'20160608','5',2,'23456','kulang',0),(5,4,'20160621','1',4,'w5w5','',0),(6,4,'20160621','4',4,'rtyghjk','hj',0);
 
 /*Table structure for table `po_status` */
 
@@ -331,7 +331,7 @@ CREATE TABLE `products` (
 
 /*Data for the table `products` */
 
-insert  into `products`(`product_id`,`product_code`,`category_id`,`product_name`,`selling_price`,`wholesale_price`,`barcode`,`current_quantity`,`minimum_quantity`,`maximum_quantity`,`is_deleted`,`measurement_id`,`stock_status_id`,`description`,`product_type`) values (1,'prod0001',1,'iphone 5s','10000','8000','00000010','9','10','50',0,2,1,'iphone 5s 16gb',NULL),(2,'prod0002',1,'iphone 6plus','30000','25000','00000020','209','10','50',0,2,1,'iphone 6plus 32 gb',NULL),(3,'prod0003',1,'samsung','15000','20000','00000030','300','10','20',0,2,1,'samsung s6',NULL),(4,'prod005',2,'Powerbank 1','1001','800','0000001005','117','20','150',1,1,1,'MI Powerbank 1',NULL),(5,'prod006',8,'Repair','1000','800','00012099','100','10','100',0,1,1,NULL,NULL);
+insert  into `products`(`product_id`,`product_code`,`category_id`,`product_name`,`selling_price`,`wholesale_price`,`barcode`,`current_quantity`,`minimum_quantity`,`maximum_quantity`,`is_deleted`,`measurement_id`,`stock_status_id`,`description`,`product_type`) values (1,'prod0001',1,'iphone 5s','10000','8000','00000010','22','10','50',0,2,1,'iphone 5s 16gb',NULL),(2,'prod0002',1,'iphone 6plus','30000','25000','00000020','216','10','50',0,2,1,'iphone 6plus 32 gb',NULL),(3,'prod0003',1,'samsung','15000','20000','00000030','304','10','20',0,2,1,'samsung s6',NULL),(4,'prod005',2,'Powerbank 1','1001','800','0000001005','126','20','150',1,1,1,'MI Powerbank 1',NULL),(5,'prod006',8,'Repair','1000','800','00012099','100','10','100',0,1,1,NULL,NULL);
 
 /*Table structure for table `sales_details` */
 
@@ -381,7 +381,7 @@ CREATE TABLE `sales_master` (
 
 /*Data for the table `sales_master` */
 
-insert  into `sales_master`(`sales_master_id`,`date_issue`,`shipment_id`,`tax_id`,`total_amount`,`total_minus_wtax`,`customer_id`,`user_id`,`sales_status_id`,`payment_status_id`,`bill_to`,`ship_to`,`is_deleted`,`description`,`date_modified`,`is_void`,`terms`) values (0000000001,'20160607',1,NULL,'37500',NULL,2,1,4,2,NULL,NULL,0,'test angono','20160607',0,NULL),(0000000002,'20160607',3,NULL,'24350',NULL,2,1,4,1,NULL,NULL,0,'','20160614',0,NULL),(0000000003,'20160608',1,NULL,'88753.75',NULL,3,1,3,2,NULL,NULL,0,'ang gondo aaaaayyyyyyyyyyyyyy!','20160609',1,NULL),(0000000005,'20160609',2,NULL,'170000',NULL,1,1,4,1,NULL,NULL,0,'','20160614',0,NULL),(0000000009,'20160609',4,NULL,'4004',NULL,3,1,4,1,NULL,NULL,0,'','20160614',0,NULL),(0000000010,'20160614',5,NULL,'435000',NULL,3,1,4,1,NULL,NULL,0,'qewq','20160614',0,NULL),(0000000011,'20160614',6,NULL,'250000',NULL,1,1,4,1,NULL,NULL,0,'fu','20160614',0,NULL),(0000000012,'20160614',NULL,NULL,'12012',NULL,2,1,1,1,NULL,NULL,0,'sfs','20160616',0,NULL),(0000000013,'20160621',NULL,NULL,'50000','47800',1,1,1,1,NULL,NULL,0,'test tax','20160621',0,NULL);
+insert  into `sales_master`(`sales_master_id`,`date_issue`,`shipment_id`,`tax_id`,`total_amount`,`total_minus_wtax`,`customer_id`,`user_id`,`sales_status_id`,`payment_status_id`,`bill_to`,`ship_to`,`is_deleted`,`description`,`date_modified`,`is_void`,`terms`) values (0000000001,'20160607',1,NULL,'10000',NULL,2,1,4,2,NULL,NULL,0,'test angono','20160607',0,NULL),(0000000002,'20160607',3,NULL,'58500',NULL,2,1,4,1,NULL,NULL,0,'','20160614',0,NULL),(0000000003,'20160608',1,NULL,'88753.75',NULL,3,1,3,2,NULL,NULL,0,'ang gondo aaaaayyyyyyyyyyyyyy!','20160609',1,NULL),(0000000005,'20160609',2,NULL,'170000',NULL,1,1,4,1,NULL,NULL,0,'','20160614',0,NULL),(0000000009,'20160609',4,NULL,'4004',NULL,3,1,4,1,NULL,NULL,0,'','20160614',0,NULL),(0000000010,'20160614',5,NULL,'435000',NULL,3,1,4,1,NULL,NULL,0,'qewq','20160614',0,NULL),(0000000011,'20160614',6,NULL,'250000',NULL,1,1,4,1,NULL,NULL,0,'fu','20160614',0,NULL),(0000000012,'20160614',NULL,NULL,'12012',NULL,2,1,2,1,NULL,NULL,0,'sfs','20160622',0,NULL),(0000000013,'20160621',NULL,NULL,'50000','47800',1,1,1,1,NULL,NULL,0,'test tax','20160621',0,NULL);
 
 /*Table structure for table `sales_payment_type` */
 
@@ -391,7 +391,7 @@ CREATE TABLE `sales_payment_type` (
   `payment_type_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`payment_type_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 /*Data for the table `sales_payment_type` */
 
@@ -471,11 +471,11 @@ CREATE TABLE `stock_adj_details` (
   `is_deleted` varchar(1) DEFAULT '0',
   `notes` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`stock_adjdetails_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
 
 /*Data for the table `stock_adj_details` */
 
-insert  into `stock_adj_details`(`stock_adjdetails_id`,`stock_adjmaster_id`,`product_id`,`quantity_received`,`is_deleted`,`notes`) values (0000000001,1,1,'3','0',NULL),(0000000002,1,1,'2','0',NULL);
+insert  into `stock_adj_details`(`stock_adjdetails_id`,`stock_adjmaster_id`,`product_id`,`quantity_received`,`is_deleted`,`notes`) values (0000000001,1,1,'3','0',NULL),(0000000002,1,1,'2','0',NULL),(0000000003,2,1,'5','0',NULL),(0000000004,2,3,'3','0',NULL),(0000000005,2,4,'7','0',NULL),(0000000006,3,4,'3','0',NULL),(0000000007,3,1,'10','0',NULL),(0000000008,3,3,'2','0',NULL),(0000000009,3,2,'7','0',NULL),(0000000010,4,4,'1','0',NULL),(0000000011,4,3,'2','0',NULL),(0000000012,4,1,'3','0',NULL);
 
 /*Table structure for table `stock_adj_master` */
 
@@ -490,12 +490,13 @@ CREATE TABLE `stock_adj_master` (
   `is_reverted` varchar(1) DEFAULT NULL,
   `reverted_from` bigint(20) DEFAULT NULL,
   `total_quantity_received` varchar(12) DEFAULT NULL,
+  `notes` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`stock_adjmaster_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 /*Data for the table `stock_adj_master` */
 
-insert  into `stock_adj_master`(`stock_adjmaster_id`,`adj_status_id`,`date_adjusted`,`is_deleted`,`total_cost`,`is_reverted`,`reverted_from`,`total_quantity_received`) values (0000000001,3,'20160523',0,'00015000000','0',0,'3');
+insert  into `stock_adj_master`(`stock_adjmaster_id`,`adj_status_id`,`date_adjusted`,`is_deleted`,`total_cost`,`is_reverted`,`reverted_from`,`total_quantity_received`,`notes`) values (0000000001,3,'20160523',0,'00015000000','0',0,'3','this is a test only'),(0000000002,1,'20160623',0,'15999','1',0,NULL,'test'),(0000000003,1,'20160623',0,'40999','0',0,NULL,'test 2'),(0000000004,1,'20160623',0,'39499',NULL,2,NULL,'Reverted from SA#0000000002');
 
 /*Table structure for table `stock_adjustments` */
 
@@ -587,14 +588,15 @@ insert  into `tax`(`tax_id`,`tax_name`,`percentage`) values (1,'VAT','12'),(2,'S
 DROP TABLE IF EXISTS `user_types`;
 
 CREATE TABLE `user_types` (
-  `user_type_id` bigint(20) NOT NULL,
+  `user_type_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
-  `is_deleted` tinyint(1) DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `is_deleted` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`user_type_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 /*Data for the table `user_types` */
 
-insert  into `user_types`(`user_type_id`,`name`,`is_deleted`) values (1,'Administrator',0),(2,'Inventory',0);
+insert  into `user_types`(`user_type_id`,`name`,`is_deleted`) values (1,'Administrator',0),(2,'Sales Admin',0),(3,'Sales Staff',0),(4,'Inventory Admin',0),(5,'Inventory Staff',0);
 
 /*Table structure for table `users` */
 
@@ -623,7 +625,7 @@ CREATE TABLE `users` (
 
 /*Data for the table `users` */
 
-insert  into `users`(`user_id`,`user_type_id`,`first_name`,`middle_name`,`last_name`,`username`,`password`,`email`,`contact_no`,`gender`,`last_login`,`is_deleted`,`is_login`,`last_activity`,`is_active`,`security_question`,`security_answer`) values (1,1,'Jenny','Bueno','Bercasio','admin','TNTz0EXkSq4dC+kr8w8+UF14gOTFdx6RSEJpaGwQ7v4=','a@a.com','0940124','Female','0000-00-00',0,1,'2016-06-21 14:41:22',1,'True love?','mom2'),(2,2,'Eom','O','Molina','eom2','TNTz0EXkSq4dC+kr8w8+UF14gOTFdx6RSEJpaGwQ7v4=','eom@gmail.com','09876543210',NULL,'0000-00-00',0,0,'2016-06-14 13:37:32',1,'short hair','percy gf');
+insert  into `users`(`user_id`,`user_type_id`,`first_name`,`middle_name`,`last_name`,`username`,`password`,`email`,`contact_no`,`gender`,`last_login`,`is_deleted`,`is_login`,`last_activity`,`is_active`,`security_question`,`security_answer`) values (1,1,'Jenny','Bueno','Bercasio','admin','TNTz0EXkSq4dC+kr8w8+UF14gOTFdx6RSEJpaGwQ7v4=','a@a.com','0940124','Female','0000-00-00',0,0,'2016-06-23 14:20:17',1,'True love?','mom2'),(2,4,'Eom','O','Molina','eom2','TNTz0EXkSq4dC+kr8w8+UF14gOTFdx6RSEJpaGwQ7v4=','eom@gmail.com','09876543210',NULL,'0000-00-00',0,0,'2016-06-22 17:06:26',1,'short hair','percy gf');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

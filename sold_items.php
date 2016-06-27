@@ -5,9 +5,9 @@
         die();
      }
 
-    if(!AllowUser(array(1))){
-         redirect("index.php");
-    }
+    // if(!AllowUser(array(1))){
+    //      redirect("index.php");
+    // }
     if(!empty($_GET['d_start'])){
         $_start=date_create($_GET['d_start']);
     }
@@ -29,7 +29,9 @@
     if(!empty($d_end)){
         $date_filter.=" AND purchase_date <= '".date_format($d_end,'Y-m-d')."'";
     }
-
+    if(!empty($_GET[''])){
+      
+    }
     $sold_items=$con->myQuery("SELECT 
     DISTINCT(p.product_name),
     SUM(quantity) AS quantity_sold, 

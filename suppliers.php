@@ -5,9 +5,9 @@
         die();
      }
 
-    if(!AllowUser(array(1))){
-         redirect("index.php");
-    }
+    // if(!AllowUser(array(1))){
+    //      redirect("index.php");
+    // }
     
     makeHead("Suppliers");
 ?>

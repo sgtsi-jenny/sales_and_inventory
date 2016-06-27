@@ -47,7 +47,7 @@
                             s.address AS supplier_address,
                             s.email AS supplier_email,
                             s.contact_number AS supplier_contact,
-                            pm.purchased_date,
+                            DATE_FORMAT(pm.purchased_date,'%m/%d/%Y') as purchased_date,
                             ps.name AS po_status
                         FROM po_master pm
                         INNER JOIN suppliers s
@@ -122,17 +122,21 @@
 ?>
 <div class="content-wrapper">
     <section class="content-header" align="right">
+    <h1 align="center" style="color:#24b798;">Purchase Order Details</h1>
         <a href='purchases.php' class='btn btn-default'><span class='glyphicon glyphicon-arrow-left'></span> Back to Puchase Order List</a>
         <?php
         // var_dump($po_details['QuantityReceived']);
         // die;
         if ($po_get_qty['qty_received'] > 0){
+            // var_dump(AllowUser(array(1,4)));
         }
         else
+            if (AllowUser(array(1,4))){
         {
         ?>
         <a href='purchase_void.php?id=<?php echo $_GET['id']; ?>' class='btn btn-default' onclick='return confirm("Are you do you want to void this Purchase Order?")'> Void </a>
         <?php
+    }
         }
         ?>
         

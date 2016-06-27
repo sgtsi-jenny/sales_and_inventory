@@ -6,10 +6,10 @@
         die();
      }
 
-    if(!AllowUser(array(1)))
-    {
-         redirect("index.php");
-    }
+    // if(!AllowUser(array(1)))
+    // {
+    //      redirect("index.php");
+    // }
     $data=$con->myQuery("SELECT
                           p.product_id,
                           p.product_code,

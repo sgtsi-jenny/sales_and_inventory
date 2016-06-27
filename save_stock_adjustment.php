@@ -11,9 +11,31 @@
 		$inputs=$_POST;
 		$errors="";
 		 	
-		// if (empty($inputs['']))
-		// {
-		// 	$errors.="No items in the list. <br/>";
+		if (empty($inputs['select_id']))
+		{
+			$errors.="No items in the list. <br/>";
+		}
+			
+		// if($errors!=""){
+			
+		// 	Alert($errors,"danger");
+		// 	if(empty($inputs['select_id[]']))
+		// 	{
+		// 		redirect("stock_adjustments.php");
+		// 		die;
+		// 	}else
+		// 	{
+		// 		redirect("stock_adjustments.php?id=".urlencode($inputs['stock_adj_master_id']));
+		// 		die;
+		// 	}
+		// }
+		// else{
+		// 	if(empty($inputs['stock_adj_master_id'])){
+		// 		#INSERT
+		// 	}
+		// 	else{
+		// 		#UPDATE
+		// 	}
 		// }
 		if($errors!="")
 		{
@@ -23,18 +45,18 @@
 				redirect("stock_adjustments.php");
 			}else
 			{
-				redirect("stock_adjustments.php?id=".urlencode($inputs['select_id[]']));
+				redirect("stock_adjustments.php?id=".urlencode($inputs['stock_adj_master_id']));
 			}
 			die;
 		}else
 		{
-			$resu=$inputs['stock_adjmaster_id'];
+			$resu=$inputs['stock_adj_master_id'];
 			//IF id exists update ELSE insert
 				
-			if(empty($inputs['stock_adjmaster_id']))
+			if(empty($inputs['stock_adj_master_id']))
 			{
 				//Insert				
-				unset($inputs['stock_adjmaster_id']);
+				unset($inputs['stock_adj_master_id']);
 				date_default_timezone_set('Asia/Manila');
 				$now = new DateTime();
 				$date_adjusted=date_format($now, 'Ymd');
@@ -87,7 +109,7 @@
 				
 				
 
-				$con->myQuery("INSERT INTO stock_adj_master (adj_status_id, date_adjusted,total_cost,is_reverted,reverted_from) VALUES ('$adj_status_id','$date_adjusted','$total_cost', '0', '0')");
+				$con->myQuery("INSERT INTO stock_adj_master (adj_status_id, date_adjusted,total_cost,is_reverted,reverted_from,notes) VALUES ('$adj_status_id','$date_adjusted','$total_cost', '0', '0','$notes')");
 
 				$file_id=$con->lastInsertId();
 				//var_dump($file_id);
@@ -126,7 +148,7 @@
 						
 
 						);
-						$con->myQuery("UPDATE products SET current_quantity = current_quantity + :quantity_received  WHERE product_id = :product_id ", $params)
+						$con->myQuery("UPDATE products SET current_quantity = current_quantity + :quantity_received  WHERE product_id = :product_id ", $params);
 						//select //
 					}
 
@@ -139,9 +161,9 @@
 						
 
 						);
-						$con->myQuery("UPDATE products SET current_quantity = current_quantity - :quantity_received  WHERE product_id = :product_id ", $params)
-						//select //
-					}
+						$con->myQuery("UPDATE products SET current_quantity = current_quantity - :quantity_received  WHERE product_id = :product_id ", $params);
+					}	//select //
+					
 				}elseif  ($adj_status_id = '3' ){
 					for ($i=0; $i < $arr_count; $i++) { 
 						$params=array(
@@ -150,7 +172,7 @@
 						'quantity_received' => $quantity_received[$i]
 						);
 						$con->myQuery("INSERT INTO badorders (product_id,product_id,quantity) 
-						VALUES (:product_id , :quantity_received) ", $params); )
+						VALUES (:product_id , :quantity_received) ", $params);
 						
 						//select //
 					}
@@ -159,21 +181,66 @@
 				//if reason
 				//for loop
 
-			
 				Alert("Save successful","success");
-				redirect("stock_adjustments.php?id=".$file_id);
+				redirect("stock_adjustments_main.php");
+				// redirect("stock_adjustments.php?id=".$file_id);
 			}
 			else{
-				
-				
+
+				$con->beginTransaction();
+
+				try {
+					echo "<pre>";
+					print_r($_POST);
+					echo "</pre>";
+
+					#REMOVE FROM stock_adj_details
+					// $con->myQuery("DELETE FROM stock_adj_details WHERE stock_adjmaster_id=?",array($inputs['stock_adj_master_id']))->fetchAll();
+					$total_cost=0;
+					foreach ($inputs['select_id'] as $key => $value) {
+						$total_cost+=$inputs['unit_cost'][$key]*$inputs['quantity_received'][$key];
+					}
+
+
+
+					$old=$con->myQuery("SELECT date_adjusted FROM stock_adj_master WHERE stock_adjmaster_id=?",array($inputs['stock_adj_master_id']))->fetch(PDO::FETCH_ASSOC);
+
+					$old['total_cost']=$total_cost;
+					$old['reverted_from']=$inputs['stock_adj_master_id'];
+					$old['notes']=$inputs['notes'];
+					$old['adj_status_id']=$inputs['adj_status_id'];
+
+
+					$con->myQuery("INSERT INTO stock_adj_master(adj_status_id,date_adjusted,total_cost,reverted_from,notes) VALUES(:adj_status_id,:date_adjusted,:total_cost,:reverted_from,:notes)",$old);
+
+					$new_stock_adj_master_id=$con->lastInsertId();
+
+					foreach ($inputs['select_id'] as $key => $value) {
+						$con->myQuery("INSERT INTO stock_adj_details(stock_adjmaster_id,product_id,quantity_received) VALUES(?,?,?)",array($new_stock_adj_master_id,$value,$inputs['quantity_received'][$key]));
+
+						$con->myQuery("UPDATE products set current_quantity=? WHERE product_id=?",array($inputs['stock_after'][$key],$inputs['select_id'][$key]));
+
+					}
+					
+					$con->myQuery("UPDATE stock_adj_master SET is_reverted=1 WHERE stock_adjmaster_id=?",array($inputs['stock_adj_master_id']));
+					// die;
+					$con->commit();
+				} catch (Exception $e) {
+					$con->rollBack();
+					Alert("Update Failed","danger");
+					redirect("stock_adjustments.php?id=".$inputs['stock_adj_master_id']);
+					die;
+				}
 				//dito update
 				// $con->myQuery("UPDATE suppliers SET name=:name,description=:description, contact_number=:contact_number,address=:address, email=:email WHERE supplier_id=:supplier_id",$inputs);
 				
-				// Alert("Update successful","success");
-				// redirect("stock_adjustments.php?id=".$inputs['stock_adjmaster_id']);
-				// }
+				Alert("Update successful","success");
+				redirect("stock_adjustments.php?id=".$new_stock_adj_master_id);
+				die;
+			}
 			
 			// redirect("sales.php");
+			
 				
 		}
 		die();

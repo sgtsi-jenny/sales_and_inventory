@@ -68,7 +68,7 @@
     <div class="content-wrapper">
         <section class="content-header">
               <h1>
-              <i class="fa fa-user" style="font-size:48px;text-shadow:2px 2px 4px #000000;"></i>
+              <i class="fa fa-cart-arrow-down" style="font-size:48px;text-shadow:2px 2px 4px #000000;"></i>
               &nbsp;&nbsp;Purchases
               </h1>
         </section>
@@ -103,8 +103,9 @@
                                       payment_status.payment_status_id
                                       FROM
                                       po_master
-                                      INNER JOIN payment_status ON po_master.payment_status_id = payment_status.payment_status_id WHERE po_master_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
+                                      INNER JOIN payment_status ON po_master.payment_status_id = payment_status.payment_status_id WHERE  po_master_id=?",array($_GET['id']))->fetch(PDO::FETCH_ASSOC);
                   $pstatus = $po_payments_status['payment_status_id'];
+                  // var_dump($pstatus);
                   if ($pstatus == "1"){
                 ?>
                 
@@ -117,13 +118,13 @@
                             <div class='form-group'>
                                 <label class='col-sm-12 col-md-3 control-label'> Remaining Balance </label>
                                 <div class='col-sm-12 col-md-6'>
-                                   <input name="remain_bal" type="text" class='form-control' value='<?php echo $remaining_bal['remaining_balance']; ?>' readonly>
+                                   <input name="remain_bal" type="text" class='form-control' value='<?php echo (number_format($remaining_bal['remaining_balance'],2)); ?>' readonly>
                                 </div>
                             </div>
                             <div class='form-group'>
                                 <label class='col-sm-12 col-md-3 control-label'> Amount *</label>
                                 <div class='col-sm-12 col-md-6'>
-                                   <input name="amount" type="text" class='form-control' placeholder="Enter Amount" >
+                                   <input name="amount" type="text" class='form-control' placeholder="Enter Amount" required>
                                 </div>
                             </div>
                             
@@ -145,12 +146,12 @@
                                         }                                         
                                     ?>
 
-                                        <input type='text' class='form-control date_picker' name='dp'   required>
+                                        <input type='text' class='form-control date_picker' name='dp' required>
 
                                 </div>
                             </div>
                            <div class='form-group'>
-                                <label class='col-sm-12 col-md-3 control-label'> Remarks *</label>
+                                <label class='col-sm-12 col-md-3 control-label'> Remarks</label>
                                 <div class='col-sm-12 col-md-6'>
                                    <input name="remarks" type="text" class='form-control' placeholder="Enter Remarks" >
                                 </div>
@@ -239,7 +240,7 @@
                                                 <th class='text-center'>Date Paid</th>
                                                 <th class='text-center'>Remarks</th>
                                                 <?php
-                                                if ($pstatus == "1")
+                                                if (AllowUser(array(1,4)))
                                                 {
                                                 ?>
                                                 <th class='text-center' style='min-width:40px'>Action</th>
@@ -259,11 +260,12 @@
                                                     <td><?php echo htmlspecialchars($row['remarks']) ?></td>
                                                     
                                                     <?php
-                                                    if ($pstatus == "1")
+                                                    // var_dump($pstatus == "1");
+                                                    if (AllowUser(array(1,4)))
                                                     {
                                                     ?>
                                                     <td align="center">
-                                                        <a href='po_void_payment.php?id=<?php echo $_GET['id']; ?>&pay_id=<?php echo $row['po_payment_id'] ?>' class='btn btn-default' onclick='return confirm("Are you do you want to void this PO Payment?")'> Void </a>
+                                                        <a class='btn btn-sm btn-danger' href='po_void_payment.php?id=<?php echo $_GET['id']; ?>&pay_id=<?php echo $row['po_payment_id'] ?>' class='btn btn-default' onclick='return confirm("Are you do you want to void this PO Payment?")'> Void </a>
 
                                                        
                                                     </td>
