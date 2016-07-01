@@ -23,6 +23,15 @@
 	require_once("template/header.php");
 	require_once("template/sidebar.php");
 ?>
+<script type="application/javascript">
+  function isNumberKey(evt)
+      {
+         var charCode = (evt.which) ? evt.which : event.keyCode
+         if (charCode > 31 && (charCode < 48 || charCode > 57))
+            return false;
+         return true;
+      }
+</script>
  	<div class="content-wrapper">
         <section class="content-header">
             <h1 align="center" style="color:#24b798;">Tax Maintenance</h1>
@@ -42,7 +51,7 @@
                             <div class='form-group'>
                                 <label class='col-sm-12 col-md-3 control-label'> Percentage* </label>
                                 <div class='col-sm-12 col-md-9'>
-                                    <input type="text" class="form-control" name="percentage" placeholder="Percentage" value="<?php echo !empty($tax)?$tax["percentage"]:"" ?>" required>
+                                    <input type="text" class="form-control" name="percentage" placeholder="Percentage" value="<?php echo !empty($tax)?$tax["percentage"]:"" ?>"  onkeypress='return isNumberKey(event)' required>
                                 </div>
                             </div>
                             <div class='form-group'>

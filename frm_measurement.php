@@ -51,7 +51,7 @@
                             
                             <div class='form-group'>
                                 <div class='col-sm-12 col-md-9 col-md-offset-3 '>
-                                     <button type='submit' class='btn btn-flat btn-success'> <span class='fa fa-check'></span> Save</button>
+                                     <button type='submit' class='btn btn-brand'> <span class='fa fa-check'></span> Save</button>
                                     <a href='measurements.php' class='btn btn-default'>Cancel</a>
                                    
                                 </div>

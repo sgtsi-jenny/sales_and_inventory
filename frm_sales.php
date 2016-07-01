@@ -71,7 +71,7 @@
   function isNumberKey(evt)
       {
          var charCode = (evt.which) ? evt.which : event.keyCode
-         if (charCode > 31 && (charCode < 48 || charCode > 57))
+         if (charCode > 31 && (charCode < 46 || charCode > 57))
             return false;
          return true;
       }
@@ -250,7 +250,7 @@
                                         <label class='control-label'> Quantity:* </label>
                                     </div>
                                     <div class = "col-md-8">
-                                        <input type="text" class="form-control" id="quantity" placeholder="0" name='quantity' value='<?php echo !empty($data)?htmlspecialchars($data['stock_adjmaster_id']):''; ?>' >
+                                        <input type="text" class="form-control" id="quantity" placeholder="0" name='quantity' value='<?php echo !empty($data)?htmlspecialchars($data['stock_adjmaster_id']):''; ?>' onkeypress='return isNumberKey(event)' >
                                     </div>
                                 </div>
                            </div>
@@ -280,7 +280,7 @@
                                         <label class='control-label'> Discount(%): </label>
                                     </div>
                                     <div class = "col-md-8">
-                                        <input type="text" class="form-control" id="discount" placeholder="0" name='discount' value='<?php echo !empty($data)?htmlspecialchars($data['stock_adjmaster_id']):''; ?>' >
+                                        <input type="text" class="form-control" id="discount" placeholder="0" name='discount' value='<?php echo !empty($data)?htmlspecialchars($data['stock_adjmaster_id']):''; ?>' onkeypress='return isNumberKey(event)'>
                                     </div>
                                 </div>
                            </div>
@@ -432,6 +432,12 @@ var current_row="";
         str_error+="Invalid price.\n";
         return_value=false;
       }
+
+       if($("#selling_price").val()>100){
+        str_error+="Invalid discount. Must not exceed in 100%\n";
+        return_value=false;
+      }
+
       if(str_error!==""){
         alert("You have the following error: \n"+str_error);
       }

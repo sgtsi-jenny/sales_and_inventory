@@ -32,6 +32,15 @@
     require_once("template/header.php");
     require_once("template/sidebar.php");
 ?>
+<script type="application/javascript">
+  function isNumberKey(evt)
+      {
+         var charCode = (evt.which) ? evt.which : event.keyCode
+         if (charCode > 31 && (charCode < 46 || charCode > 57))
+            return false;
+         return true;
+      }
+</script>
 
 <div class="content-wrapper">
 	<section class="content-header">
@@ -144,7 +153,7 @@
 														<label class='control-label'> Unit Cost: </label>
 													</div>
 													<div class = "col-md-8">
-														<input type="text" class="form-control " id="unit_cost" placeholder="Unit Cost" name='unit_cost' value='<?php echo !empty($data)?htmlspecialchars($row['unit_cost']):''; ?>' required>
+														<input type="text" class="form-control " id="unit_cost" placeholder="Unit Cost" name='unit_cost' value='<?php echo !empty($data)?htmlspecialchars($row['unit_cost']):''; ?>'  onkeypress='return isNumberKey(event)' required>
 													</div>
 												</div>
 											</div>
@@ -154,7 +163,7 @@
 							                			<label class='control-label'> Quantity to Purchase: * </label>
 							                		</div>
 							                		<div class = "col-md-8">
-							                			<input type="text" class="form-control" id="qty" placeholder="Quantity to Purchase" name='qty' value='<?php //echo !empty($data)?htmlspecialchars($data['stock_adjmaster_id']):''; ?>' required>
+							                			<input type="text" class="form-control" id="qty" placeholder="Quantity to Purchase" name='qty' value='<?php //echo !empty($data)?htmlspecialchars($data['stock_adjmaster_id']):''; ?>'  onkeypress='return isNumberKey(event)' required>
 							                		</div>
 							                	</div>
                            					</div>

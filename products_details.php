@@ -13,6 +13,15 @@
 <?php
   Alert();
 ?>
+<script type="application/javascript">
+  function isNumberKey(evt)
+      {
+         var charCode = (evt.which) ? evt.which : event.keyCode
+         if (charCode > 31 && (charCode < 46 || charCode > 57))
+            return false;
+         return true;
+      }
+</script>
 <form class='form-horizontal' name="frm_prod" action='save_product_details.php' method="POST" onsubmit="return validate(this)" enctype="multipart/form-data">
     <input type='hidden' name='id' value='<?php echo !empty($data)?$data['product_id']:''; ?>'>
 
@@ -49,7 +58,7 @@
             </select>
           </div>
           <div class='col-ms-1'>
-            <a href='frm_categories.php' class='btn btn-flat btn-sm btn-success'><span class='fa fa-plus'></span></a>
+            <a href='frm_categories.php' class='btn btn-sm btn-brand'><span class='fa fa-plus'></span></a>
           </div>
         </div>
       </div>
@@ -74,21 +83,21 @@
     <div class="form-group">
       <label for="selling_price" class="col-md-3 control-label">Selling Price * </label>
       <div class="col-md-7">
-        <input type="text" class="form-control" id="selling_price"  name='selling_price' placeholder="0000.00" value='<?php echo !empty($data)?htmlspecialchars($data['selling_price']):''; ?>' required>
+        <input type="text" class="form-control" id="selling_price"  name='selling_price' placeholder="0000.00" value='<?php echo !empty($data)?htmlspecialchars($data['selling_price']):''; ?>' onkeypress='return isNumberKey(event)'  required>
       </div>
     </div>
 
     <div class="form-group">
       <label for="wholesale_price" class="col-md-3 control-label">Wholesale Price * </label>
       <div class="col-md-7">
-        <input type="text" class="form-control" id="wholesale_price"  name='wholesale_price' placeholder="0000.00" value='<?php echo !empty($data)?htmlspecialchars($data['wholesale_price']):''; ?>' required>
+        <input type="text" class="form-control" id="wholesale_price"  name='wholesale_price' placeholder="0000.00" value='<?php echo !empty($data)?htmlspecialchars($data['wholesale_price']):''; ?>' onkeypress='return isNumberKey(event)' required>
       </div>
     </div>
 
     <div class="form-group">
       <label for="current_quantity" class="col-md-3 control-label">Current Quantity *</label>
       <div class="col-md-7">
-        <input type="text" class="form-control" id="current_quantity"  name='current_quantity' placeholder="0" value='<?php echo !empty($data)?htmlspecialchars($data['current_quantity']):''; ?>' required <?php echo $cur_qty;?>>
+        <input type="text" class="form-control" id="current_quantity"  name='current_quantity' placeholder="0" value='<?php echo !empty($data)?htmlspecialchars($data['current_quantity']):''; ?>' onkeypress='return isNumberKey(event)' required <?php echo $cur_qty;?>>
       </div>
     </div>
 
@@ -104,7 +113,7 @@
             </select>
           </div>
           <div class='col-ms-1'>
-            <a href='frm_measurement.php' class='btn btn-flat btn-sm btn-success'><span class='fa fa-plus'></span></a>
+            <a href='frm_measurement.php' class='btn btn-sm btn-brand'><span class='fa fa-plus'></span></a>
           </div>
         </div>
       </div>
@@ -113,14 +122,14 @@
     <div class="form-group">
       <label for="min_quantity" class="col-md-3 control-label">Minimum Quantity *</label>
       <div class="col-md-7">
-        <input type="text" class="form-control" id="min_quantity"  name='min_quantity' placeholder="0" value='<?php echo !empty($data)?htmlspecialchars($data['minimum_quantity']):''; ?>' required>
+        <input type="text" class="form-control" id="min_quantity"  name='min_quantity' placeholder="0" value='<?php echo !empty($data)?htmlspecialchars($data['minimum_quantity']):''; ?>' onkeypress='return isNumberKey(event)' required>
       </div>
     </div>
 
     <div class="form-group">
       <label for="max_quantity" class="col-md-3 control-label">Maximum Quantity *</label>
       <div class="col-md-7">
-        <input type="text" class="form-control" id="max_quantity"  name='max_quantity' placeholder="0" value='<?php echo !empty($data)?htmlspecialchars($data['maximum_quantity']):''; ?>' required>
+        <input type="text" class="form-control" id="max_quantity"  name='max_quantity' placeholder="0" value='<?php echo !empty($data)?htmlspecialchars($data['maximum_quantity']):''; ?>' onkeypress='return isNumberKey(event)' required>
       </div>
     </div>
 

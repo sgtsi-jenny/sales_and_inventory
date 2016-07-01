@@ -625,7 +625,7 @@ CREATE TABLE `users` (
 
 /*Data for the table `users` */
 
-insert  into `users`(`user_id`,`user_type_id`,`first_name`,`middle_name`,`last_name`,`username`,`password`,`email`,`contact_no`,`gender`,`last_login`,`is_deleted`,`is_login`,`last_activity`,`is_active`,`security_question`,`security_answer`) values (1,1,'Jenny','Bueno','Bercasio','admin','TNTz0EXkSq4dC+kr8w8+UF14gOTFdx6RSEJpaGwQ7v4=','a@a.com','0940124','Female','0000-00-00',0,0,'2016-06-23 14:20:17',1,'True love?','mom2'),(2,4,'Eom','O','Molina','eom2','TNTz0EXkSq4dC+kr8w8+UF14gOTFdx6RSEJpaGwQ7v4=','eom@gmail.com','09876543210',NULL,'0000-00-00',0,0,'2016-06-22 17:06:26',1,'short hair','percy gf');
+insert  into `users`(`user_id`,`user_type_id`,`first_name`,`middle_name`,`last_name`,`username`,`password`,`email`,`contact_no`,`gender`,`last_login`,`is_deleted`,`is_login`,`last_activity`,`is_active`,`security_question`,`security_answer`) values (1,1,'Jenny','Bueno','Bercasio','admin','TNTz0EXkSq4dC+kr8w8+UF14gOTFdx6RSEJpaGwQ7v4=','a@a.com','0940124','Female','0000-00-00',0,0,'2016-06-23 14:20:17',1,'True love?','mom2'),(2,1,'Eom','O','Molina','eom2','TNTz0EXkSq4dC+kr8w8+UF14gOTFdx6RSEJpaGwQ7v4=','eom@gmail.com','09876543210',NULL,'0000-00-00',0,0,'2016-06-22 17:06:26',1,'short hair','percy gf');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

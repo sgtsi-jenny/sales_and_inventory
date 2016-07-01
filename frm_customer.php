@@ -24,7 +24,15 @@
     }
 	makeHead("Customer");
 ?>
-
+<script type="application/javascript">
+  function isNumberKey(evt)
+      {
+         var charCode = (evt.which) ? evt.which : event.keyCode
+         if (charCode > 31 && (charCode < 48 || charCode > 57))
+            return false;
+         return true;
+      }
+</script>
                     
 <form class='form-horizontal' method='POST' action='save_customer.php' >
 <input type='hidden' name='id' value='<?php echo !empty($data)?$data['customer_id']:""?>'>
@@ -37,7 +45,7 @@
 <div class='form-group'>
     <label class='col-sm-12 col-md-3 control-label'> TIN*</label>
     <div class='col-sm-12 col-md-7'>
-       <input name="tin" type="text" class='form-control' placeholder="Enter TIN" value='<?php echo !empty($data)?htmlspecialchars($data['tin']):''; ?>' required>
+       <input name="tin" type="text" class='form-control' placeholder="Enter TIN" value='<?php echo !empty($data)?htmlspecialchars($data['tin']):''; ?>'  onkeypress='return isNumberKey(event)' required>
     </div>
 </div>
 <div class='form-group'>

@@ -617,7 +617,7 @@
                                          
                                                                                
                                     ?>
-                                <input type='text' class='form-control date_picker' name='date_shipped'  value='<?php echo !empty($shipment)?htmlspecialchars($shipment['date_shipped']):''; ?>' required>
+                                <input type='date' class='form-control' name='date_shipped'  value='<?php echo !empty($shipment)?htmlspecialchars($shipment['date_shipped']):''; ?>' required>
                             </div>
 
                             <div class="form-group">
