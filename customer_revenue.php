@@ -6,33 +6,52 @@
     die();
   }
 
-  if(!AllowUser(array(1)))
-  {
-    redirect("index.php");
-  }
+  // if(!AllowUser(array(1)))
+  // {
+  //   redirect("index.php");
+  // }
 
   $customer=$con->myQuery("SELECT customer_id,customer_name FROM customers WHERE is_deleted=0")->fetchAll(PDO::FETCH_ASSOC);
 
-  if(!empty($_GET['date_from']) && !empty($_GET['date_to']))
-  {
-    $inputs['date_from']=$_GET['date_from'];
-    $inputs['date_to']=$_GET['date_to'];
 
-    $query="SELECT * FROM sales_master";
+    $query="SELECT 
+            DISTINCT(p.product_name),
+            SUM(quantity) AS quantity_sold, 
+            p.selling_price,
+            SUM(sd.discount) AS discount,
+            SUM(sd.total_cost) AS total_cost
+            FROM products p 
+            INNER JOIN sales_details sd ON sd.product_id=p.product_id
+            INNER JOIN sales_master sm ON sm.sales_master_id=sd.sales_master_id
+            INNER JOIN customers ON sm.customer_id=customers.customer_id WHERE sm.date_issue BETWEEN :date_from AND :date_to 
+            ";
     #only admin, salesadmin, and inventoryadmin
     if(AllowUser(array(1,2)))
     {
       if(!empty($_GET['customer_id']) && $_GET['customer_id']!='NULL' )
       {
-        $query.=" AND customer_id=:customer_id";
+        $query.=" AND sm.customer_id=:customer_id";
         $inputs['customer_id']=$_GET['customer_id'];
       }
     }
     else{
-        $query.=" AND customer_id=:customer_id";
+        $query.=" AND sm.customer_id=:customer_id";
     }
-    $data=$con->myQuery($query,$inputs)->fetchAll(PDO::FETCH_ASSOC);   
-  }
+    //var_dump($data=$con->myQuery($query,$inputs));
+    //die();
+    if(!empty($_GET['date_from']) && !empty($_GET['date_to']))
+    {
+      $date = date_create($_GET['date_from']);
+      $inputs['date_from']= date_format($date, 'Ymd');
+
+      $date1 = date_create($_GET['date_to']);
+      $inputs['date_to']= date_format($date1, 'Ymd');
+      
+      $data=$con->myQuery($query,$inputs)->fetchAll(PDO::FETCH_ASSOC);  
+      // var_dump($inputs['date_from']);
+      // die;
+    }
+
 
 
 
@@ -47,7 +66,7 @@
 <div class="content-wrapper">
   <section class="content-header">
     <h1 align="center" style="color:#24b798;">
-      Customer Revenue Report
+      Customer Revenue Reports
     </h1>
   </section>
 
@@ -69,7 +88,7 @@
                         <div class="col-sm-7">
                           <select class='form-control select2' name='customer_id' data-placeholder="All Employees" <?php echo !(empty($_GET))?"data-selected='".$_GET['customer_id']."'":NULL ?> style='width:100%'>
                             <?php
-                              echo makeOptions($customer,"All Employees");
+                              echo makeOptions($customer,"All Customer");
                             ?>
                           </select>
                         </div>
@@ -122,57 +141,46 @@
                 </thead>
                 <tbody>
                 <?php
-                $sold_items=$con->myQuery("SELECT 
-                DISTINCT(p.product_name),
-                SUM(quantity) AS quantity_sold, 
-                p.selling_price,
-                SUM(sd.discount) AS discount,
-                SUM(sd.total_cost) AS total_cost
-                FROM products p 
-                INNER JOIN sales_details sd ON sd.product_id=p.product_id
-                INNER JOIN sales_master sm ON sm.sales_master_id=sd.sales_master_id
-                INNER JOIN customers ON sm.customer_id=customers.customer_id
-                GROUP BY sd.product_id")->fetchAll(PDO::FETCH_ASSOC);
-                foreach ($sold_items as $row):
-                $action_buttons="";
+                  foreach ($data as $row):
+                  $action_buttons="";
                 ?>
 
                 <tr>
                 <?php
-                foreach ($row as $key => $value):
+                  foreach ($row as $key => $value):
                 ?>
                 <?php
-                if($key=='selling_price'):
+                  if($key=='selling_price'):
                 ?>
                 <?php
-                elseif($key=='quantity_sold'):
+                  elseif($key=='quantity_sold'):
                 ?>
                 <td class='text-center'><?php echo htmlspecialchars($row['quantity_sold']) ?></td> 
                 <td class='text-right'><?php echo htmlspecialchars(number_format($row['selling_price'],2)) ?></td>
                 <?php
-                elseif($key=='total_cost'):
+                  elseif($key=='total_cost'):
                 ?>
                 <td class='text-right'><?php echo htmlspecialchars(number_format($row['total_cost'],2)) ?></td>
                 <?php
-                elseif($key=='discount'):
+                  elseif($key=='discount'):
                 ?>
-                <td class='text-center'><?php echo htmlspecialchars($row['discount']) ?>%</td>
+                <td class='text-center'><?php echo htmlspecialchars($row['discount']); ?>%</td>
 
                 <?php
-                else:
+                  else:
                 ?>
                 <td>
                 <?php
-                echo htmlspecialchars($value);
+                  echo htmlspecialchars($value);
                 ?>
                 </td>
                 <?php
-                endif;
-                endforeach;
+                  endif;
+                  endforeach;
                 ?>
                 </tr>
                 <?php
-                endforeach;
+                    endforeach;
                 ?>
                 </tbody>
               </table>
@@ -207,14 +215,17 @@
       });
 </script>
 <script type="text/javascript">
-    function validatePost(post_form){
+    function validatePost(post_form)
+    {
         console.log();
         var str_error="";
         $.each($(post_form).serializeArray(),function(index,field){
             console.log(field);
-            if(field.value==""){
+            if(field.value=="")
+            {
             
-                switch(field.name){
+                switch(field.name)
+                {
                     case "name":
                         str_error+="Incorrect entry in the field. \n";
                         break;
@@ -226,12 +237,13 @@
             }
 
         });
-        if(str_error!=""){
+        if(str_error!="")
+        {
             alert("You have the following errors: \n" + str_error );
             return false;
-        }
-        else{
-            return true
+        }else
+        {
+            return true;
         }
     }
     
