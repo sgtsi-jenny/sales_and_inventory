@@ -17,32 +17,18 @@
 		$inputs=$_POST;
 		$inputs=array_map("trim", $inputs);
 		$errors="";
+		$cname=$inputs['custName'];
+		$results=$con->myQuery("select customer_name from customers where customer_name='$cname'")->fetch(PDO::FETCH_ASSOC);
+		if($cname==$results['customer_name']){
+			$errors.="Customer Name already exists. <br/>";
+		}
+		// var_dump($cname);
+		// die;
 		if (empty($inputs['custName'])){
 			$errors.="Enter Customer Name. <br/>";
 		}
-		if (empty($inputs['tin'])){
-			$errors.="Enter TIN. <br/>";
-		}
-		if (empty($inputs['description'])){
-			$errors.="Enter Description. <br/>";
-		}
-		if (empty($inputs['fax'])){
-			$errors.="Enter Fax. <br/>";
-		}
-		if (empty($inputs['telephoneNumber'])){
-			$errors.="Enter Telephone Number. <br/>";
-		}
-		if (empty($inputs['mobileNumber'])){
-			$errors.="Enter Mobile Number. <br/>";
-		}
-		if (empty($inputs['dob'])){
-			$errors.="Enter Birth Date. <br/>";
-		}
-		if (empty($inputs['website'])){
-			$errors.="Enter Website. <br/>";
-		}
-		if (empty($inputs['email'])){
-			$errors.="Enter Email Address. <br/>";
+		if(!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+     		$errors.="Enter a valid email address. <br/>";
 		}
 
 		if($errors!=""){
@@ -50,12 +36,12 @@
 			// $_SESSION[WEBAPP]['frm_inputs']['asset_model_id']=$inputs['model_id'];
 			// unset($_SESSION[WEBAPP]['frm_inputs']['model_id']);
 
-			Alert("You have the following errors: <br/>".$errors,"danger");
+			Alert("Please try again, you have the following errors: <br/>".$errors,"danger");
 			if(empty($inputs['customer_id'])){
-				redirect("frm_customer.php");
+				redirect("frm_customers.php");
 			}
 			else{
-				redirect("frm_customer.php?id=".urlencode($inputs['customer_id']));
+				redirect("frm_customers.php?id=".urlencode($inputs['customer_id']));
 			}
 			die;
 		}

@@ -17,13 +17,14 @@
 		/**if (empty($inputs['categoryid'])){
 			$errors.="Enter Category ID. <br/>";
 		}**/
+		$cname=$inputs['custName'];
+		$results=$con->myQuery("select name from categories where name='$cname'")->fetch(PDO::FETCH_ASSOC);
+		if($cname==$results['catname']){
+			$errors.="Category Name already exists. <br/>";
+		}
 		if (empty($inputs['catname'])){
 			$errors.="Enter Category Name. <br/>";
 		}
-
-		
-// var_dump($inputs);
-// die;
 
 		if($errors!=""){
 			$_SESSION[WEBAPP]['frm_inputs']=$inputs;

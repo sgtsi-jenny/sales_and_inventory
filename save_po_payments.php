@@ -23,9 +23,6 @@
 		if (empty($inputs['dp'])){
 			$errors.="Enter Date Paid. <br/>";
 		}
-		if (empty($inputs['remarks'])){
-			$errors.="Enter Remarks. <br/>";
-		}
 
        // $required_fieds=array(
 		//	"c_id"=>"Select Contact Name. <br/>"

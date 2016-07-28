@@ -16,14 +16,15 @@
 
     $query="SELECT 
             DISTINCT(p.product_name),
-            SUM(quantity) AS quantity_sold, 
+            (SELECT SUM(sd.quantity) FROM sales_details sd WHERE sd.product_id=p.product_id) AS quantity_sold,
             p.selling_price,
-            SUM(sd.discount) AS discount,
-            SUM(sd.total_cost) AS total_cost
-            FROM products p 
+            (SELECT SUM(sd.discount) FROM sales_details sd WHERE sd.product_id=p.product_id) AS discount,
+            (SELECT SUM(sd.total_cost) FROM sales_details sd WHERE sd.product_id=p.product_id) AS total_cost
+            FROM products p
             INNER JOIN sales_details sd ON sd.product_id=p.product_id
             INNER JOIN sales_master sm ON sm.sales_master_id=sd.sales_master_id
-            INNER JOIN customers ON sm.customer_id=customers.customer_id WHERE sm.date_issue BETWEEN :date_from AND :date_to 
+            INNER JOIN customers ON sm.customer_id=customers.customer_id
+            WHERE sm.customer_id=:customer_id AND sm.date_issue BETWEEN :date_from AND :date_to 
             ";
     #only admin, salesadmin, and inventoryadmin
     if(AllowUser(array(1,2)))
@@ -41,6 +42,7 @@
     //die();
     if(!empty($_GET['date_from']) && !empty($_GET['date_to']))
     {
+      $inputs['customer_id']=$_GET['customer_id'];
       $date = date_create($_GET['date_from']);
       $inputs['date_from']= date_format($date, 'Ymd');
 
@@ -99,18 +101,48 @@
                       <div class='form-group'>
                         <label for="date_start" class="col-sm-3 control-label">Start Date *</label>
                           <div class="col-sm-7">
-                            <input type="date" class="form-control" id="date_from"  name='date_from' value='<?php echo !empty($_GET)?htmlspecialchars($_GET['date_from']):''; ?>' required>
+                            <!-- <input type="date" class="form-control" id="date_from"  name='date_from' value='<?php echo !empty($_GET)?htmlspecialchars($_GET['date_from']):''; ?>' required> -->
+                                    <?php
+                                        $ds="";
+                                         if(!empty($account)){
+                                            $ds=$account['ds'];
+                                            if($ds=="00000000"){
+                                                $ds="";
+                                            }
+                                             else
+                                            {
+                                                $ds=inputmask_format_date($ds);
+                                                //echo $dob;
+                                            }
+                                        }                                         
+                                    ?>
+                                    <input type='text' class='form-control date_picker' name='date_from' required>
                           </div>
                       </div>
                       <div class='form-group'>
                         <label for="date_end" class="col-sm-3 control-label">End Date *</label>
                           <div class="col-sm-7">
-                            <input type="date" class="form-control" id="date_to"  name='date_to' value='<?php echo !empty($_GET)?htmlspecialchars($_GET['date_to']):''; ?>' required>
+                            <!-- <input type="date" class="form-control" id="date_to"  name='date_to' value='<?php echo !empty($_GET)?htmlspecialchars($_GET['date_to']):''; ?>' required> -->
+                                    <?php
+                                        $de="";
+                                         if(!empty($account)){
+                                            $de=$account['de'];
+                                            if($de=="00000000"){
+                                                $ddes="";
+                                            }
+                                             else
+                                            {
+                                                $de=inputmask_format_date($de);
+                                                //echo $dob;
+                                            }
+                                        }                                         
+                                    ?>
+                                    <input type='text' class='form-control date_picker' name='date_to' required>
                           </div>
                       </div>
                       <div class="form-group">
                         <div class="col-sm-7 col-md-offset-3 text-center">
-                          <button type='submit' class='btn btn-success'>Filter </button>
+                          <button type='submit' class='btn btn-brand'>Filter </button>
                           <a href='customer_revenue.php' class='btn btn-default'>Cancel</a>
                         </div>
                       </div>

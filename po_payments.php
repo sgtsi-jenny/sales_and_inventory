@@ -65,6 +65,15 @@
     require_once("template/header.php");
     require_once("template/sidebar.php");
 ?>
+<script type="application/javascript">
+  function isNumberKey(evt)
+      {
+         var charCode = (evt.which) ? evt.which : event.keyCode
+         if (charCode > 31 && (charCode < 46 || charCode > 57))
+            return false;
+         return true;
+      }
+</script>
     <div class="content-wrapper">
         <section class="content-header">
               <h1>
@@ -124,7 +133,7 @@
                             <div class='form-group'>
                                 <label class='col-sm-12 col-md-3 control-label'> Amount *</label>
                                 <div class='col-sm-12 col-md-6'>
-                                   <input name="amount" type="text" class='form-control' placeholder="Enter Amount" required>
+                                   <input name="amount" type="text" class='form-control' placeholder="Enter Amount" onkeypress='return isNumberKey(event)' required>
                                 </div>
                             </div>
                             

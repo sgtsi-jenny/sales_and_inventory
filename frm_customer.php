@@ -22,18 +22,30 @@
         }
         $disable2="";
     }
+    // if(!empty($_SESSION[WEBAPP]['frm_inputs'])){
+    //     if(!empty($data)){
+    //         $old_data=$data;
+    //     }
+    //     $data=$_SESSION[WEBAPP]['frm_inputs'];
+    //     if(!empty($old_data)){
+    //         $data['customer_id']=$old_sup['customer_id'];
+    //     }
+    // }
+
 	makeHead("Customer");
 ?>
 <script type="application/javascript">
   function isNumberKey(evt)
       {
          var charCode = (evt.which) ? evt.which : event.keyCode
-         if (charCode > 31 && (charCode < 48 || charCode > 57))
+         if (charCode > 31 && (charCode < 45 || charCode > 57))
             return false;
          return true;
       }
 </script>
-                    
+<?php
+    Alert();
+?>              
 <form class='form-horizontal' method='POST' action='save_customer.php' >
 <input type='hidden' name='id' value='<?php echo !empty($data)?$data['customer_id']:""?>'>
 <div class='form-group'>
@@ -43,33 +55,33 @@
     </div>
 </div>
 <div class='form-group'>
-    <label class='col-sm-12 col-md-3 control-label'> TIN*</label>
+    <label class='col-sm-12 col-md-3 control-label'> TIN</label>
     <div class='col-sm-12 col-md-7'>
-       <input name="tin" type="text" class='form-control' placeholder="Enter TIN" value='<?php echo !empty($data)?htmlspecialchars($data['tin']):''; ?>'  onkeypress='return isNumberKey(event)' required>
+       <input name="tin" type="text" class='form-control' placeholder="Enter TIN" value='<?php echo !empty($data)?htmlspecialchars($data['tin']):''; ?>'  onkeypress='return isNumberKey(event)'>
     </div>
 </div>
 <div class='form-group'>
-    <label class='col-sm-12 col-md-3 control-label'> Description*</label>
+    <label class='col-sm-12 col-md-3 control-label'> Description</label>
     <div class='col-sm-12 col-md-7'>
-       <input name="description" type="text" class='form-control' placeholder="Enter Description" value='<?php echo !empty($data)?htmlspecialchars($data['description']):''; ?>' required>
+       <input name="description" type="text" class='form-control' placeholder="Enter Description" value='<?php echo !empty($data)?htmlspecialchars($data['description']):''; ?>' >
     </div>
 </div>
 <div class='form-group'>
-    <label class='col-sm-12 col-md-3 control-label'> Fax*</label>
+    <label class='col-sm-12 col-md-3 control-label'> Fax</label>
     <div class='col-sm-12 col-md-7'>
-       <input name="fax" type="text" class='form-control' placeholder="Enter Fax" value='<?php echo !empty($data)?htmlspecialchars($data['fax']):''; ?>' required>
+       <input name="fax" type="text" class='form-control' placeholder="Enter Fax" value='<?php echo !empty($data)?htmlspecialchars($data['fax']):''; ?>' >
     </div>
 </div>
  <div class='form-group'>
-    <label class='col-sm-12 col-md-3 control-label'> Telephone Number*</label>
+    <label class='col-sm-12 col-md-3 control-label'> Telephone Number</label>
     <div class='col-sm-12 col-md-7'>
-       <input name="telephoneNumber" type="text" class='form-control' placeholder="Enter Telephone Number" value='<?php echo !empty($data)?htmlspecialchars($data['telephone_number']):''; ?>' required>
+       <input name="telephoneNumber" type="text" class='form-control' placeholder="Enter Telephone Number" value='<?php echo !empty($data)?htmlspecialchars($data['telephone_number']):''; ?>' onkeypress='return isNumberKey(event)'>
     </div>
 </div>
 <div class='form-group'>
     <label class='col-sm-12 col-md-3 control-label'> Mobile Number*</label>
     <div class='col-sm-12 col-md-7'>
-       <input name="mobileNumber" type="text" class='form-control' placeholder="Enter Mobile Number" value='<?php echo !empty($data)?htmlspecialchars($data['mobile_number']):''; ?>' required>
+       <input name="mobileNumber" type="text" class='form-control' placeholder="Enter Mobile Number" value='<?php echo !empty($data)?htmlspecialchars($data['mobile_number']):''; ?>' onkeypress='return isNumberKey(event)' required>
     </div>
 </div>
 <div class='form-group'>
@@ -114,9 +126,9 @@
     </div>
 </div> -->
 <div class='form-group'>
-    <label class='col-sm-12 col-md-3 control-label'> Website*</label>
+    <label class='col-sm-12 col-md-3 control-label'> Website</label>
     <div class='col-sm-12 col-md-7'>
-       <input name="website" type="text" class='form-control' placeholder="Enter Website" value='<?php echo !empty($data)?htmlspecialchars($data['website']):''; ?>' required>
+       <input name="website" type="text" class='form-control' placeholder="Enter Website" value='<?php echo !empty($data)?htmlspecialchars($data['website']):''; ?>' >
     </div>
 </div>
 <div class='form-group'>
